@@ -72,6 +72,19 @@ describe React::Component do
       expect(element.state.foo).to be(10)
     end
     
+    it "should define getter using `define_state`" do
+      Foo.class_eval do
+        define_state(:foo) { 10 }
+        before_mount :bump
+        def bump
+          self.foo = self.foo + 20
+        end
+      end
+      
+      element = renderToDocument(Foo)
+      expect(element.state.foo).to be(30)
+    end
+    
     pending "raise error if multiple states and block given at the same time"
   end
   

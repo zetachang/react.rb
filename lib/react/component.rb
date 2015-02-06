@@ -46,7 +46,8 @@ module React
         states.each do |name|
           # getter
           define_method("#{name}") do
-            `this.state['#{name}']`
+            state = Native(`#{@_bridge_object}.state`)
+            state[name]
           end
           # setter
           define_method("#{name}=") do |new_state|
