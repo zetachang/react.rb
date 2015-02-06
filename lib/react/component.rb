@@ -3,7 +3,16 @@ module React
     def self.included(base)
       @@before_mount_callbacks = {}
       @@after_mount_callbacks = {}
+      @@init_state = {}
       base.extend(ClassMethods)
+    end
+    
+    def _bridge_object=(object)
+      @_bridge_object = object
+    end
+    
+    def _init_state
+      @@init_state[self.class.name]
     end
     
     def _component_will_mount
@@ -29,8 +38,25 @@ module React
         @@after_mount_callbacks[self.name] = callback
       end
       
-      def define_state(*states)
-        
+      def define_state(*states)      
+        if block_given?
+          @@init_state[self.name] = {} unless @@init_state[self.name]
+          @@init_state[self.name][states[0]] = yield
+        end
+        states.each do |name|
+          # getter
+          define_method("#{name}") do
+            `this.state['#{name}']`
+          end
+          # setter
+          define_method("#{name}=") do |new_state|
+            state = Native(`#{@_bridge_object}.state`)
+            state = {} unless state
+            state[name] = new_state
+            `#{@_bridge_object}.setState(#{state.to_n})`
+            new_state
+          end
+        end
       end
     end
   end

@@ -40,7 +40,7 @@ describe React::Component do
   end
   
   describe "State setter & getter" do
-    before do
+    before(:each) do
       stub_const 'Foo', Class.new
       Foo.class_eval do
         include React::Component
@@ -50,14 +50,29 @@ describe React::Component do
       end
     end
     
-    it "should define setter & getter by using `define_state`" do
+    it "should define setter using `define_state`" do
       Foo.class_eval do
-        define_state :s1
+        define_state :foo
+        before_mount :set_up
+        def set_up
+          self.foo = "bar"
+        end
       end
       
       element = renderToDocument(Foo)
       expect(element.state.foo).to be("bar")
     end
+    
+    it "should define init state by passing a block to `define_state`" do
+      Foo.class_eval do
+        define_state(:foo) { 10 }
+      end
+      
+      element = renderToDocument(Foo)
+      expect(element.state.foo).to be(10)
+    end
+    
+    pending "raise error if multiple states and block given at the same time"
   end
   
   pending "props (a.k.a params)"

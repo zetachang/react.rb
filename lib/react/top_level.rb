@@ -15,22 +15,31 @@ module React
     if type.kind_of?(Class)
       raise "Provided class should define `render` method"  if !(type.method_defined? :render)
       @instance = type.new
-      %x{
-        var componentClass = React.createClass({
+      spec = %x{
+        {
           componentWillMount: function() {
-            #{@instance._component_will_mount}
+            #{@instance._bridge_object = `this`}
+            #{@instance._component_will_mount()}
           },
           componentDidMount: function() {
-            #{@instance._component_did_mount}
+            #{@instance._bridge_object = `this`}
+            #{@instance._component_did_mount()}
           },
           render: function() {
             return #{@instance.render}
-          },
-          getInitialState: function() {
-            return {foo: 'bar'}
           }
-        });
+        };
       }
+      
+      if @instance.respond_to?("_init_state") && state = @instance._init_state
+        %x{ 
+          spec.getInitialState = function() {
+            return #{state.to_n};
+          }
+        }
+      end
+      
+      `var componentClass = React.createClass(spec)`
       return `React.createElement(componentClass)`
     else
       if HTML_TAGS.include?(type)
