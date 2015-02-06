@@ -85,7 +85,39 @@ describe React::Component do
       expect(element.state.foo).to be(30)
     end
     
-    pending "raise error if multiple states and block given at the same time"
+    it "should define multiple state accessor by passing symols array to `define_state`" do
+      Foo.class_eval do
+        define_state :foo, :foo2
+        before_mount :set_up
+        def set_up
+          self.foo = 10
+          self.foo2 = 20
+        end
+      end
+      
+      element = renderToDocument(Foo)
+      expect(element.state.foo).to be(10)
+      expect(element.state.foo2).to be(20)
+    end
+    
+    it "should invoke `define_state` multiple times to define states" do
+      Foo.class_eval do
+        define_state(:foo) { 30 }
+        define_state(:foo2) { 40 }
+      end
+      
+      element = renderToDocument(Foo)
+      expect(element.state.foo).to be(30)
+      expect(element.state.foo2).to be(40)
+    end
+    
+    it "should raise error if multiple states and block given at the same time" do
+      expect  { 
+        Foo.class_eval do
+          define_state(:foo, :foo2) { 30 }
+        end
+      }.to raise_error
+    end
   end
   
   pending "props (a.k.a params)"

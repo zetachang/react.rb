@@ -38,7 +38,8 @@ module React
         @@after_mount_callbacks[self.name] = callback
       end
       
-      def define_state(*states)      
+      def define_state(*states)
+        raise "Block could be only given when define exactly one state" if block_given? && states.count > 1      
         if block_given?
           @@init_state[self.name] = {} unless @@init_state[self.name]
           @@init_state[self.name][states[0]] = yield
