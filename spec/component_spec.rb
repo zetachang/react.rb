@@ -118,6 +118,23 @@ describe React::Component do
         end
       }.to raise_error
     end
+    
+    # We should refactor this to non-async test
+    async "should get state in render method" do
+      Foo.class_eval do
+        define_state(:foo) { 10 }
+        def render
+          React.create_element("div") { self.foo }
+        end
+      end
+      
+      div = `document.createElement("div")`
+      React.render(React.create_element(Foo), div) do
+        run_async {
+          expect(`div.textContent`).to eq("10")
+        }
+      end
+    end
   end
   
   pending "props (a.k.a params)"
