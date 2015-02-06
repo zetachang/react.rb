@@ -1,0 +1,46 @@
+# Purpose
+
+The idea is
+
+1) Take advantage of React.js 's Virtual DOM
+2) Establish a higher level of helpers's (rather than write low level DOM)
+3) Make Ruby / Rails developers feel like home
+
+https://github.com/reactjs/react-tutorial/blob/master/public/scripts/example.js#L27
+
+http://robots.thoughtbot.com/writing-a-domain-specific-language-in-ruby
+
+http://asciicasts.com/episodes/245-new-gem-with-bundler
+
+https://github.com/opal/opal-rails/blob/master/lib/opal/rails/template_handler.rb
+
+EventEmitter
+
+# TODO
+
+* Implement the reference
+  * Create element with children
+  * Lifecycle hook
+  * Events hook
+  * Refs hook
+* Evalutate mixins
+* How about CSS & Flex
+* How to write test....(http://opalrb.org/docs/rspec/)
+
+Routing? 
+
+Highest level state
+
+class App
+  render do
+    
+  end
+end
+
+ability to compose query...
+updates should be done right...
+
+getInitialState() return value used in `this.state`
+getDefaultProps() return valuue set on `this.props` (could be overwritee by parent)
+
+this.props named as options

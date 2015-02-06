@@ -1,0 +1,12 @@
+<%= div do |ele| %>
+  <% ele.on(:click) do |evt| %>
+    <% @count = @count + 1 %>
+  <% end %>
+  <%= @count %>
+<% end %>
+
+- div do |ele|
+  - ele.on(:click) do |evt
+    - @count = @count + 1
+  = count
+  

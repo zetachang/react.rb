@@ -1,0 +1,5 @@
+<%= content_tag_for(:div) do %>
+  <h1>Comments</h1>
+  <%= render "comment_list", data: @data %>
+  <%= render "comment_form", on_comment_submit: :submit_comment %>
+<% end %>
