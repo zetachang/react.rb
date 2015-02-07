@@ -3,12 +3,12 @@ require "spec_helper"
 describe React do
   describe "is_valid_element" do
     it "should return true if passed a valid element" do
-      element = `React.createElement('div')`
+      element = React::Element.new(`React.createElement('div')`)
       expect(React.is_valid_element(element)).to eq(true)
     end
     
     it "should return false is passed a non React element" do
-      element = `{}`
+      element = React::Element.new(`{}`)
       expect(React.is_valid_element(element)).to eq(false)
     end
   end
@@ -23,7 +23,7 @@ describe React do
       it "should create a valid element with text as only child when block yield String" do
         element = React.create_element('div') { "lorem ipsum" }
         expect(React.is_valid_element(element)).to eq(true)
-        expect(`element.props.children`).to eq("lorem ipsum")
+        expect(element.props.children).to eq("lorem ipsum")
       end
       
       it "should create a valid element with children as array when block yield Array of element" do
@@ -31,9 +31,7 @@ describe React do
           [React.create_element('span'), React.create_element('span'), React.create_element('span')]
         end
         expect(React.is_valid_element(element)).to eq(true)
-        
-        children = `element.props.children`
-        expect(children.length).to eq(3)
+        expect(element.props.children.length).to eq(3)
       end
     end
     describe "custom element" do

@@ -26,7 +26,7 @@ module React
             #{@instance._component_did_mount()}
           },
           render: function() {
-            return #{@instance.render}
+            return #{@instance.render.to_n}
           }
         };
       }
@@ -40,13 +40,13 @@ module React
       end
       
       `var componentClass = React.createClass(spec)`
-      return `React.createElement(componentClass)`
+      return React::Element.new(`React.createElement(componentClass)`)
     else
       if HTML_TAGS.include?(type)
         if block_given?
-          `React.createElement(#{type}, null, #{yield})`
+          React::Element.new(`React.createElement(#{type}, null, #{yield})`)
         else
-          `React.createElement(#{type})`
+          React::Element.new(`React.createElement(#{type})`)
         end
       else
         raise "not implemented"
@@ -57,19 +57,19 @@ module React
   def self.render(element, container)
     if block_given?
       %x{ 
-        React.render(element, container, function(){#{ yield }}) 
+        React.render(#{element.to_n}, container, function(){#{ yield }}) 
       }
     else
-      `React.render(element, container, function(){})`
+      `React.render(#{element.to_n}, container, function(){})`
     end
     return nil
   end
   
   def self.is_valid_element(element)
-    `React.isValidElement(element)`
+    element.kind_of?(React::Element) && `React.isValidElement(#{element.to_n})`
   end
   
   def self.render_to_string(element)
-    `React.renderToString(element)`
+    `React.renderToString(#{element.to_n})`
   end
 end
