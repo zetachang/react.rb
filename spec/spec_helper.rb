@@ -13,9 +13,9 @@ module ReactTestHelpers
     return Native(instance)
   end
   
-  def simulateEvent(event, element)
+  def simulateEvent(event, element, params = {})
     simulator = Native(`ReactTestUtils.Simulate`)
-    simulator[event.to_s].call(element.to_n)
+    simulator[event.to_s].call(element.to_n, params)
   end
 end
 
