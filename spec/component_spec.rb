@@ -171,7 +171,7 @@ describe React::Component do
     it "should read from parent passed properties through `params`" do
       Foo.class_eval do
         def render
-          React.create_element("div") { params["prop"] }
+          React.create_element("div") { params[:prop] }
         end
       end
       
