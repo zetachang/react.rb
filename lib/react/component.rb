@@ -8,7 +8,7 @@ module React
     end
     
     def params
-      Native(`#{@_bridge_object}.props`)
+      @_params ||= Native(`#{@_bridge_object}.props`)
     end
     
     def _bridge_object=(object)
