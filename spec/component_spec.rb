@@ -119,8 +119,7 @@ describe React::Component do
       }.to raise_error
     end
     
-    # We should refactor this to non-async test
-    async "should get state in render method" do
+    it "should get state in render method" do
       Foo.class_eval do
         define_state(:foo) { 10 }
         def render
@@ -128,12 +127,8 @@ describe React::Component do
         end
       end
       
-      div = `document.createElement("div")`
-      React.render(React.create_element(Foo), div) do
-        run_async {
-          expect(`div.textContent`).to eq("10")
-        }
-      end
+      element = renderToDocument(Foo)
+      expect(element.getDOMNode.textContent).to eq("10")
     end
   end
   
