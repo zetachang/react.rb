@@ -1,3 +1,5 @@
+require "active_support"
+
 module React
   class Element
     include Native
@@ -7,6 +9,12 @@ module React
     
     def initialize(native_element)
       @native = native_element
+    end
+    
+    def on(event_name)
+      name = event_name.to_s.camelize
+      self.props["on#{name}"] = `function(){#{yield}}`
+      self
     end
   end
 end

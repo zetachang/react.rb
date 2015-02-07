@@ -15,4 +15,14 @@ describe React::Element do
       }
     end
   end
+  
+  it "should be event-subscribable through `on(:event_name)` method" do
+    expect { |b|
+      element = React.create_element("div").on(:click, &b)
+      simulateEvent(:click, element)
+      `var ReactTestUtils = React.addons.TestUtils`
+      instance = renderElementToDocument(element)
+      `React.addons.TestUtils.Simulate.click(#{instance.to_n})`
+    }.to yield_control
+  end
 end
