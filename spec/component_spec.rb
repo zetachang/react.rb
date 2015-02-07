@@ -137,5 +137,23 @@ describe React::Component do
     end
   end
   
-  pending "props (a.k.a params)"
+  describe "this.props could be accessed through `params` method" do
+    before do
+      stub_const 'Foo', Class.new
+      Foo.class_eval do
+        include React::Component
+      end
+    end
+    
+    it "should read from parent passed properties through `params`" do
+      Foo.class_eval do
+        def render
+          React.create_element("div") { params["prop"] }
+        end
+      end
+      
+      element = renderToDocument(Foo, prop: "foobar")
+      expect(element.getDOMNode.textContent).to eq("foobar")
+    end
+  end
 end

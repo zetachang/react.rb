@@ -41,6 +41,7 @@ module React
             #{@instance._component_did_mount()}
           },
           render: function() {
+            #{@instance._bridge_object = `this`}
             return #{@instance.render.to_n}
           }
         };

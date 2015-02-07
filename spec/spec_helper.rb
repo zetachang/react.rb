@@ -1,9 +1,10 @@
 require 'react'
 
 module ReactTestHelpers
-  def renderToDocument(type)
+  def renderToDocument(type, options = {})
     `var ReactTestUtils = React.addons.TestUtils`
-    instance = `ReactTestUtils.renderIntoDocument(#{React.create_element(type).to_n})`
+    element = React.create_element(type, options)
+    instance = `ReactTestUtils.renderIntoDocument(#{element.to_n})`
     return Native(instance)
   end
 end

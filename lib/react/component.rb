@@ -7,6 +7,10 @@ module React
       base.extend(ClassMethods)
     end
     
+    def params
+      Native(`#{@_bridge_object}.props`)
+    end
+    
     def _bridge_object=(object)
       @_bridge_object = object
     end
