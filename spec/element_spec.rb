@@ -20,9 +20,8 @@ describe React::Element do
     it "should be subscribable through `on(:event_name)` method" do
       expect { |b|
         element = React.create_element("div").on(:click, &b)
-        `var ReactTestUtils = React.addons.TestUtils`
         instance = renderElementToDocument(element)
-        `React.addons.TestUtils.Simulate.click(#{instance.to_n})`
+        simulateEvent(:click, instance)
       }.to yield_control
     end
     

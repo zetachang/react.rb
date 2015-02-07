@@ -12,6 +12,11 @@ module ReactTestHelpers
     instance = `ReactTestUtils.renderIntoDocument(#{element.to_n})`
     return Native(instance)
   end
+  
+  def simulateEvent(event, element)
+    simulator = Native(`ReactTestUtils.Simulate`)
+    simulator[event.to_s].call(element.to_n)
+  end
 end
 
 RSpec.configure do |config|
