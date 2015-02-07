@@ -16,13 +16,19 @@ describe React::Element do
     end
   end
   
-  it "should be event-subscribable through `on(:event_name)` method" do
-    expect { |b|
-      element = React.create_element("div").on(:click, &b)
-      simulateEvent(:click, element)
-      `var ReactTestUtils = React.addons.TestUtils`
-      instance = renderElementToDocument(element)
-      `React.addons.TestUtils.Simulate.click(#{instance.to_n})`
-    }.to yield_control
+  describe "Event subscription" do
+    it "should be subscribable through `on(:event_name)` method" do
+      expect { |b|
+        element = React.create_element("div").on(:click, &b)
+        `var ReactTestUtils = React.addons.TestUtils`
+        instance = renderElementToDocument(element)
+        `React.addons.TestUtils.Simulate.click(#{instance.to_n})`
+      }.to yield_control
+    end
+    
+    it "should return self for `on` method" do
+      element = React.create_element("div")
+      expect(element.on(:click){}).to eq(element)
+    end
   end
 end
