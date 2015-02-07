@@ -44,8 +44,10 @@ module React
       
       def define_state(*states)
         raise "Block could be only given when define exactly one state" if block_given? && states.count > 1      
+        
+        @@init_state[self.name] = {} unless @@init_state[self.name]
+        
         if block_given?
-          @@init_state[self.name] = {} unless @@init_state[self.name]
           @@init_state[self.name][states[0]] = yield
         end
         states.each do |name|
@@ -56,10 +58,14 @@ module React
           end
           # setter
           define_method("#{name}=") do |new_state|
-            state = Native(`#{@_bridge_object}.state`)
-            state = {} unless state
-            state[name] = new_state
-            `#{@_bridge_object}.setState(#{state.to_n})`
+            unless @_bridge_object
+              @@init_state[self.class.name][name] = new_state
+            else
+              state = Native(`#{@_bridge_object}.state`)
+              state = {} unless state
+              state[name] = new_state
+              `#{@_bridge_object}.setState(#{state.to_n})`
+            end
             new_state
           end
         end

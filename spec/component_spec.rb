@@ -130,6 +130,20 @@ describe React::Component do
       element = renderToDocument(Foo)
       expect(element.getDOMNode.textContent).to eq("10")
     end
+    
+    it "should set initial state in class `initialize` method" do
+      Foo.class_eval do
+        define_state :foo, :bar
+        def initialize
+          self.foo = 10
+          self.bar = 20
+        end
+      end
+      
+      element = renderToDocument(Foo)
+      expect(element.state.foo).to eq(10)
+      expect(element.state.bar).to eq(20)
+    end
   end
   
   describe "this.props could be accessed through `params` method" do
