@@ -179,4 +179,30 @@ describe React::Component do
       expect(element.getDOMNode.textContent).to eq("foobar")
     end
   end
+  
+  describe "Event handling" do
+    before do
+      stub_const 'Foo', Class.new
+      Foo.class_eval do
+        include React::Component
+      end
+    end
+    
+    it "should work in render method" do
+      Foo.class_eval do
+        define_state(:clicked) { false }
+        
+        def render
+          React.create_element("div").on(:click) do
+            self.clicked = true
+          end
+        end
+      end
+      
+      element = React.create_element(Foo)
+      instance = renderElementToDocument(element)
+      simulateEvent(:click, instance.getDOMNode)
+      expect(instance.state.clicked).to eq(true)
+    end
+  end
 end
