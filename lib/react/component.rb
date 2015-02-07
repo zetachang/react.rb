@@ -53,8 +53,12 @@ module React
         states.each do |name|
           # getter
           define_method("#{name}") do
-            state = Native(`#{@_bridge_object}.state`)
-            state[name]
+            unless @_bridge_object
+              @@init_state[self.class.name][name] 
+            else
+              state = Native(`#{@_bridge_object}.state`)
+              state[name]
+            end
           end
           # setter
           define_method("#{name}=") do |new_state|
