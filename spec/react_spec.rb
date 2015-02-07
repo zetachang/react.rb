@@ -49,6 +49,11 @@ describe React do
         expect(React.is_valid_element(element)).to eq(true)
       end
       
+      it "should allow creating with properties" do
+        element = React.create_element(Foo, foo: "bar")
+        expect(element.props.foo).to eq("bar")
+      end
+      
       it "should raise error if provided class doesn't defined `render`" do
         expect { React.create_element(Array) }.to raise_error
       end
