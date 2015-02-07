@@ -53,7 +53,18 @@ describe React do
         expect { React.create_element(Array) }.to raise_error
       end
     end
-    pending "element with properties"
+    
+    describe "create element with properties" do
+      it "should enforce snake-cased property name" do
+        element = React.create_element("div", class_name: "foo")
+        expect(element.props.className).to eq("foo")
+      end
+      
+      it "should allow custom property" do
+        element = React.create_element("div", foo: "bar")
+        expect(element.props.foo).to eq("bar")
+      end
+    end
   end
   
   

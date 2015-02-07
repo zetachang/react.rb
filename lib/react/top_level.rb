@@ -11,7 +11,22 @@ module React
                 output p param picture pre progress q rp rt ruby s samp script section select
                 small source span strong style sub summary sup table tbody td textarea tfoot th
                 thead time title tr track u ul var video wbr)
-  def self.create_element(type)
+  ATTRIBUTES = %w(accept acceptCharset accessKey action allowFullScreen allowTransparency alt
+                async autoComplete autoPlay cellPadding cellSpacing charSet checked classID
+                className cols colSpan content contentEditable contextMenu controls coords
+                crossOrigin data dateTime defer dir disabled download draggable encType form
+                formAction formEncType formMethod formNoValidate formTarget frameBorder height
+                hidden href hrefLang htmlFor httpEquiv icon id label lang list loop manifest
+                marginHeight marginWidth max maxLength media mediaGroup method min multiple
+                muted name noValidate open pattern placeholder poster preload radioGroup
+                readOnly rel required role rows rowSpan sandbox scope scrolling seamless
+                selected shape size sizes span spellCheck src srcDoc srcSet start step style
+                tabIndex target title type useMap value width wmode)
+  def self.create_element(type, properties = {})
+    props = {}
+    
+    properties.map {|key, value| props[lower_camelize(key)] = value }
+    
     if type.kind_of?(Class)
       raise "Provided class should define `render` method"  if !(type.method_defined? :render)
       @instance = type.new
@@ -44,9 +59,9 @@ module React
     else
       if HTML_TAGS.include?(type)
         if block_given?
-          React::Element.new(`React.createElement(#{type}, null, #{yield})`)
+          React::Element.new(`React.createElement(#{type}, #{props.to_n}, #{yield})`)
         else
-          React::Element.new(`React.createElement(#{type})`)
+          React::Element.new(`React.createElement(#{type}, #{props.to_n})`)
         end
       else
         raise "not implemented"
@@ -71,5 +86,14 @@ module React
   
   def self.render_to_string(element)
     `React.renderToString(#{element.to_n})`
+  end
+  
+  private
+  
+  def self.lower_camelize(snake_cased_word)
+    words = snake_cased_word.split("_")
+    result = [words.first]
+    result.concat(words[1..-1].map {|word| word[0].upcase + word[1..-1] })
+    result.join("")
   end
 end
