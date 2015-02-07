@@ -55,8 +55,7 @@ module React
         }
       end
       
-      `var componentClass = React.createClass(spec)`
-      return React::Element.new(`React.createElement(componentClass, #{props.to_n})`)
+      return React::Element.new(`React.createElement(React.createClass(spec), #{props.to_n})`)
     else
       if HTML_TAGS.include?(type)
         if block_given?
