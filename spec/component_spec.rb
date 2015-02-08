@@ -201,7 +201,7 @@ describe React::Component do
       
       element = React.create_element(Foo)
       instance = renderElementToDocument(element)
-      simulateEvent(:click, instance.getDOMNode)
+      simulateEvent(:click, instance)
       expect(instance.state.clicked).to eq(true)
     end
   end
