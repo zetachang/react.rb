@@ -1,7 +1,7 @@
 require "spec_helper"
 
 describe React::Event do
-  it "should bridge attributes of native SyntheticEvent" do
+  it "should bridge attributes of native SyntheticEvent (see http://facebook.github.io/react/docs/events.html#syntheticevent)" do
     element = React.create_element('div').on(:click) do |event|
       expect(event.bubbles).to eq(`#{event.to_n}.bubbles`)
       expect(event.cancelable).to eq(`#{event.to_n}.cancelable`)
