@@ -13,7 +13,11 @@ module React
     
     def on(event_name)
       name = event_name.to_s.camelize
-      self.props["on#{name}"] = `function(){#{yield}}`
+      self.props["on#{name}"] = %x{ 
+        function(event){
+          #{yield React::Event.new(`event`)}
+        }
+      }
       self
     end
   end

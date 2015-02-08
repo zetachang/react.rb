@@ -22,7 +22,7 @@ describe React::Element do
         element = React.create_element("div").on(:click, &b)
         instance = renderElementToDocument(element)
         simulateEvent(:click, instance)
-      }.to yield_control
+      }.to yield_with_args(React::Event)
       
       expect { |b|
         element = React.create_element("div").on(:key_down, &b)
