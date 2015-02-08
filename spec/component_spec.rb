@@ -204,5 +204,43 @@ describe React::Component do
       simulateEvent(:click, instance)
       expect(instance.state.clicked).to eq(true)
     end
+    
+    it "should invoke handler on `this.props` using emit" do
+      Foo.class_eval do
+        after_mount :setup
+        
+        def setup
+          self.emit(:foo, "bar")
+        end
+        
+        def render
+          React.create_element("div")
+        end
+      end
+      
+      expect { |b|
+        element = React.create_element(Foo).on(:foo, &b)
+        renderElementToDocument(element)
+      }.to yield_with_args("bar")
+    end
+    
+    it "should invoke handler with multiple params using emit" do
+      Foo.class_eval do
+        after_mount :setup
+        
+        def setup
+          self.emit(:foo_invoked, [1,2,3], "bar")
+        end
+        
+        def render
+          React.create_element("div")
+        end
+      end
+      
+      expect { |b|
+        element = React.create_element(Foo).on(:foo_invoked, &b)
+        renderElementToDocument(element)
+      }.to yield_with_args([1,2,3], "bar")
+    end
   end
 end

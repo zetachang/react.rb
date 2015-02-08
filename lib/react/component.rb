@@ -11,6 +11,10 @@ module React
       @_params ||= Native(`#{@_bridge_object}.props`)
     end
     
+    def emit(event_name, *args)
+      self.params["_on#{event_name.to_s.camelize}"].call(*args)
+    end
+    
     def _bridge_object=(object)
       @_bridge_object = object
     end

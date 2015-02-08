@@ -13,11 +13,20 @@ module React
     
     def on(event_name)
       name = event_name.to_s.camelize
-      self.props["on#{name}"] = %x{ 
-        function(event){
-          #{yield React::Event.new(`event`)}
+      
+      if React::Event::BUILT_IN_EVENTS.include?("on#{name}")
+        self.props["on#{name}"] = %x{ 
+          function(event){
+            #{yield React::Event.new(`event`)}
+          }
         }
-      }
+      else
+        self.props["_on#{name}"] = %x{ 
+          function(){
+            #{yield *Array(`arguments`)}
+          }
+        }
+      end
       self
     end
   end
