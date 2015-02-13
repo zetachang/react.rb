@@ -84,14 +84,6 @@ module React
       self.params["_on#{event_name.to_s.event_camelize}"].call(*args)
     end
     
-    def _bridge_object=(object)
-      @_bridge_object = object
-    end
-    
-    def _init_state
-      self.class.init_state
-    end
-    
     def _component_will_mount
       return unless self.class.before_mount_callbacks
       self.class.before_mount_callbacks.each do |callback|
@@ -124,7 +116,7 @@ module React
         };
       }
       
-      state = self._init_state
+      state = self.class.init_state
       
       %x{ 
         spec.getInitialState = function() {
