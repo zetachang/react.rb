@@ -150,8 +150,7 @@ module React
             unless @_bridge_object
               self.class.init_state[name] 
             else
-              state = Native(`#{@_bridge_object}.state`)
-              state[name]
+              `#{@_bridge_object}.state[#{name}]`
             end
           end
           # setter
@@ -159,11 +158,13 @@ module React
             unless @_bridge_object
               self.class.init_state[name] = new_state
             else
-              state = Native(`#{@_bridge_object}.state`)
-              state = {} unless state
-              state[name] = new_state
-              `#{@_bridge_object}.setState(#{state.to_n})`
+              %x{
+                state = #{@_bridge_object}.state || {};
+                state[#{name}] = #{new_state};
+                #{@_bridge_object}.setState(state);
+              }
             end
+            
             new_state
           end
         end
