@@ -8,11 +8,11 @@ module React
     end
     
     def params
-      @_params ||= Native(`#{@_bridge_object}.props`)
+      Native(`#{@_bridge_object}.props`)
     end
     
     def refs
-      @_refs ||= Native(`#{@_bridge_object}.refs`)
+      Native(`#{@_bridge_object}.refs`)
     end
     
     def emit(event_name, *args)
