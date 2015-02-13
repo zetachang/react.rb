@@ -3,6 +3,7 @@ if RUBY_ENGINE == 'opal'
   require "react/component" 
   require "react/element"
   require "react/event"
+  require "react/version" 
 else
   require "opal"
   require "react/version"  
