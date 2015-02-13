@@ -1,3 +1,5 @@
+require "./ext/string"
+
 module React
   module Component          
     def self.included(base)
@@ -16,7 +18,7 @@ module React
     end
     
     def emit(event_name, *args)
-      self.params["_on#{event_name.to_s.camelize}"].call(*args)
+      self.params["_on#{event_name.to_s.event_camelize}"].call(*args)
     end
     
     def _bridge_object=(object)

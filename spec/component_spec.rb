@@ -210,7 +210,7 @@ describe React::Component do
         after_mount :setup
         
         def setup
-          self.emit(:foo, "bar")
+          self.emit(:foo_submit, "bar")
         end
         
         def render
@@ -219,7 +219,7 @@ describe React::Component do
       end
       
       expect { |b|
-        element = React.create_element(Foo).on(:foo, &b)
+        element = React.create_element(Foo).on(:foo_submit, &b)
         renderElementToDocument(element)
       }.to yield_with_args("bar")
     end

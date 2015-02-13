@@ -1,4 +1,4 @@
-require "active_support"
+require "./ext/string"
 
 module React
   class Element
@@ -12,14 +12,7 @@ module React
     end
     
     def on(event_name)
-      def camelize(string)
-        `#{string}.replace(/(^|_)([^_]+)/g, function(match, pre, word, index) {
-          var capitalize = true;
-          return capitalize ? word.substr(0,1).toUpperCase()+word.substr(1) : word;
-        })`
-      end
-      
-      name = camelize(event_name.to_s)
+      name = event_name.to_s.event_camelize
       if React::Event::BUILT_IN_EVENTS.include?("on#{name}")
         self.props["on#{name}"] = %x{ 
           function(event){
