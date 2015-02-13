@@ -6,12 +6,12 @@ The idea is
 2. Establish a higher level of helpers's (rather than write low level DOM)
 3. Make Ruby / Rails developers feel like home
 
-## Developling
+## Developing
 
 1. `bundle install`
 2. `bundle exec rackup`
 3. Open `http://localhost:9292` to run the test
 
-## Notice
+## Example
 
-* stuff under `example` folder are broken
+* `example/react-tutorial`: `bundle exec rackup` to run the example
