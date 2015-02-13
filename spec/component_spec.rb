@@ -2,7 +2,7 @@ require "spec_helper"
 
 describe React::Component do
   describe "Life Cycle" do
-    before do
+    before(:each) do
       stub_const 'Foo', Class.new
       Foo.class_eval do
         include React::Component
@@ -34,6 +34,27 @@ describe React::Component do
 
       expect_any_instance_of(Foo).to receive(:bar3)
       expect_any_instance_of(Foo).to receive(:bar4)
+
+      renderToDocument(Foo)
+    end
+    
+    it "should allow multiple class declared life cycle hooker" do
+      stub_const 'FooBar', Class.new
+      Foo.class_eval do
+        before_mount :bar
+        def bar; end
+      end
+      
+      FooBar.class_eval do
+        include React::Component
+        after_mount :bar2
+        def bar2; end
+        def render
+          React.create_element("div") { "lorem" }
+        end
+      end
+      
+      expect_any_instance_of(Foo).to receive(:bar)
 
       renderToDocument(Foo)
     end

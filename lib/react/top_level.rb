@@ -23,45 +23,38 @@ module React
                 selected shape size sizes span spellCheck src srcDoc srcSet start step style
                 tabIndex target title type useMap value width wmode)
   def self.create_element(type, properties = {})
-    props = {}
+    props = `{}`
     
-    properties.map {|key, value| props[lower_camelize(key)] = value }
+    properties.map {|key, value| `props[#{lower_camelize(key)}] = #{value}` }
     
     if type.kind_of?(Class)
       raise "Provided class should define `render` method"  if !(type.method_defined? :render)
-      @instance = type.new
-      spec = %x{
-        {
-          componentWillMount: function() {
-            #{@instance._bridge_object = `this`}
-            #{@instance._component_will_mount()}
-          },
-          componentDidMount: function() {
-            #{@instance._bridge_object = `this`}
-            #{@instance._component_did_mount()}
-          },
-          render: function() {
-            #{@instance._bridge_object = `this`}
-            return #{@instance.render.to_n}
-          }
-        };
-      }
+      instance = type.new
       
-      if @instance.respond_to?("_init_state") && state = @instance._init_state
-        %x{ 
-          spec.getInitialState = function() {
-            return #{state.to_n};
-          }
+      if instance.respond_to?("_spec")
+        return React::Element.new(`React.createElement(React.createClass(#{instance._spec}), #{props})`)
+      else
+        spec = %x{
+          {render: function() {
+            return #{instance.render.to_n}
+          }}
         }
+        return React::Element.new(`React.createElement(React.createClass(#{spec}), #{props})`)
       end
       
-      return React::Element.new(`React.createElement(React.createClass(spec), #{props.to_n})`)
+      return React::Element.new(`React.createElement(React.createClass(spec), #{props})`)
     else
       if HTML_TAGS.include?(type)
         if block_given?
-          React::Element.new(`React.createElement(#{type}, #{props.to_n}, #{yield})`)
+          children = yield
+          if children.is_a?(Array)
+            children = children.map{|ele| ele.to_n }
+            React::Element.new(`React.createElement(#{type}, #{props}, #{children})`)
+          else
+            React::Element.new(`React.createElement(#{type}, #{props}, #{children.to_n})`)
+          end
         else
-          React::Element.new(`React.createElement(#{type}, #{props.to_n})`)
+          React::Element.new(`React.createElement(#{type}, #{props})`)
         end
       else
         raise "not implemented"
