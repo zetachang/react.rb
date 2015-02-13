@@ -243,4 +243,39 @@ describe React::Component do
       }.to yield_with_args([1,2,3], "bar")
     end
   end
+  
+  describe "Refs" do
+    before do
+      stub_const 'Foo', Class.new
+      Foo.class_eval do
+        include React::Component
+      end
+    end
+    
+    it "should correctly assign refs" do
+      Foo.class_eval do
+        def render
+          React.create_element("input", type: :text, ref: :field)
+        end
+      end
+      
+      element = renderToDocument(Foo)
+      expect(element.refs.field).not_to be_nil
+    end
+    
+    it "should access refs through `refs` method" do
+      Foo.class_eval do    
+        def render
+          React.create_element("input", type: :text, ref: :field).on(:click) do
+            refs[:field].value = "some_stuff"
+          end
+        end
+      end
+      
+      element = renderToDocument(Foo)
+      simulateEvent(:click, element)
+      
+      expect(element.refs.field.value).to eq("some_stuff")
+    end
+  end
 end
