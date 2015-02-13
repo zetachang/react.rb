@@ -34,11 +34,8 @@ module React
       if instance.respond_to?("_spec")
         return React::Element.new(`React.createElement(React.createClass(#{instance._spec}), #{props})`)
       else
-        spec = %x{
-          {render: function() {
-            return #{instance.render.to_n}
-          }}
-        }
+        spec = `instance`
+        `spec.render = #{spec.render}`
         return React::Element.new(`React.createElement(React.createClass(#{spec}), #{props})`)
       end
       
