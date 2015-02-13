@@ -29,6 +29,12 @@ describe React::Element do
         instance = renderElementToDocument(element)
         simulateEvent(:keyDown, instance, {key: "Enter"})
       }.to yield_control
+      
+      expect { |b|
+        element = React.create_element("form").on(:submit, &b)
+        instance = renderElementToDocument(element)
+        simulateEvent(:submit, instance, {})
+      }.to yield_control
     end
     
     it "should return self for `on` method" do
