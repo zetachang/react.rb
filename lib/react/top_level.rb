@@ -23,40 +23,43 @@ module React
                 selected shape size sizes span spellCheck src srcDoc srcSet start step style
                 tabIndex target title type useMap value width wmode)
   def self.create_element(type, properties = {})
-    props = `{}`
+    params = []
     
-    properties.map {|key, value| `props[#{lower_camelize(key)}] = #{value}` }
-    
+    # Component Spec or Nomral DOM
     if type.kind_of?(Class)
       raise "Provided class should define `render` method"  if !(type.method_defined? :render)
       instance = type.new
       
       if instance.respond_to?("_spec")
-        return React::Element.new(`React.createElement(React.createClass(#{instance._spec}), #{props})`)
+        params << `React.createClass(#{instance._spec})`
       else
-        spec = `instance`
-        `spec.render = #{spec.render}`
-        return React::Element.new(`React.createElement(React.createClass(#{spec}), #{props})`)
+        spec = %x{
+          {
+            render: function() {
+              return #{instance.render.to_n};
+            }
+          }
+        }
+        params << `React.createClass(#{spec})`
       end
-      
-      return React::Element.new(`React.createElement(React.createClass(spec), #{props})`)
     else
-      if HTML_TAGS.include?(type)
-        if block_given?
-          children = yield
-          if children.is_a?(Array)
-            children = children.map{|ele| ele.to_n }
-            React::Element.new(`React.createElement(#{type}, #{props}, #{children})`)
-          else
-            React::Element.new(`React.createElement(#{type}, #{props}, #{children.to_n})`)
-          end
-        else
-          React::Element.new(`React.createElement(#{type}, #{props})`)
-        end
-      else
-        raise "not implemented"
+      raise "not implemented" unless HTML_TAGS.include?(type)
+      params << type
+    end
+    
+    # Passed in properties
+    props = `{}`
+    properties.map {|key, value| `props[#{lower_camelize(key)}] = #{value}` }
+    params << props
+    
+    # Children Nodes
+    if block_given?
+      children = [yield].flatten.each do |ele|
+        params << ele.to_n
       end
     end
+    
+    return React::Element.new(`React.createElement.apply(null, #{params})`)
   end
   
   def self.render(element, container)
