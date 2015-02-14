@@ -5,10 +5,13 @@ require 'react'
 
 class Comment
   include React::Component
+  
   def render
+    converter = Native(`new Showdown.converter()`)
+    raw_markup = converter.makeHtml(params[:children].to_s)
     React.create_element('div') do
       [React.create_element('h2') { params[:author] },
-      React.create_element('span') { params[:text] }]
+      React.create_element('span', dangerously_set_inner_HTML: {__html: raw_markup}.to_n)]
     end
   end
 end 
@@ -19,7 +22,7 @@ class CommentList
   def render
     React.create_element('div') do
       params[:data].each_with_index.map do |comment, idx|
-        React.create_element(Comment, author: comment["author"], text:  comment["text"], key: idx) 
+        React.create_element(Comment, author: comment["author"], key: idx) { comment["text"] }
       end
     end
   end
