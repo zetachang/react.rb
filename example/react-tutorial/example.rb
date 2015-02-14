@@ -72,7 +72,7 @@ class CommentBox
   end
   
   def start_polling
-    Window.set_interval(2000) { load_comments_from_server }
+    Window.set_interval(params[:pollInterval]) { load_comments_from_server }
   end
 
   def handle_comment_submit(comment)
