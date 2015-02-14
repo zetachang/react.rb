@@ -44,3 +44,8 @@ getInitialState() return value used in `this.state`
 getDefaultProps() return valuue set on `this.props` (could be overwritee by parent)
 
 this.props named as options
+
+- [ ] Addd test for state should be original object
+- [ ] DSL
+- [ ] self.set_data(p) do |
+      en
