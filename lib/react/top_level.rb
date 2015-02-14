@@ -22,6 +22,8 @@ module React
                 readOnly rel required role rows rowSpan sandbox scope scrolling seamless
                 selected shape size sizes span spellCheck src srcDoc srcSet start step style
                 tabIndex target title type useMap value width wmode)
+                
+  @@spec_factory = {}
   def self.create_element(type, properties = {})
     params = []
     
@@ -31,7 +33,8 @@ module React
       instance = type.new
       
       if instance.respond_to?("_spec")
-        params << `React.createClass(#{instance._spec})`
+        @@spec_factory[type] ||= `React.createClass(#{instance._spec})`
+        params << @@spec_factory[type]
       else
         spec = %x{
           {
