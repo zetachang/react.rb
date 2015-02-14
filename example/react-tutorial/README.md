@@ -1,6 +1,6 @@
 # React Tutorial
 
-This is a rewrite of original comment box example using React.rb from the [React tutorial]((http://facebook.github.io/react/docs/tutorial.html)).
+This is a rewrite of original comment box example using React.rb from the [React tutorial](http://facebook.github.io/react/docs/tutorial.html).
 
 ## To use
 
