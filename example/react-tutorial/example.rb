@@ -38,7 +38,7 @@ class CommentBox
       if response.ok?
         self.data = JSON.parse(response.body)
       else
-        puts "failed :("
+        puts "failed with status #{response.status_code}"
       end
     end
   end
@@ -47,6 +47,14 @@ class CommentBox
     comments = self.data
     comments.push(comment)
     self.data = comments
+    
+    HTTP.post(params[:url], payload: comment) do |response|
+      if response.ok?
+        self.data = JSON.parse(response.body)
+      else
+        puts "failed with status #{response.status_code}"
+      end
+    end
   end
 
   def render
