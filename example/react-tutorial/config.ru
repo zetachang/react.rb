@@ -2,12 +2,6 @@
 require 'bundler'
 Bundler.require
 
-require "sinatra"
-require "opal"
-require "opal-jquery"
-require "react"
-
-
 Opal::Processor.source_map_enabled = true
 
 opal = Opal::Server.new {|s|

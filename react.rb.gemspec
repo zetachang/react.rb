@@ -16,9 +16,8 @@ Gem::Specification.new do |s|
   s.require_paths  = ['lib']
 
   s.add_runtime_dependency 'opal', '~> 0.6.0'
-  s.add_runtime_dependency 'hooks', '~> 0.4.0'
+  s.add_runtime_dependency 'opal-activesupport'
   s.add_development_dependency 'opal-rspec', '~> 0.3.0.beta3'
   s.add_development_dependency 'sinatra'
   s.add_development_dependency 'opal-jquery'
-  s.add_development_dependency 'opal-activesupport'
 end
