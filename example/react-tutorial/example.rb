@@ -60,7 +60,7 @@ class CommentForm
   include React::Component
 
   def render
-    a = React.create_element('form') do
+    React.create_element('form') do
       [
         React.create_element('input', type: "text", placeholder: "Your name", ref: "author"),
         React.create_element('input', type: "text", placeholder: "Say something...", ref: "text"),
@@ -79,5 +79,5 @@ class CommentForm
 end
 
 Document.ready? do 
-  React.render React.create_element(CommentBox, url: "comments.json"), `document.getElementById('content')`
+  React.render React.create_element(CommentBox, url: "comments.json"), Element.find('#content').get(0)
 end
