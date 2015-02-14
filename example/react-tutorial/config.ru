@@ -41,6 +41,7 @@ get '/' do
     <!doctype html>
     <html>
       <head>
+        <link rel="stylesheet" href="base.css" />
         <script src="http://cdnjs.cloudflare.com/ajax/libs/react/0.12.2/react.js"></script>
         <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
         <script src="/assets/example.js"></script>
