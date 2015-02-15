@@ -17,6 +17,10 @@ module ReactTestHelpers
     simulator = Native(`ReactTestUtils.Simulate`)
     simulator[event.to_s].call(`#{element.to_n}.getDOMNode()`, params)
   end
+  
+  def isElementOfType(element, type)
+    `React.addons.TestUtils.isElementOfType(#{element.to_n}, #{type.cached_component_class})`
+  end
 end
 
 RSpec.configure do |config|

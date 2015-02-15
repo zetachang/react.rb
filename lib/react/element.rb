@@ -28,5 +28,15 @@ module React
       end
       self
     end
+    
+    def map(&block)
+      buffer = []
+      %x{
+        React.Children.forEach(#{self.props.children}, function(element){
+          #{buffer << block.call(React::Element.new(`element`))}
+        })
+      }
+      buffer
+    end
   end
 end

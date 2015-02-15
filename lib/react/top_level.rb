@@ -82,6 +82,10 @@ module React
     `React.renderToString(#{element.to_n})`
   end
   
+  def self.render_to_static_markup(element)
+    `React.renderToStaticMarkup(#{element.to_n})`
+  end
+  
   private
   
   def self.lower_camelize(snake_cased_word)
