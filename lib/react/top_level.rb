@@ -44,7 +44,7 @@ module React
         params << `React.createClass(#{spec})`
       end
     else
-      raise "not implemented" unless HTML_TAGS.include?(type)
+      raise "#{type} not implemented" unless HTML_TAGS.include?(type)
       params << type
     end
     
