@@ -2,11 +2,7 @@ require "./ext/string"
 
 module React
   module Component            
-    def self.included(base)
-      @@before_mount_callbacks = {}
-      @@after_mount_callbacks = {}
-      @@init_state = {}
-      
+    def self.included(base)      
       base.class_eval do
         def self.class_attribute(*attrs)
           class << attrs 
@@ -67,7 +63,7 @@ module React
           end
         end
       
-        class_attribute :before_mount_callbacks, :after_mount_callbacks, :init_state
+        class_attribute :before_mount_callbacks, :after_mount_callbacks, :init_state, :cached_component_class
       end
       base.extend(ClassMethods)
     end
@@ -98,7 +94,13 @@ module React
       end
     end
     
-    def _spec
+    def _component_class
+      self.class.cached_component_class ||= `React.createClass(#{spec})`
+    end
+    
+    private
+    
+    def spec
       spec = %x{
         {
           componentWillMount: function() {

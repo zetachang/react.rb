@@ -23,7 +23,6 @@ module React
                 selected shape size sizes span spellCheck src srcDoc srcSet start step style
                 tabIndex target title type useMap value width wmode)
                 
-  @@spec_factory = {}
   def self.create_element(type, properties = {})
     params = []
     
@@ -32,9 +31,8 @@ module React
       raise "Provided class should define `render` method"  if !(type.method_defined? :render)
       instance = type.new
       
-      if instance.respond_to?("_spec")
-        @@spec_factory[type] ||= `React.createClass(#{instance._spec})`
-        params << @@spec_factory[type]
+      if instance.respond_to?("_component_class")
+        params << instance._component_class
       else
         spec = %x{
           {
