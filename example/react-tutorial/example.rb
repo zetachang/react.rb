@@ -15,9 +15,9 @@ class Comment
   def render
     converter = Native(`new Showdown.converter()`)
     raw_markup = converter.makeHtml(params[:children].to_s)
-    React.create_element('div', class_name: "comment") do
-      [React.create_element('h2', class_name: "commentAuthor") { params[:author] },
-      React.create_element('span', dangerously_set_inner_HTML: {__html: raw_markup}.to_n)]
+    div class_name: "comment" do
+      h2(class_name: "commentAuthor") { params[:author] }
+      span(dangerously_set_inner_HTML: {__html: raw_markup}.to_n)
     end
   end
 end 
@@ -26,9 +26,9 @@ class CommentList
   include React::Component
 
   def render
-    React.create_element('div', class_name: "commentList") do
+    div class_name: "commentList" do
       params[:data].each_with_index.map do |comment, idx|
-        React.create_element(Comment, author: comment["author"], key: idx) { comment["text"] }
+        present(Comment, author: comment["author"], key: idx) { comment["text"] }
       end
     end
   end
@@ -38,13 +38,13 @@ class CommentForm
   include React::Component
 
   def render
-    React.create_element('form', class_name: "commentForm") do
-      [
-        React.create_element('input', type: "text", placeholder: "Your name", ref: "author"),
-        React.create_element('input', type: "text", placeholder: "Say something...", ref: "text"),
-        React.create_element('input', type: "submit", value: "Post")
-      ]
-    end.on(:submit) do |event|
+    f = form(class_name: "commentForm") do
+      input type: "text", placeholder: "Your name", ref: "author"
+      input type: "text", placeholder: "Say something...", ref: "text"
+      input type: "submit", value: "Post"
+    end
+    
+    f.on(:submit) do |event|
       event.prevent_default
       author = self.refs.author.getDOMNode().value.strip
       text = self.refs.text.getDOMNode().value.strip
@@ -90,10 +90,10 @@ class CommentBox
   end
 
   def render
-    React.create_element('div', class_name: "commentBox") do
-      [React.create_element('h1') { "Comments" },
-       React.create_element(CommentList, data: self.data),
-       React.create_element(CommentForm).on(:comment_submit) {|c| handle_comment_submit(c) }]
+    div class_name: "commentBox" do
+      h1 { "Comments" }
+      present CommentList, data: self.data
+      present(CommentForm).on(:comment_submit) {|c| handle_comment_submit(c) }
     end
   end
 end
