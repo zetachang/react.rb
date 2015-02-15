@@ -2,7 +2,7 @@ require "spec_helper"
 
 describe React::ElementBuilder do
   it "should build DOM element in builder context" do
-    element = React::ElementBuilder.build do
+    element = React::ElementBuilder.build(self) do
       div do
         span
         span do
@@ -25,7 +25,7 @@ describe React::ElementBuilder do
       end
     end
     
-    element = React::ElementBuilder.build do
+    element = React::ElementBuilder.build(self) do
       render(Foo) do
         div
         div
@@ -35,5 +35,26 @@ describe React::ElementBuilder do
     expect(isElementOfType(element, Foo)).to eq(true)
     expect(element.map {|ele| ele.element_type}).to eq(["div", "div"])
     expect(React.render_to_static_markup(element)).to eq("<div></div>")
+  end
+  
+  it "should proxy to original self in builder context" do
+    stub_const 'Foo', Class.new
+    Foo.class_eval do
+      attr_accessor :foo
+      def initialize
+        self.foo = "bar"
+      end
+      
+      def render
+        React::ElementBuilder.build(self) do
+          div do
+            div { foo }
+          end
+        end
+      end
+    end
+    
+    element = Foo.new.render
+    expect(React.render_to_static_markup(element)).to eq("<div><div>bar</div></div>")
   end
 end
