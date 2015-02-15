@@ -299,4 +299,31 @@ describe React::Component do
       expect(element.refs.field.value).to eq("some_stuff")
     end
   end
+  
+  describe "Render" do
+    it "should support React::ElementBuilder helpers" do
+      stub_const 'Foo', Class.new
+      Foo.class_eval do
+        include React::Component
+        
+        def render
+          div do
+            span { params[:foo] }
+          end
+        end
+      end
+      
+      stub_const 'Bar', Class.new
+      Bar.class_eval do
+        include React::Component
+        def render
+          div do
+            present Foo, foo: "astring"
+          end
+        end
+      end
+      
+      expect(React.render_to_static_markup(React.create_element(Bar))).to eq("<div><div><span>astring</span></div></div>")
+    end
+  end
 end

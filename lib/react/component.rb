@@ -98,6 +98,30 @@ module React
       self.class.cached_component_class ||= `React.createClass(#{spec})`
     end
     
+    def method_missing(name, *args, &block)
+      unless (React::HTML_TAGS.include?(name) || name == 'present')
+        return super
+      end
+      
+      if name == "present"
+        name = args.shift
+      end 
+      
+      if block
+        @buffer = [] unless @buffer
+        current = @buffer
+        @buffer = []
+        result = block.call
+        element = React.create_element(name, *args) { @buffer.count == 0 ? result : @buffer }
+        @buffer = current
+      else        
+        element = React.create_element(name, *args)
+      end
+      
+      @buffer << element
+      element
+    end
+    
     private
     
     def spec
