@@ -4,7 +4,6 @@ module React
   module Component            
     def self.included(base)  
       base.class_eval do
-        #include Native
         def self.class_attribute(*attrs)
           class << attrs 
             def extract_options!
@@ -123,36 +122,6 @@ module React
       element
     end
     
-    private
-    
-    def spec
-      spec = %x{
-        {
-          componentWillMount: function() {
-            #{@_bridge_object = `this`}
-            #{self._component_will_mount()}
-          },
-          componentDidMount: function() {
-            #{@_bridge_object = `this`}
-            #{self._component_did_mount()}
-          },
-          render: function() {
-            #{@_bridge_object = `this`}
-            return #{self.render.to_n}
-          }
-        };
-      }
-      
-      state = self.class.init_state
-      
-      %x{ 
-        spec.getInitialState = function() {
-          return #{state.to_n};
-        }
-      }
-      
-      return spec
-    end
     
     module ClassMethods
       def before_mount(*callback)
