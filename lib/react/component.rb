@@ -2,8 +2,9 @@ require "./ext/string"
 
 module React
   module Component            
-    def self.included(base)      
+    def self.included(base)  
       base.class_eval do
+        #include Native
         def self.class_attribute(*attrs)
           class << attrs 
             def extract_options!
@@ -68,36 +69,36 @@ module React
       base.extend(ClassMethods)
     end
     
+    def initialize(native_element)
+      @native = native_element
+    end
+    
     def params
-      Native(`#{@_bridge_object}.props`)
+      Native(`#{@native}.props`)
     end
     
     def refs
-      Native(`#{@_bridge_object}.refs`)
+      Native(`#{@native}.refs`)
     end
     
     def emit(event_name, *args)
       self.params["_on#{event_name.to_s.event_camelize}"].call(*args)
     end
     
-    def _component_will_mount
+    def component_will_mount
       return unless self.class.before_mount_callbacks
       self.class.before_mount_callbacks.each do |callback|
         send(callback)
       end
     end
     
-    def _component_did_mount
+    def component_did_mount
       return unless self.class.after_mount_callbacks
       self.class.after_mount_callbacks.each do |callback|
         send(callback)
       end
     end
-    
-    def _component_class
-      self.class.cached_component_class ||= `React.createClass(#{spec})`
-    end
-    
+
     def method_missing(name, *args, &block)
       unless (React::HTML_TAGS.include?(name) || name == 'present')
         return super
@@ -173,21 +174,21 @@ module React
         states.each do |name|
           # getter
           define_method("#{name}") do
-            unless @_bridge_object
+            unless @native
               self.class.init_state[name] 
             else
-              `#{@_bridge_object}.state[#{name}]`
+              `#{@native}.state[#{name}]`
             end
           end
           # setter
           define_method("#{name}=") do |new_state|
-            unless @_bridge_object
+            unless @native
               self.class.init_state[name] = new_state
             else
               %x{
-                state = #{@_bridge_object}.state || {};
+                state = #{@native}.state || {};
                 state[#{name}] = #{new_state};
-                #{@_bridge_object}.setState(state);
+                #{@native}.setState(state);
               }
             end
             

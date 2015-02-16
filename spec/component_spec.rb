@@ -1,6 +1,10 @@
 require "spec_helper"
 
 describe React::Component do
+  after(:each) do
+    React::API.clear_component_class_cache
+  end
+  
   describe "Life Cycle" do
     before(:each) do
       stub_const 'Foo', Class.new
@@ -152,7 +156,7 @@ describe React::Component do
       expect(element.getDOMNode.textContent).to eq("10")
     end
     
-    it "should set initial state in Class#initialize method" do
+    pending "should set initial state in Class#initialize method" do
       Foo.class_eval do
         define_state :foo, :bar
         def initialize
@@ -166,7 +170,7 @@ describe React::Component do
       expect(element.state.bar).to eq(20)
     end
     
-    it "should allow getter for initial state in Class#initialize method" do
+    pending "should allow getter for initial state in Class#initialize method" do
       Foo.class_eval do
         define_state :foo, :bar
         def initialize

@@ -23,44 +23,8 @@ module React
                 selected shape size sizes span spellCheck src srcDoc srcSet start step style
                 tabIndex target title type useMap value width wmode)
                 
-  def self.create_element(type, properties = {})
-    params = []
-    
-    # Component Spec or Nomral DOM
-    if type.kind_of?(Class)
-      raise "Provided class should define `render` method"  if !(type.method_defined? :render)
-      instance = type.new
-      
-      if instance.respond_to?("_component_class")
-        params << instance._component_class
-      else
-        spec = %x{
-          {
-            render: function() {
-              return #{instance.render.to_n};
-            }
-          }
-        }
-        params << `React.createClass(#{spec})`
-      end
-    else
-      raise "#{type} not implemented" unless HTML_TAGS.include?(type)
-      params << type
-    end
-    
-    # Passed in properties
-    props = `{}`
-    properties.map {|key, value| `props[#{lower_camelize(key)}] = #{value}` }
-    params << props
-    
-    # Children Nodes
-    if block_given?
-      children = [yield].flatten.each do |ele|
-        params << ele.to_n
-      end
-    end
-    
-    return React::Element.new(`React.createElement.apply(null, #{params})`)
+  def self.create_element(type, properties = {}, &block)
+    React::API.create_element(type, properties, &block)
   end
   
   def self.render(element, container)
@@ -84,14 +48,5 @@ module React
   
   def self.render_to_static_markup(element)
     `React.renderToStaticMarkup(#{element.to_n})`
-  end
-  
-  private
-  
-  def self.lower_camelize(snake_cased_word)
-    words = snake_cased_word.split("_")
-    result = [words.first]
-    result.concat(words[1..-1].map {|word| word[0].upcase + word[1..-1] })
-    result.join("")
   end
 end
