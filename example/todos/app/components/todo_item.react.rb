@@ -38,7 +38,7 @@ class TodoItem
       end
       input(class_name: "edit", value: self.edit_text, ref: :input)
       .on(:blur) { finish_editing }
-      .on(:change) {|e| self.edit_text = `#{e.to_n}.target.value` }
+      .on(:change) {|e| self.edit_text = e.target.value }
       .on(:key_down) { |e| finish_editing if (`#{e.to_n}.keyCode` == 13) }
     end
   end
