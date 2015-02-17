@@ -163,6 +163,23 @@ module React
             
             new_state
           end
+          # setter with callback
+          define_method("set_#{name}") do |new_state, &block|
+            unless @native
+              self.class.init_state[name] = new_state
+            else
+              %x{
+                state = #{@native}.state || {};
+                state[#{name}] = #{new_state};
+                #{@native}.setState(state, function(){
+                  #{block.call if block}
+                });
+              }
+            end
+            
+            new_state
+          end
+          
         end
       end
     end
