@@ -1,10 +1,10 @@
 module React
   class API
     @@component_classes = {}
-    
+
     def self.create_element(type, properties = {}, &block)
       params = []
-    
+
       # Component Spec or Nomral DOM
       if type.kind_of?(Class)
         raise "Provided class should define `render` method"  if !(type.method_defined? :render)
@@ -33,28 +33,34 @@ module React
         raise "#{type} not implemented" unless HTML_TAGS.include?(type)
         params << type
       end
-    
+
       # Passed in properties
       props = `{}`
-      properties.map {|key, value| `props[#{lower_camelize(key)}] = #{value}` }
+      properties.map do |key, value|
+         if key == "class_name" && value.is_a?(Hash)
+           `props[#{lower_camelize(key)}] = React.addons.classSet(#{value.to_n})`
+         else
+           `props[#{lower_camelize(key)}] = #{value}`
+         end
+      end
       params << props
-    
+
       # Children Nodes
       if block_given?
         children = [yield].flatten.each do |ele|
           params << ele.to_n
         end
       end
-    
+
       return React::Element.new(`React.createElement.apply(null, #{params})`)
     end
-    
+
     def self.clear_component_class_cache
       @@component_classes = {}
     end
-    
+
     private
-  
+
     def self.lower_camelize(snake_cased_word)
       words = snake_cased_word.split("_")
       result = [words.first]

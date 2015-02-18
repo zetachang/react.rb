@@ -6,26 +6,26 @@ describe React do
       element = React::Element.new(`React.createElement('div')`)
       expect(React.is_valid_element(element)).to eq(true)
     end
-    
+
     it "should return false is passed a non React element" do
       element = React::Element.new(`{}`)
       expect(React.is_valid_element(element)).to eq(false)
     end
   end
-  
+
   describe "create_element" do
     it "should create a valid element with only tag" do
       element = React.create_element('div')
       expect(React.is_valid_element(element)).to eq(true)
     end
-    
+
     context "with block" do
       it "should create a valid element with text as only child when block yield String" do
         element = React.create_element('div') { "lorem ipsum" }
         expect(React.is_valid_element(element)).to eq(true)
         expect(element.props.children).to eq("lorem ipsum")
       end
-      
+
       it "should create a valid element with children as array when block yield Array of element" do
         element = React.create_element('div') do
           [React.create_element('span'), React.create_element('span'), React.create_element('span')]
@@ -33,7 +33,7 @@ describe React do
         expect(React.is_valid_element(element)).to eq(true)
         expect(element.props.children.length).to eq(3)
       end
-      
+
       it "should render element with children as array when block yield Array of element" do
         element = React.create_element('div') do
           [React.create_element('span'), React.create_element('span'), React.create_element('span')]
@@ -51,50 +51,65 @@ describe React do
           end
         end
       end
-      
-      it "should render element with only one children correctly" do        
+
+      it "should render element with only one children correctly" do
         element = React.create_element(Foo) { React.create_element('span') }
         instance = renderElementToDocument(element)
         expect(instance.props.children).not_to be_a(Array)
         expect(instance.props.children.type).to eq("span")
       end
-      
-      it "should render element with more than one children correctly" do        
+
+      it "should render element with more than one children correctly" do
         element = React.create_element(Foo) { [React.create_element('span'), React.create_element('span')] }
         instance = renderElementToDocument(element)
         expect(instance.props.children).to be_a(Array)
         expect(instance.props.children.length).to eq(2)
       end
-      
+
       it "should create a valid element provided class defined `render`" do
         element = React.create_element(Foo)
         expect(React.is_valid_element(element)).to eq(true)
       end
-      
+
       it "should allow creating with properties" do
         element = React.create_element(Foo, foo: "bar")
         expect(element.props.foo).to eq("bar")
       end
-      
+
       it "should raise error if provided class doesn't defined `render`" do
         expect { React.create_element(Array) }.to raise_error
       end
     end
-    
+
     describe "create element with properties" do
       it "should enforce snake-cased property name" do
         element = React.create_element("div", class_name: "foo")
         expect(element.props.className).to eq("foo")
       end
-      
+
       it "should allow custom property" do
         element = React.create_element("div", foo: "bar")
         expect(element.props.foo).to eq("bar")
       end
     end
+
+    describe "class_name helpers (React.addons.classSet)" do
+      it "should transform Hash provided to `class_name` props as string" do
+        classes = {foo: true, bar: false, lorem: true}
+        element = React.create_element("div", class_name: classes)
+
+        expect(element.props.className).to eq("foo lorem")
+      end
+
+      it "should not alter behavior when passing a string" do
+        element = React.create_element("div", class_name: "foo bar")
+
+        expect(element.props.className).to eq("foo bar")
+      end
+    end
   end
-  
-  
+
+
   describe "render" do
     async "should render element to DOM" do
       div = `document.createElement("div")`
@@ -105,12 +120,12 @@ describe React do
         }
       end
     end
-    
+
     it "should work without providing a block" do
       div = `document.createElement("div")`
       React.render(React.create_element('span') { "lorem" }, div)
     end
-    
+
     pending "should return nil to prevent abstraction leakage" do
       div = `document.createElement("div")`
       expect {
@@ -118,12 +133,12 @@ describe React do
       }.to be_nil
     end
   end
-  
+
   describe "render_to_String" do
     it "should render a React.Element to string" do
       ele = React.create_element('span') { "lorem" }
       expect(React.render_to_string(ele)).to be_kind_of(String)
     end
   end
-  
+
 end
