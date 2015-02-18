@@ -14,4 +14,5 @@ The idea is
 
 ## Example
 
-* `example/react-tutorial`: `bundle exec rackup` to run the example
+* React Tutorial: see [example/react-tutorial](example/react-tutorial/README.md)
+* TodoMVC: see [example/todos](example/todos/README.md)

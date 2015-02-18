@@ -1,6 +1,6 @@
-# opal-todos
+# react.rb-todos
 
-A very simple port of [TodoMVC](http://todomvc.com) (specifically based on backbone version).
+Modify from original version of [Opal-Todos](https://github.com/opal/opal-todos)
 
 ## Running
 
@@ -27,3 +27,11 @@ which acts just like the rails tag helper. This will include our
 `application.rb` file, and all of its dependencies. Each file will be included
 in a seperate `<script>..</script>` tag to make navigating the code in a
 web browser easier.
+
+### Router
+
+`TodoAppView` use router provided by [Vienna](https://github.com/opal/vienna)
+
+### Model
+
+Use model layer provided by [Vienna](https://github.com/opal/vienna) which provide basic support of local storage and update notification.
