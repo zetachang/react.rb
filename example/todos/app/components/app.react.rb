@@ -4,18 +4,21 @@ require "components/todo_list.react"
 
 class TodoAppView
   include React::Component
+
+  KEY_ENTER = 13
+
   define_state(:todos) { [] }
   define_state(:current_filter) { "all" }
-  
+
   before_mount :set_up
-  
+
   def set_up
     Todo.on(:create)  { Todo.adapter.sync_models(Todo); reload_current }
     Todo.on(:update)  { Todo.adapter.sync_models(Todo); reload_current }
     Todo.on(:destroy) { Todo.adapter.sync_models(Todo); reload_current }
     router.update
   end
-  
+
   def router
     @router ||= Vienna::Router.new.tap do |router|
       router.route('/:filter') do |params|
@@ -23,13 +26,13 @@ class TodoAppView
       end
     end
   end
-  
+
   def reload_current
     apply_filter(current_filter)
   end
-  
+
   def apply_filter(filter)
-    self.current_filter = filter    
+    self.current_filter = filter
     Todo.adapter.find_all(Todo) do |models|
       case filter
       when "all"
@@ -41,18 +44,18 @@ class TodoAppView
       end
     end
   end
-  
+
   def handle_keydown(event)
-    if `#{event.to_n}.keyCode` == 13
+    if event.key_code == KEY_ENTER
       value = event.target.value.strip
       Todo.create title: value, completed: false
       event.target.value = ""
     end
   end
-  
+
   def render
     div do
-      header(id: "header") do 
+      header(id: "header") do
         h1 { "Todos" }
         input(id: "new-todo", placeholder: "What needs to be done?").on(:key_down) { |e| handle_keydown(e) }
       end

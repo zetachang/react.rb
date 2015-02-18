@@ -1,5 +1,6 @@
 class TodoItem
   include React::Component
+  KEY_ENTER = 13
 
   define_state(:editing) { false }
   define_state(:edit_text)
@@ -39,7 +40,7 @@ class TodoItem
       input(class_name: "edit", value: self.edit_text, ref: :input)
       .on(:blur) { finish_editing }
       .on(:change) {|e| self.edit_text = e.target.value }
-      .on(:key_down) { |e| finish_editing if (`#{e.to_n}.keyCode` == 13) }
+      .on(:key_down) { |e| finish_editing if (e.key_code == KEY_ENTER) }
     end
   end
 end
