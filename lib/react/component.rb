@@ -8,6 +8,9 @@ module React
         class_attribute :before_mount_callbacks, :after_mount_callbacks, :init_state
       end
       base.extend(ClassMethods)
+
+      base.before_mount_callbacks = []
+      base.after_mount_callbacks = []
     end
 
     def initialize(native_element)
@@ -33,14 +36,22 @@ module React
     def component_will_mount
       return unless self.class.before_mount_callbacks
       self.class.before_mount_callbacks.each do |callback|
-        send(callback)
+        if callback.is_a?(Proc)
+          callback.call
+        else
+          send(callback)
+        end
       end
     end
 
     def component_did_mount
       return unless self.class.after_mount_callbacks
       self.class.after_mount_callbacks.each do |callback|
-        send(callback)
+        if callback.is_a?(Proc)
+          callback.call
+        else
+          send(callback)
+        end
       end
     end
 
@@ -70,12 +81,14 @@ module React
 
 
     module ClassMethods
-      def before_mount(*callback)
-        self.before_mount_callbacks=  callback
+      def before_mount(*callback, &block)
+        self.before_mount_callbacks.concat callback
+        self.before_mount_callbacks << block if block_given?
       end
 
-      def after_mount(*callback)
-        self.after_mount_callbacks = callback
+      def after_mount(*callback, &block)
+        self.after_mount_callbacks.concat callback
+        self.after_mount_callbacks << block if block_given?
       end
 
       def define_state(*states)

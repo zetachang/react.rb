@@ -62,6 +62,20 @@ describe React::Component do
 
       renderToDocument(Foo)
     end
+
+    it "should allow block for life cycle helpers" do
+      proc_a = Proc.new {}
+      proc_b = Proc.new {}
+      Foo.class_eval do
+        before_mount(&proc_a)
+        after_mount(&proc_b)
+      end
+
+      expect(proc_a).to receive(:call)
+      expect(proc_b).to receive(:call)
+
+      renderToDocument(Foo)
+    end
   end
 
   describe "State setter & getter" do
