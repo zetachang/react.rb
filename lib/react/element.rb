@@ -42,7 +42,6 @@ module React
           if block_given?
             %x{
               React.Children.forEach(#{self.to_n}, function(context){
-                debugger
                 #{block.call(React::Element.new(`context`))}
               })
             }
