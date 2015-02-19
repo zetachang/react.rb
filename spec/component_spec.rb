@@ -305,7 +305,7 @@ describe React::Component do
   end
 
   describe "Render" do
-    it "should support React::ElementBuilder helpers" do
+    it "should support element building helpers" do
       stub_const 'Foo', Class.new
       Foo.class_eval do
         include React::Component
@@ -328,6 +328,20 @@ describe React::Component do
       end
 
       expect(React.render_to_static_markup(React.create_element(Bar))).to eq("<div><div><span>astring</span></div></div>")
+    end
+
+    it "should build single node in top-level render without providing a block" do
+      stub_const 'Foo', Class.new
+      Foo.class_eval do
+        include React::Component
+
+        def render
+          div
+        end
+      end
+
+      element = React.create_element(Foo)
+      expect(React.render_to_static_markup(element)).to eq("<div></div>")
     end
   end
 

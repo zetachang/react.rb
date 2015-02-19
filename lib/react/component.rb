@@ -53,8 +53,8 @@ module React
         name = args.shift
       end
 
+      @buffer = [] unless @buffer
       if block
-        @buffer = [] unless @buffer
         current = @buffer
         @buffer = []
         result = block.call
