@@ -2,9 +2,9 @@ require 'bundler'
 Bundler.require
 
 require "opal-rspec"
-require "react"
-Opal.append_path File.expand_path('../spec', __FILE__)
 
+Opal.append_path File.expand_path('../spec', __FILE__)
+Opal.append_path File.expand_path('../vendor', __FILE__)
 
 run Opal::Server.new { |s|
   s.main = 'opal/rspec/sprockets_runner'

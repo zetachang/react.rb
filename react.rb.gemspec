@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.files          = `git ls-files`.split("\n")
   s.executables    = `git ls-files -- bin/*`.split("\n").map { |f| File.basename(f) }
   s.test_files     = `git ls-files -- {test,spec,features}/*`.split("\n")
-  s.require_paths  = ['lib']
+  s.require_paths  = ['lib', 'vendor']
 
   s.add_runtime_dependency 'opal', '~> 0.6.0'
   s.add_runtime_dependency 'opal-activesupport'
