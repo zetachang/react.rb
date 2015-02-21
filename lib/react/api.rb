@@ -11,6 +11,9 @@ module React
         @@component_classes[type.to_s] ||= %x{
           React.createClass({
             propTypes: #{type.respond_to?(:prop_types) ? type.prop_types.to_n : `{}`},
+            getDefaultProps: function(){
+              return #{type.respond_to?(:default_props) ? type.default_props.to_n : `{}`};
+            },
             getInitialState: function(){
               return #{type.respond_to?(:init_state) ? type.init_state.to_n : `{}`};
             },

@@ -199,7 +199,6 @@ describe React::Component do
     end
   end
 
-
   describe "Props" do
     describe "this.props could be accessed through `params` method" do
       before do
@@ -260,6 +259,26 @@ describe React::Component do
         renderToDocument(Foo, bar: 10, lorem: Lorem.new)
         `window.console = org_console;`
         expect(`log`).to eq(["Warning: In component `Foo`\nRequired prop `foo` was not specified\nProvided prop `bar` was not the specified type `String`"])
+      end
+    end
+
+    describe "Default props" do
+      it "should set default props using validation helper" do
+        stub_const 'Foo', Class.new
+        Foo.class_eval do
+          include React::Component
+          params do
+            optional :foo, default: "foo"
+            optional :bar, default: "bar"
+          end
+
+          def render
+            div { params[:foo] + "-" + params[:bar]}
+          end
+        end
+
+        expect(React.render_to_static_markup(React.create_element(Foo, foo: "lorem"))).to eq("<div>lorem-bar</div>")
+        expect(React.render_to_static_markup(React.create_element(Foo))).to eq("<div>foo-bar</div>")
       end
     end
   end

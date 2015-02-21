@@ -11,7 +11,6 @@ module React
 
       base.before_mount_callbacks = []
       base.after_mount_callbacks = []
-      base.validator = {}
     end
 
     def initialize(native_element)
@@ -83,19 +82,26 @@ module React
 
     module ClassMethods
       def prop_types
-        self.validator
+        if self.validator
+          {
+            _componentValidator: %x{
+              function(props, propName, componentName) {
+                var error = new Error(#{"In component `" + self.name + "`\n" + validator.validate(Hash.new(`props`)).join("\n")});
+                return error;
+              }
+            }
+          }
+        else
+          {}
+        end
+      end
+
+      def default_props
+        self.validator ? self.validator.default_props : {}
       end
 
       def params(&block)
-        validator = React::Validator.build(&block)
-        self.validator = {
-          _componentValidator: %x{
-            function(props, propName, componentName) {
-              var error = new Error(#{"In component `" + self.name + "`\n" + validator.validate(Hash.new(`props`)).join("\n")});
-              return error;
-            }
-          }
-        }
+        self.validator = React::Validator.build(&block)
       end
 
       def before_mount(*callback, &block)
