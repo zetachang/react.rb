@@ -5,12 +5,13 @@ module React
   module Component
     def self.included(base)
       base.class_eval do
-        class_attribute :before_mount_callbacks, :after_mount_callbacks, :init_state
+        class_attribute :before_mount_callbacks, :after_mount_callbacks, :init_state, :validator
       end
       base.extend(ClassMethods)
 
       base.before_mount_callbacks = []
       base.after_mount_callbacks = []
+      base.validator = {}
     end
 
     def initialize(native_element)
@@ -81,6 +82,22 @@ module React
 
 
     module ClassMethods
+      def prop_types
+        self.validator
+      end
+
+      def params(&block)
+        validator = React::Validator.build(&block)
+        self.validator = {
+          _componentValidator: %x{
+            function(props, propName, componentName) {
+              var error = new Error(#{"In component `" + self.name + "`\n" + validator.validate(Hash.new(`props`)).join("\n")});
+              return error;
+            }
+          }
+        }
+      end
+
       def before_mount(*callback, &block)
         self.before_mount_callbacks.concat callback
         self.before_mount_callbacks << block if block_given?

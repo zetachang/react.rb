@@ -199,23 +199,68 @@ describe React::Component do
     end
   end
 
-  describe "this.props could be accessed through `params` method" do
-    before do
-      stub_const 'Foo', Class.new
-      Foo.class_eval do
-        include React::Component
-      end
-    end
 
-    it "should read from parent passed properties through `params`" do
-      Foo.class_eval do
-        def render
-          React.create_element("div") { params[:prop] }
+  describe "Props" do
+    describe "this.props could be accessed through `params` method" do
+      before do
+        stub_const 'Foo', Class.new
+        Foo.class_eval do
+          include React::Component
         end
       end
 
-      element = renderToDocument(Foo, prop: "foobar")
-      expect(element.getDOMNode.textContent).to eq("foobar")
+      it "should read from parent passed properties through `params`" do
+        Foo.class_eval do
+          def render
+            React.create_element("div") { params[:prop] }
+          end
+        end
+
+        element = renderToDocument(Foo, prop: "foobar")
+        expect(element.getDOMNode.textContent).to eq("foobar")
+      end
+    end
+
+    describe "Prop validation" do
+      before do
+        stub_const 'Foo', Class.new
+        Foo.class_eval do
+          include React::Component
+        end
+      end
+
+      it "should specify validation rules using `params` class method" do
+        Foo.class_eval do
+          params do
+            requires :foo, type: String
+            optional :bar
+          end
+        end
+
+        expect(Foo.prop_types).to have_key(:_componentValidator)
+      end
+
+      it "should return log error in warning if validation failed" do
+        stub_const 'Lorem', Class.new
+        Foo.class_eval do
+          params do
+            requires :foo
+            requires :lorem, type: Lorem
+            optional :bar, type: String
+          end
+
+          def render; div; end
+        end
+
+        %x{
+          var log = [];
+          var org_console = window.console;
+          window.console = {warn: function(str){log.push(str)}}
+        }
+        renderToDocument(Foo, bar: 10, lorem: Lorem.new)
+        `window.console = org_console;`
+        expect(`log`).to eq(["Warning: In component `Foo`\nRequired prop `foo` was not specified\nProvided prop `bar` was not the specified type `String`"])
+      end
     end
   end
 

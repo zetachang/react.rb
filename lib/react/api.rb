@@ -10,6 +10,7 @@ module React
         raise "Provided class should define `render` method"  if !(type.method_defined? :render)
         @@component_classes[type.to_s] ||= %x{
           React.createClass({
+            propTypes: #{type.respond_to?(:prop_types) ? type.prop_types.to_n : `{}`},
             getInitialState: function(){
               return #{type.respond_to?(:init_state) ? type.init_state.to_n : `{}`};
             },

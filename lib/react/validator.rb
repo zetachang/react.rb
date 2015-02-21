@@ -23,7 +23,6 @@ module React
     end
 
     def validate(props)
-      #debugger
       errors = []
       props.keys.each do |prop_name|
         errors <<  "Provided prop `#{prop_name}` not specified in spec"  if @rules[prop_name] == nil
