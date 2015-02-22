@@ -2,12 +2,13 @@
 
 **React.rb is a [Opal Ruby](http://opalrb.org) wrapper of [React.js library](http://facebook.github.io/react/)**.
 
-It let you write reactive UI component with Ruby's elegancy and compiled to run in Javascript.
+It let you write reactive UI component with Ruby's elegancy and compiled to run in Javascript. :heart:
 
 ## Installation
 
 ```ruby
-gem `react.rb`
+# Gemfile
+gem "react.rb"
 ```
 
 and in your Opal application,
@@ -38,7 +39,7 @@ React.render_static_markup(React.create_element(HelloMessage)) # => '<div>Hello 
 
 ### More complicated one
 
-To hook into native ReactComponent life cycle, the native `this` will be passed to the class's initializer. And all corresponding life cycle methods (`componentDidMount`, etc) will be invoked on the instance with using the corresponding snake case method name.
+To hook into native ReactComponent life cycle, the native `this` will be passed to the class's initializer. And all corresponding life cycle methods (`componentDidMount`, etc) will be invoked on the instance using the corresponding snake-case method name.
 
 ```ruby
 class HelloMessage
@@ -55,7 +56,7 @@ class HelloMessage
   end
 end
 
-puts React.render_static_markup(React.create_element(HelloMessage, name: 'John'))
+puts React.render_to_static_markup(React.create_element(HelloMessage, name: 'John'))
 
 # => will_mount!
 # => '<div>Hello John!</div>'
@@ -67,32 +68,55 @@ Hey, we are using Ruby, simply include `React::Component` to save your typing an
 
 ```ruby
 class HelloMessage
+  include React::Component
+  MSG = {great: 'Cool!', bad: 'Cheer up!'}
+
   define_state(:foo) { "Default greeting" }
 
   before_mount do
-    self.foo = self.foo + " <3 "
+    self.foo = "#{self.foo}: #{MSG[params[:mood]]}"
+  end
+
+  after_mount :log
+
+  def log
+    puts "mounted!"
   end
 
   def render
     div do
-      span { self.foo + " Hello #{params[:name]}!" }
+      span { self.foo + " #{params[:name]}!" }
     end
   end
 end
 
-React.render_static_markup(React.create_element(HelloMessage, name: 'John')) # => '<div>Hello John!</div>'
+class App
+  include React::Component
+
+  def render
+    present HelloMessage, name: 'John', mood: 'great'
+  end
+end
+
+puts React.render_to_static_markup(React.create_element(App))
+# => '<div><span>Default greeting: Cool! John!</span></div>'
+React.render(React.create_element(App), `document.body`)
+# mounted!
 ```
 
-* Callback of life cycle could be created through `before_mount`, `after_mount`, etc
-* `this.props` is provided through method `self.params`
-* Use class method `define_method` to create setter & getter of `this.state` for you
+* Callback of life cycle could be created through helpers `before_mount`, `after_mount`, etc
+* `this.props` is accessed through method `self.params`
+* Use helper method `define_state` to create setter & getter of `this.state` for you
+* For the detailed mapping to the original API, see [this issue](https://github.com/zetachang/react.rb/issues/2) for reference. Complete reference will come soon.
 
 ### Props validation
 
-How about props validation? Inspired from [Grape API](https://github.com/intridea/grape), props validation rule could be create easily through `params` class method as below,
+How about props validation? Inspired from [Grape API](https://github.com/intridea/grape), props validation rule could be created easily through `params` class method as below,
 
 ```ruby
 class App
+  include React::Component
+
   params do
     requires :username, type: String
     requires :enum, values: ['foo', 'bar', 'awesome']
@@ -101,7 +125,9 @@ class App
     optional :flash_message, type: String, default: 'Welcome!' # no need to feed through `getDefaultProps`
   end
 
-  def render; end
+  def render
+    div
+  end
 end
 ```
 
@@ -109,6 +135,13 @@ end
 
 * React Tutorial: see [example/react-tutorial](example/react-tutorial), the original CommentBox example.
 * TodoMVC: see [example/todos](example/todos), your beloved TodoMVC <3.
+
+## TODOS
+
+* Mixins examples
+* Documentation
+* API wrapping coverage of the original js library (pretty close though)
+* React Native?
 
 ## Developing
 
@@ -121,7 +154,7 @@ To run the test case of the project yourself.
 
 ## Contributions
 
-This project is still in early stage, so discussion, bug report and PR are really welcome :wink.
+This project is still in early stage, so discussion, bug report and PR are really welcome :wink:.
 
 ## Contact
 
@@ -130,4 +163,4 @@ This project is still in early stage, so discussion, bug report and PR are reall
 
 ## License
 
-In short, IPSqueezableViewController is available under the MIT license. See the LICENSE file for more info.
+In short, React.rb is available under the MIT license. See the LICENSE file for more info.
