@@ -10,6 +10,10 @@ module React
         class_attribute :init_state, :validator
         define_callback :before_mount
         define_callback :after_mount
+        define_callback :before_receive_props
+        define_callback :before_update
+        define_callback :after_update
+        define_callback :before_unmount
       end
       base.extend(ClassMethods)
     end
@@ -43,23 +47,23 @@ module React
     end
 
     def component_will_receive_props(next_props)
-
+      self.run_callback(:before_receive_props, next_props)
     end
 
     def should_component_update?(next_props, next_state)
-
+      self.respond_to?(:needs_update?) ? self.needs_update? : true
     end
 
     def component_will_update(next_props, next_state)
-
+      self.run_callback(:before_update, next_props, next_state)
     end
 
     def component_did_update(prev_props, prev_state)
-
+      self.run_callback(:after_update, prev_props, prev_state)
     end
 
     def component_will_unmount
-
+      self.run_callback(:before_unmount)
     end
 
     def method_missing(name, *args, &block)
