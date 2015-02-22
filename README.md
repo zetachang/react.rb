@@ -1,6 +1,6 @@
 # React.rb
 
-**React.rb is a [Opal Ruby](http://opalrb.org) wrapper of [React.js library](http://facebook.github.io/react/)**.
+**React.rb is an [Opal Ruby](http://opalrb.org) wrapper of [React.js library](http://facebook.github.io/react/)**.
 
 It let you write reactive UI component with Ruby's elegancy and compiled to run in Javascript. :heart:
 
@@ -16,6 +16,7 @@ and in your Opal application,
 ```ruby
 require "opal"
 require "react"
+
 React.render(React.create_element('h1'){ "Hello World!" }, `document.body`)
 ```
 
@@ -34,7 +35,9 @@ class HelloMessage
   end
 end
 
-React.render_static_markup(React.create_element(HelloMessage)) # => '<div>Hello World!</div>'
+puts React.render_to_static_markup(React.create_element(HelloMessage))
+
+# => '<div>Hello World!</div>'
 ```
 
 ### More complicated one
@@ -99,8 +102,11 @@ class App
 end
 
 puts React.render_to_static_markup(React.create_element(App))
+
 # => '<div><span>Default greeting: Cool! John!</span></div>'
+
 React.render(React.create_element(App), `document.body`)
+
 # mounted!
 ```
 
