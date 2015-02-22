@@ -55,6 +55,7 @@ GEM
       opal (>= 0.6.0, < 1.0.0)
     rack (1.5.2)
     rake (10.1.1)
+    react-source (0.12.2)
     source_map (3.0.1)
       json
     sprockets (2.12.3)
@@ -77,6 +78,7 @@ DEPENDENCIES
   opal-jquery!
   opal-rspec (= 0.3.0.beta2)
   rake
+  react-source
   react.rb!
   thin
   vienna!
