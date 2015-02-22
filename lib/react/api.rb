@@ -64,7 +64,7 @@ module React
          if key == "class_name" && value.is_a?(Hash)
            props[lower_camelize(key)] = `React.addons.classSet(#{value.to_n})`
          else
-           props[lower_camelize(key)] = value
+           props[React::ATTRIBUTES.include?(lower_camelize(key)) ? lower_camelize(key) : key] = value
          end
       end
       params << props

@@ -91,6 +91,11 @@ describe React do
         element = React.create_element("div", foo: "bar")
         expect(element.props.foo).to eq("bar")
       end
+
+      it "should not camel-case custom property" do
+        element = React.create_element("div", foo_bar: "foo")
+        expect(element.props.foo_bar).to eq("foo")
+      end
     end
 
     describe "class_name helpers (React.addons.classSet)" do
