@@ -11,7 +11,7 @@ end
 
 class Comment
   include React::Component
-  
+
   def render
     converter = Native(`new Showdown.converter()`)
     raw_markup = converter.makeHtml(params[:children].to_s)
@@ -20,7 +20,7 @@ class Comment
       span(dangerously_set_inner_HTML: {__html: raw_markup}.to_n)
     end
   end
-end 
+end
 
 class CommentList
   include React::Component
@@ -43,7 +43,7 @@ class CommentForm
       input type: "text", placeholder: "Say something...", ref: "text"
       input type: "submit", value: "Post"
     end
-    
+
     f.on(:submit) do |event|
       event.prevent_default
       author = self.refs.author.getDOMNode().value.strip
@@ -70,16 +70,16 @@ class CommentBox
       end
     end
   end
-  
+
   def start_polling
-    Window.set_interval(params[:pollInterval]) { load_comments_from_server }
+    Window.set_interval(params[:poll_interval]) { load_comments_from_server }
   end
 
   def handle_comment_submit(comment)
     comments = self.data
     comments.push(comment)
     self.data = comments
-    
+
     HTTP.post(params[:url], payload: comment) do |response|
       if response.ok?
         self.data = JSON.parse(response.body)
@@ -99,6 +99,6 @@ class CommentBox
 end
 
 
-Document.ready? do 
+Document.ready? do
   React.render React.create_element(CommentBox, url: "comments.json", poll_interval: 2000), Element.find('#content').get(0)
 end
