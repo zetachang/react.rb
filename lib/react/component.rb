@@ -25,16 +25,16 @@ module React
     end
 
     def params
-      Native(`#{@native}.props`)
+      Hash.new(`#{@native}.props`)
     end
 
     def refs
-      Native(`#{@native}.refs`)
+      Hash.new(`#{@native}.refs`)
     end
 
     def state
       raise "No native ReactComponent associated" unless @native
-      Native(`#{@native}.state`)
+      Hash.new(`#{@native}.state`)
     end
 
     def emit(event_name, *args)
