@@ -1,6 +1,5 @@
 require "native"
 require 'active_support'
-require "promise"
 
 module React
   HTML_TAGS = %w(a abbr address area article aside audio b base bdi bdo big blockquote body br
@@ -28,14 +27,9 @@ module React
   end
 
   def self.render(element, container)
-    if block_given?
-      %x{
-        React.render(#{element.to_n}, container, function(){#{ yield }})
-      }
-    else
-      `React.render(#{element.to_n}, container, function(){})`
-    end
-    return nil
+    component = Native(`React.render(#{element.to_n}, container, function(){#{yield if block_given?}})`)
+    component.class.include(React::Component::API)
+    component
   end
 
   def self.is_valid_element(element)

@@ -5,6 +5,7 @@ require 'react/callbacks'
 module React
   module Component
     def self.included(base)
+      base.include(API)
       base.include(React::Callbacks)
       base.class_eval do
         class_attribute :init_state, :validator
@@ -30,35 +31,13 @@ module React
       Native(`#{@native}.refs`)
     end
 
-    def emit(event_name, *args)
-      self.params["_on#{event_name.to_s.event_camelize}"].call(*args)
-    end
-
-    def mounted?
-      `#{@native}.isMounted()`
-    end
-
     def state
       raise "No native ReactComponent associated" unless @native
       Native(`#{@native}.state`)
     end
 
-    def set_state(state, &block)
-      raise "No native ReactComponent associated" unless @native
-      %x{
-        #{@native}.setState(#{state.to_n}, function(){
-          #{block.call if block}
-        });
-      }
-    end
-
-    def set_state!(state, &block)
-      raise "No native ReactComponent associated" unless @native
-      %x{
-        #{@native}.replaceState(#{state.to_n}, function(){
-          #{block.call if block}
-        });
-      }
+    def emit(event_name, *args)
+      self.params["_on#{event_name.to_s.event_camelize}"].call(*args)
     end
 
     def component_will_mount
@@ -167,6 +146,30 @@ module React
             new_state
           end
         end
+      end
+    end
+
+    module API
+      def mounted?
+        `#{@native}.isMounted()`
+      end
+
+      def set_state(state, &block)
+        raise "No native ReactComponent associated" unless @native
+        %x{
+          #{@native}.setState(#{state.to_n}, function(){
+            #{block.call if block}
+          });
+        }
+      end
+
+      def set_state!(state, &block)
+        raise "No native ReactComponent associated" unless @native
+        %x{
+          #{@native}.replaceState(#{state.to_n}, function(){
+            #{block.call if block}
+          });
+        }
       end
     end
   end

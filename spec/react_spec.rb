@@ -131,6 +131,14 @@ describe React do
       React.render(React.create_element('span') { "lorem" }, div)
     end
 
+    it "should return a React::Component::API compatible object" do
+      div = `document.createElement("div")`
+      component = React.render(React.create_element('span') { "lorem" }, div)
+      React::Component::API.public_instance_methods(true).each do |method_name|
+        expect(component).to respond_to(method_name)
+      end
+    end
+
     pending "should return nil to prevent abstraction leakage" do
       div = `document.createElement("div")`
       expect {
