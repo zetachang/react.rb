@@ -87,18 +87,17 @@ describe React::Component do
       renderToDocument(Foo)
     end
 
-    it "should allow block for life cycle helpers" do
-      proc_a = Proc.new {}
-      proc_b = Proc.new {}
+    it "should allow block for life cycle callback" do
       Foo.class_eval do
-        before_mount(&proc_a)
-        after_mount(&proc_b)
+        define_state(:foo)
+        
+        before_mount do
+          self.foo = "bar"
+        end
       end
 
-      expect(proc_a).to receive(:call)
-      expect(proc_b).to receive(:call)
-
-      renderToDocument(Foo)
+      element = renderToDocument(Foo)
+      expect(element.state.foo).to be("bar")
     end
   end
 
