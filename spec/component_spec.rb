@@ -193,7 +193,7 @@ describe React::Component do
       expect(element.getDOMNode.textContent).to eq("10")
     end
 
-    it "should support original `set_state` method" do
+    it "should support original `setState` as `set_state` method" do
       Foo.class_eval do
         before_mount do
           self.set_state(foo: "bar")
@@ -202,6 +202,36 @@ describe React::Component do
 
       element = renderToDocument(Foo)
       expect(element.state.foo).to be("bar")
+    end
+
+    it "should support originl `state` method" do
+      Foo.class_eval do
+        before_mount do
+          self.set_state(foo: "bar")
+        end
+
+        def render
+          div { self.state[:foo] }
+        end
+      end
+
+      expect(React.render_to_static_markup(React.create_element(Foo))).to eq("<div>bar</div>")
+    end
+
+    it "should transform state getter to Ruby object" do
+      Foo.class_eval do
+        define_state :foo
+
+        before_mount do
+          self.foo = {a: 10}
+        end
+
+        def render
+          div { self.foo[:a] }
+        end
+      end
+
+      expect(React.render_to_static_markup(React.create_element(Foo))).to eq("<div>10</div>")
     end
   end
 

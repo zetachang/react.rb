@@ -38,6 +38,11 @@ module React
       `#{@native}.isMounted()`
     end
 
+    def state
+      raise "No native ReactComponent associated" unless @native
+      Native(`#{@native}.state`)
+    end
+
     def set_state(state, &block)
       raise "No native ReactComponent associated" unless @native
       %x{
@@ -141,7 +146,7 @@ module React
           # getter
           define_method("#{name}") do
             return unless @native
-            `#{@native}.state[#{name}]`
+            self.state[name]
           end
           # setter
           define_method("#{name}=") do |new_state|
