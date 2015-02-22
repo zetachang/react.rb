@@ -59,12 +59,12 @@ module React
       end
 
       # Passed in properties
-      props = `{}`
+      props = {}
       properties.map do |key, value|
          if key == "class_name" && value.is_a?(Hash)
-           `props[#{lower_camelize(key)}] = React.addons.classSet(#{value.to_n})`
+           props[lower_camelize(key)] = `React.addons.classSet(#{value.to_n})`
          else
-           `props[#{lower_camelize(key)}] = #{value}`
+           props[lower_camelize(key)] = value
          end
       end
       params << props
@@ -72,11 +72,11 @@ module React
       # Children Nodes
       if block_given?
         children = [yield].flatten.each do |ele|
-          params << ele.to_n
+          params << ele
         end
       end
 
-      return React::Element.new(`React.createElement.apply(null, #{params})`)
+      return React::Element.new(`React.createElement.apply(null, #{params.to_n})`)
     end
 
     def self.clear_component_class_cache

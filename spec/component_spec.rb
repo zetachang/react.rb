@@ -254,6 +254,17 @@ describe React::Component do
         element = renderToDocument(Foo, prop: "foobar")
         expect(element.getDOMNode.textContent).to eq("foobar")
       end
+
+      it "should access nested params as orignal Ruby object" do
+        Foo.class_eval do
+          def render
+            React.create_element("div") { params[:prop][:foo] }
+          end
+        end
+
+        element = renderToDocument(Foo, prop: {foo: 10})
+        expect(element.getDOMNode.textContent).to eq("10")
+      end
     end
 
     describe "Prop validation" do
