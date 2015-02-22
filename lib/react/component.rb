@@ -118,7 +118,7 @@ module React
       end
 
       def initial_state
-
+        self.init_state || {}
       end
 
       def default_props

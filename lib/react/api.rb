@@ -15,7 +15,7 @@ module React
               return #{type.respond_to?(:default_props) ? type.default_props.to_n : `{}`};
             },
             getInitialState: function(){
-              return #{type.respond_to?(:init_state) ? type.init_state.to_n : `{}`};
+              return #{type.respond_to?(:initial_state) ? type.initial_state.to_n : `{}`};
             },
             componentWillMount: function() {
               instance = #{type.new(`this`)};
