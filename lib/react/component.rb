@@ -55,6 +55,26 @@ module React
       end
     end
 
+    def component_will_receive_props(next_props)
+
+    end
+
+    def should_component_update?(next_props, next_state)
+
+    end
+
+    def component_will_update(next_props, next_state)
+
+    end
+
+    def component_did_update(prev_props, prev_state)
+
+    end
+
+    def component_will_unmount
+
+    end
+
     def method_missing(name, *args, &block)
       unless (React::HTML_TAGS.include?(name) || name == 'present')
         return super
@@ -95,6 +115,10 @@ module React
         else
           {}
         end
+      end
+
+      def initial_state
+
       end
 
       def default_props

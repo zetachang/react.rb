@@ -5,6 +5,30 @@ describe React::Component do
     React::API.clear_component_class_cache
   end
 
+  it "should define component spec methods" do
+    stub_const 'Foo', Class.new
+    Foo.class_eval do
+      include React::Component
+      def render
+        React.create_element("div")
+      end
+    end
+
+    # Class Methods
+    expect(Foo).to respond_to("initial_state")
+    expect(Foo).to respond_to("default_props")
+    expect(Foo).to respond_to("prop_types")
+
+    # Instance method
+    expect(Foo.new).to respond_to("component_will_mount")
+    expect(Foo.new).to respond_to("component_did_mount")
+    expect(Foo.new).to respond_to("component_will_receive_props")
+    expect(Foo.new).to respond_to("should_component_update?")
+    expect(Foo.new).to respond_to("component_will_update")
+    expect(Foo.new).to respond_to("component_did_update")
+    expect(Foo.new).to respond_to("component_will_unmount")
+  end
+
   describe "Life Cycle" do
     before(:each) do
       stub_const 'Foo', Class.new

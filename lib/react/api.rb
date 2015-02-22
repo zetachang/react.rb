@@ -25,6 +25,26 @@ module React
               instance = #{type.new(`this`)};
               return #{`instance`.component_did_mount if type.method_defined? :component_did_mount};
             },
+            componentWillReceiveProps: function(next_props) {
+              instance = #{type.new(`this`)};
+              return #{`instance`.component_will_receive_props(`next_props`) if type.method_defined? :component_will_receive_props};
+            },
+            shouldComponentUpdate: function(next_props, next_state) {
+              instance = #{type.new(`this`)};
+              return #{`instance`.should_component_update?(`next_props`, `next_state`) if type.method_defined? :should_component_update?};
+            },
+            componentWillUpdate: function(next_props, next_state) {
+              instance = #{type.new(`this`)};
+              return #{`instance`.component_will_update(`next_props`, `next_state`) if type.method_defined? :component_will_update};
+            },
+            componentDidUpdate: function(prev_props, prev_state) {
+              instance = #{type.new(`this`)};
+              return #{`instance`.component_did_update(`prev_props`, `prev_state`) if type.method_defined? :component_did_update};
+            },
+            componentWillUnmount: function() {
+              instance = #{type.new(`this`)};
+              return #{`instance`.component_will_unmount if type.method_defined? :component_will_unmount};
+            },
             render: function() {
               instance = #{type.new(`this`)};
               return #{`instance`.render.to_n};
