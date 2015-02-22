@@ -7,32 +7,27 @@ class TodoAppView
 
   KEY_ENTER = 13
 
+  params do
+    requires :filter, values: ["all", "active", "completed"]
+  end
+
   define_state(:todos) { [] }
-  define_state(:current_filter) { "all" }
 
-  before_mount :set_up
-
-  def set_up
-    Todo.on(:create)  { Todo.adapter.sync_models(Todo); reload_current }
-    Todo.on(:update)  { Todo.adapter.sync_models(Todo); reload_current }
-    Todo.on(:destroy) { Todo.adapter.sync_models(Todo); reload_current }
-    router.update
+  before_mount do
+    Todo.on(:create)  { Todo.adapter.sync_models(Todo); reload_current_filter }
+    Todo.on(:update)  { Todo.adapter.sync_models(Todo); reload_current_filter }
+    Todo.on(:destroy) { Todo.adapter.sync_models(Todo); reload_current_filter }
   end
 
-  def router
-    @router ||= Vienna::Router.new.tap do |router|
-      router.route('/:filter') do |params|
-        apply_filter(params[:filter].empty? ? "all" : params[:filter])
-      end
-    end
+  before_receive_props do |next_props|
+    apply_filter next_props[:filter]
   end
 
-  def reload_current
-    apply_filter(current_filter)
+  def reload_current_filter
+    apply_filter(params[:filter])
   end
 
   def apply_filter(filter)
-    self.current_filter = filter
     Todo.adapter.find_all(Todo) do |models|
       case filter
       when "all"
@@ -60,7 +55,7 @@ class TodoAppView
         input(id: "new-todo", placeholder: "What needs to be done?").on(:key_down) { |e| handle_keydown(e) }
       end
       present TodoList, todos: self.todos
-      present Footer, selected_filter: self.current_filter
+      present Footer, selected_filter: params[:filter]
     end
   end
 end

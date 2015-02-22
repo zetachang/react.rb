@@ -50,19 +50,19 @@ module React
     end
 
     def component_will_receive_props(next_props)
-      self.run_callback(:before_receive_props, next_props)
+      self.run_callback(:before_receive_props, Hash.new(next_props))
     end
 
     def should_component_update?(next_props, next_state)
-      self.respond_to?(:needs_update?) ? self.needs_update? : true
+      self.respond_to?(:needs_update?) ? self.needs_update?(Hash.new(next_props), Hash.new(next_state)) : true
     end
 
     def component_will_update(next_props, next_state)
-      self.run_callback(:before_update, next_props, next_state)
+      self.run_callback(:before_update, Hash.new(next_props), Hash.new(next_state))
     end
 
     def component_did_update(prev_props, prev_state)
-      self.run_callback(:after_update, prev_props, prev_state)
+      self.run_callback(:after_update, Hash.new(prev_props), Hash.new(prev_state))
     end
 
     def component_will_unmount

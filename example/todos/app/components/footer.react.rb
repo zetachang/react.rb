@@ -17,7 +17,7 @@ class Footer
                    {href: "#/active", filter: "active"},
                    {href: "#/completed", filter: "completed"}]
         filters.map do |item|
-          li { a(href: item[:href], class_name: {selected: params[:selectedFilter] == item[:filter]}) { item[:filter].capitalize } }
+          li { a(href: item[:href], class_name: {selected: params[:selected_filter] == item[:filter]}) { item[:filter].capitalize } }
         end
       end
 
