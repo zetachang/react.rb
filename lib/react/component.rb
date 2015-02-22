@@ -1,16 +1,17 @@
 require "./ext/string"
 require 'active_support/core_ext/class/attribute'
+require 'react/callbacks'
 
 module React
   module Component
     def self.included(base)
+      base.include(React::Callbacks)
       base.class_eval do
-        class_attribute :before_mount_callbacks, :after_mount_callbacks, :init_state, :validator
+        class_attribute :init_state, :validator
+        define_callback :before_mount
+        define_callback :after_mount
       end
       base.extend(ClassMethods)
-
-      base.before_mount_callbacks = []
-      base.after_mount_callbacks = []
     end
 
     def initialize(native_element)
@@ -34,25 +35,11 @@ module React
     end
 
     def component_will_mount
-      return unless self.class.before_mount_callbacks
-      self.class.before_mount_callbacks.each do |callback|
-        if callback.is_a?(Proc)
-          callback.call
-        else
-          send(callback)
-        end
-      end
+      self.run_callback(:before_mount)
     end
 
     def component_did_mount
-      return unless self.class.after_mount_callbacks
-      self.class.after_mount_callbacks.each do |callback|
-        if callback.is_a?(Proc)
-          callback.call
-        else
-          send(callback)
-        end
-      end
+      self.run_callback(:after_mount)
     end
 
     def component_will_receive_props(next_props)
@@ -127,16 +114,6 @@ module React
 
       def params(&block)
         self.validator = React::Validator.build(&block)
-      end
-
-      def before_mount(*callback, &block)
-        self.before_mount_callbacks.concat callback
-        self.before_mount_callbacks << block if block_given?
-      end
-
-      def after_mount(*callback, &block)
-        self.after_mount_callbacks.concat callback
-        self.after_mount_callbacks << block if block_given?
       end
 
       def define_state(*states)
