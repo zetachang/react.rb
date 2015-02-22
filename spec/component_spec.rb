@@ -511,22 +511,13 @@ describe React::Component do
       Foo.class_eval do
         include React::Component
 
-        define_state(:mounted) { false }
-        after_mount :verify
-
-        def verify
-          if self.mounted?
-            self.mounted = true
-          end
-        end
-
         def render
           React.create_element("div")
         end
       end
 
-      element = renderToDocument(Foo)
-      expect(element.state.mounted).to eq(true)
+      component = renderToDocument(Foo)
+      expect(component.mounted?).to eq(true)
     end
   end
 end
