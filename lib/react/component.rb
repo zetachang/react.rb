@@ -156,6 +156,24 @@ module React
       alias_native :mounted?, :isMounted
       alias_native :force_update!, :forceUpdate
 
+      def set_props(prop, &block)
+        raise "No native ReactComponent associated" unless @native
+        %x{
+          #{@native}.setProps(#{prop.to_n}, function(){
+            #{block.call if block}
+          });
+        }
+      end
+
+      def set_props!(prop, &block)
+        raise "No native ReactComponent associated" unless @native
+        %x{
+          #{@native}.replaceProps(#{prop.to_n}, function(){
+            #{block.call if block}
+          });
+        }
+      end
+
       def set_state(state, &block)
         raise "No native ReactComponent associated" unless @native
         %x{
