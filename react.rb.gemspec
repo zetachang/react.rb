@@ -6,9 +6,9 @@ Gem::Specification.new do |s|
   s.version      = React::VERSION
   s.author       = 'David Chang'
   s.email        = 'zeta11235813@gmail.com'
-  s.homepage     = ''
-  s.summary      = 'React.js on Ruby'
-  s.description  = ''
+  s.homepage     = 'https://github.com/zetachang/react.rb'
+  s.summary      = 'Opal Ruby wrapper of React.js library.'
+  s.description  = "Write reactive UI component with Ruby's elegancy and compiled to run in Javascript."
 
   s.files          = `git ls-files`.split("\n")
   s.executables    = `git ls-files -- bin/*`.split("\n").map { |f| File.basename(f) }
