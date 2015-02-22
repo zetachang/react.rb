@@ -150,9 +150,11 @@ module React
     end
 
     module API
-      def mounted?
-        `#{@native}.isMounted()`
-      end
+      include Native
+
+      alias_native :dom_node, :getDOMNode
+      alias_native :mounted?, :isMounted
+      alias_native :force_update!, :forceUpdate
 
       def set_state(state, &block)
         raise "No native ReactComponent associated" unless @native
