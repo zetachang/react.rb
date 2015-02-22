@@ -2,7 +2,7 @@ require "native"
 require 'active_support'
 require "promise"
 
-module React  
+module React
   HTML_TAGS = %w(a abbr address area article aside audio b base bdi bdo big blockquote body br
                 button canvas caption cite code col colgroup data datalist dd del details dfn
                 dialog div dl dt em embed fieldset figcaption figure footer form h1 h2 h3 h4 h5
@@ -22,31 +22,35 @@ module React
                 readOnly rel required role rows rowSpan sandbox scope scrolling seamless
                 selected shape size sizes span spellCheck src srcDoc srcSet start step style
                 tabIndex target title type useMap value width wmode)
-                
+
   def self.create_element(type, properties = {}, &block)
     React::API.create_element(type, properties, &block)
   end
-  
+
   def self.render(element, container)
     if block_given?
-      %x{ 
-        React.render(#{element.to_n}, container, function(){#{ yield }}) 
+      %x{
+        React.render(#{element.to_n}, container, function(){#{ yield }})
       }
     else
       `React.render(#{element.to_n}, container, function(){})`
     end
     return nil
   end
-  
+
   def self.is_valid_element(element)
     element.kind_of?(React::Element) && `React.isValidElement(#{element.to_n})`
   end
-  
+
   def self.render_to_string(element)
     `React.renderToString(#{element.to_n})`
   end
-  
+
   def self.render_to_static_markup(element)
     `React.renderToStaticMarkup(#{element.to_n})`
+  end
+
+  def self.unmount_component_at_node(node)
+    `React.unmountComponentAtNode(node)`
   end
 end

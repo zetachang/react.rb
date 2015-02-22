@@ -134,10 +134,21 @@ describe React do
     end
   end
 
-  describe "render_to_String" do
+  describe "render_to_string" do
     it "should render a React.Element to string" do
       ele = React.create_element('span') { "lorem" }
       expect(React.render_to_string(ele)).to be_kind_of(String)
+    end
+  end
+
+  describe "unmount_component_at_node" do
+    async "should unmount component at node" do
+      div = `document.createElement("div")`
+      React.render(React.create_element('span') { "lorem" }, div ) do
+        run_async {
+          expect(React.unmount_component_at_node(div)).to eq(true)
+        }
+      end
     end
   end
 
