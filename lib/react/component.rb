@@ -52,6 +52,15 @@ module React
       }
     end
 
+    def set_state!(state, &block)
+      raise "No native ReactComponent associated" unless @native
+      %x{
+        #{@native}.replaceState(#{state.to_n}, function(){
+          #{block.call if block}
+        });
+      }
+    end
+
     def component_will_mount
       self.run_callback(:before_mount)
     end
