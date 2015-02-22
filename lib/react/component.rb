@@ -1,6 +1,7 @@
 require "./ext/string"
 require 'active_support/core_ext/class/attribute'
 require 'react/callbacks'
+require "react/ext/hash"
 
 module React
   module Component
@@ -159,7 +160,7 @@ module React
       def set_props(prop, &block)
         raise "No native ReactComponent associated" unless @native
         %x{
-          #{@native}.setProps(#{prop.to_n}, function(){
+          #{@native}.setProps(#{prop.shallow_to_n}, function(){
             #{block.call if block}
           });
         }
@@ -168,7 +169,7 @@ module React
       def set_props!(prop, &block)
         raise "No native ReactComponent associated" unless @native
         %x{
-          #{@native}.replaceProps(#{prop.to_n}, function(){
+          #{@native}.replaceProps(#{prop.shallow_to_n}, function(){
             #{block.call if block}
           });
         }
@@ -177,7 +178,7 @@ module React
       def set_state(state, &block)
         raise "No native ReactComponent associated" unless @native
         %x{
-          #{@native}.setState(#{state.to_n}, function(){
+          #{@native}.setState(#{state.shallow_to_n}, function(){
             #{block.call if block}
           });
         }
@@ -186,7 +187,7 @@ module React
       def set_state!(state, &block)
         raise "No native ReactComponent associated" unless @native
         %x{
-          #{@native}.replaceState(#{state.to_n}, function(){
+          #{@native}.replaceState(#{state.shallow_to_n}, function(){
             #{block.call if block}
           });
         }

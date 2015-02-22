@@ -67,16 +67,16 @@ module React
            props[React::ATTRIBUTES.include?(lower_camelize(key)) ? lower_camelize(key) : key] = value
          end
       end
-      params << props
+      params << props.shallow_to_n
 
       # Children Nodes
       if block_given?
         children = [yield].flatten.each do |ele|
-          params << ele
+          params << ele.to_n
         end
       end
 
-      return React::Element.new(`React.createElement.apply(null, #{params.to_n})`)
+      return React::Element.new(`React.createElement.apply(null, #{params})`)
     end
 
     def self.clear_component_class_cache
