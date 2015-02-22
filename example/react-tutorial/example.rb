@@ -46,12 +46,12 @@ class CommentForm
 
     f.on(:submit) do |event|
       event.prevent_default
-      author = self.refs.author.getDOMNode().value.strip
-      text = self.refs.text.getDOMNode().value.strip
+      author = self.refs[:author].dom_node.value.strip
+      text = self.refs[:text].dom_node.value.strip
       return if !text || !author
       self.emit(:comment_submit, {author: author, text: text})
-      self.refs.author.getDOMNode().value = ""
-      self.refs.text.getDOMNode().value = ""
+      self.refs[:author].dom_node.value = ""
+      self.refs[:text].dom_node.value = ""
     end
   end
 end

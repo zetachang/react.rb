@@ -30,8 +30,8 @@ class TodoItem
         end
         label { self.edit_text }.on(:double_click) do
           # set on state will trigger re-render, so we manipulate the DOM after render done
-          self.set_editing(true) do
-            self.refs.input.getDOMNode.focus
+          self.set_state(editing: true) do
+            self.refs[:input].dom_node.focus
           end
           self.edit_text = params[:todo].title
         end
