@@ -90,7 +90,7 @@ describe React::Component do
     it "should allow block for life cycle callback" do
       Foo.class_eval do
         define_state(:foo)
-        
+
         before_mount do
           self.foo = "bar"
         end
@@ -191,6 +191,17 @@ describe React::Component do
 
       element = renderToDocument(Foo)
       expect(element.getDOMNode.textContent).to eq("10")
+    end
+
+    it "should support original `set_state` method" do
+      Foo.class_eval do
+        before_mount do
+          self.set_state(foo: "bar")
+        end
+      end
+
+      element = renderToDocument(Foo)
+      expect(element.state.foo).to be("bar")
     end
 
     pending "should set initial state in Class#initialize method" do

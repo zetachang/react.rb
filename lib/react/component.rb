@@ -38,6 +38,15 @@ module React
       `#{@native}.isMounted()`
     end
 
+    def set_state(state, &block)
+      raise "No native ReactComponent associated" unless @native
+      %x{
+        #{@native}.setState(#{state.to_n}, function(){
+          #{block.call if block}
+        });
+      }
+    end
+
     def component_will_mount
       self.run_callback(:before_mount)
     end
@@ -131,43 +140,18 @@ module React
         states.each do |name|
           # getter
           define_method("#{name}") do
-            unless @native
-              self.class.init_state[name]
-            else
-              `#{@native}.state[#{name}]`
-            end
+            return unless @native
+            `#{@native}.state[#{name}]`
           end
           # setter
           define_method("#{name}=") do |new_state|
-            unless @native
-              self.class.init_state[name] = new_state
-            else
-              %x{
-                state = #{@native}.state || {};
-                state[#{name}] = #{new_state};
-                #{@native}.setState(state);
-              }
-            end
+            return unless @native
+            hash = {}
+            hash[name] = new_state
+            self.set_state(hash)
 
             new_state
           end
-          # setter with callback
-          define_method("set_#{name}") do |new_state, &block|
-            unless @native
-              self.class.init_state[name] = new_state
-            else
-              %x{
-                state = #{@native}.state || {};
-                state[#{name}] = #{new_state};
-                #{@native}.setState(state, function(){
-                  #{block.call if block}
-                });
-              }
-            end
-
-            new_state
-          end
-
         end
       end
     end
