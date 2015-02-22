@@ -11,7 +11,7 @@ module React
       callbacks = self.class.send(attribute_name)
       callbacks.each do |callback|
         if callback.is_a?(Proc)
-          callback.call(*args)
+          instance_exec(*args, &callback)
         else
           send(callback, *args)
         end
@@ -27,7 +27,6 @@ module React
           callbacks = self.send(attribute_name)
           callbacks.concat(args)
           callbacks.push(block) if block_given?
-          debugger
           self.send("#{attribute_name}=", callbacks)
         end
       end

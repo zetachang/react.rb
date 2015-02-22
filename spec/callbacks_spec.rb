@@ -39,54 +39,69 @@ describe React::Callbacks do
 
   it "should be able to define block callback" do
     stub_const 'Foo', Class.new
-    proc_a = Proc.new {}
-    proc_b = Proc.new {}
     Foo.class_eval do
       include React::Callbacks
+      attr_accessor :a
+      attr_accessor :b
+
       define_callback :before_dinner
 
-      before_dinner(&proc_a)
-      before_dinner(&proc_b)
+      before_dinner do
+        self.a = 10
+      end
+      before_dinner do
+        self.b = 20
+      end
     end
 
-    expect(proc_a).to receive(:call)
-    expect(proc_b).to receive(:call)
-    Foo.new.run_callback(:before_dinner)
+    foo = Foo.new
+    foo.run_callback(:before_dinner)
+    expect(foo.a).to eq(10)
+    expect(foo.b).to eq(20)
   end
 
   it "should be able to define multiple callback group" do
-    proc_a = Proc.new {}
     stub_const 'Foo', Class.new
     Foo.class_eval do
       include React::Callbacks
       define_callback :before_dinner
       define_callback :after_dinner
+      attr_accessor :a
 
-      before_dinner(&proc_a)
+      before_dinner do
+        self.a = 10
+      end
     end
 
-    expect(proc_a).to receive(:call)
-    Foo.new.run_callback(:before_dinner)
-    Foo.new.run_callback(:after_dinner)
+    foo = Foo.new
+    foo.run_callback(:before_dinner)
+    foo.run_callback(:after_dinner)
+
+    expect(foo.a).to eq(10)
   end
 
   it "should be able to receive args as callback" do
-    a_proc = Proc.new { }
     stub_const 'Foo', Class.new
     Foo.class_eval do
       include React::Callbacks
       define_callback :before_dinner
       define_callback :after_dinner
 
-      before_dinner(&a_proc)
+      attr_accessor :lorem
+
+      before_dinner do |a, b|
+        self.lorem  = "#{a}-#{b}"
+      end
+
       after_dinner :eat_ice_cream
       def eat_ice_cream(a,b,c);  end
     end
 
-    expect(a_proc).to receive(:call).with(1,2)
     expect_any_instance_of(Foo).to receive(:eat_ice_cream).with(4,5,6)
 
-    Foo.new.run_callback(:before_dinner, 1, 2)
-    Foo.new.run_callback(:after_dinner, 4, 5, 6)
+    foo = Foo.new
+    foo.run_callback(:before_dinner, 1, 2)
+    foo.run_callback(:after_dinner, 4, 5, 6)
+    expect(foo.lorem).to eq('1-2')
   end
 end
