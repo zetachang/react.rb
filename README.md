@@ -17,7 +17,7 @@ and in your Opal application,
 require "opal"
 require "react"
 
-React.render(React.create_element('h1'){ "Hello World!" }, `document.body`)
+React.render(React.create_element('h1'){ "Hello World!" }, 'document.body')
 ```
 
 For integration with server (Sinatra, etc), see setup of [TodoMVC](example/todos) or the [official docs](http://opalrb.org/docs/) of Opal.
@@ -105,7 +105,7 @@ puts React.render_to_static_markup(React.create_element(App))
 
 # => '<div><span>Default greeting: Cool! John!</span></div>'
 
-React.render(React.create_element(App), `document.body`)
+React.render(React.create_element(App), 'document.body')
 
 # mounted!
 ```
