@@ -42,7 +42,7 @@ puts React.render_to_static_markup(React.create_element(HelloMessage))
 
 ### More complicated one
 
-To hook into native ReactComponent life cycle, the native `this` will be passed to the class's initializer. And all corresponding life cycle methods (`componentDidMount`, etc) will be invoked on the instance using the corresponding snake-case method name.
+To hook into native ReactComponent life cycle, the native `this` will be passed to the class's initializer. And all corresponding life cycle methods (`componentDidMount`, etc) will be invoked on the instance using the snake-case method name.
 
 ```ruby
 class HelloMessage
@@ -67,7 +67,7 @@ puts React.render_to_static_markup(React.create_element(HelloMessage, name: 'Joh
 
 ### React::Component
 
-Hey, we are using Ruby, simply include `React::Component` to save your typing and have some handy method defined.
+Hey, we are using Ruby, simply include `React::Component` to save your typing and have some handy methods defined.
 
 ```ruby
 class HelloMessage
@@ -117,7 +117,7 @@ React.render(React.create_element(App), `document.body`)
 
 ### Props validation
 
-How about props validation? Inspired from [Grape API](https://github.com/intridea/grape), props validation rule could be created easily through `params` class method as below,
+How about props validation? Inspired by [Grape API](https://github.com/intridea/grape), props validation rule could be created easily through `params` class method as below,
 
 ```ruby
 class App
@@ -139,7 +139,7 @@ end
 
 ## Mixins
 
-Simply create a Ruby module to encapsulate the behavior. Below are modifed from original [React.js Exmaple on Mixin](http://facebook.github.io/react/docs/reusable-components.html#mixins), [Opal Browser](https://github.com/opal/opal-browser) syntax are used to make it cleaner.
+Simply create a Ruby module to encapsulate the behavior. Example below is modified from the original [React.js Exmaple on Mixin](http://facebook.github.io/react/docs/reusable-components.html#mixins), [Opal Browser](https://github.com/opal/opal-browser) syntax are used to make it cleaner.
 
 ```ruby
 module SetInterval
@@ -183,7 +183,7 @@ $window.after(5) do
 end
 
 # => Tick!
-# => ... for 5 times then stop ticking
+# => ... for 5 times then stop ticking after 5 seconds
 ```
 
 ## Example
