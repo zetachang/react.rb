@@ -137,9 +137,9 @@ class App
 end
 ```
 
-## Mixins
+### Mixins
 
-Simply create a Ruby module to encapsulate the behavior. Example below is modified from the original [React.js Exmaple on Mixin](http://facebook.github.io/react/docs/reusable-components.html#mixins), [Opal Browser](https://github.com/opal/opal-browser) syntax are used to make it cleaner.
+Simply create a Ruby module to encapsulate the behavior. Example below is modified from the original [React.js Exmaple on Mixin](http://facebook.github.io/react/docs/reusable-components.html#mixins). [Opal Browser](https://github.com/opal/opal-browser) syntax are used here to make it cleaner.
 
 ```ruby
 module SetInterval
