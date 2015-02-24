@@ -137,6 +137,55 @@ class App
 end
 ```
 
+## Mixins
+
+Simply create a Ruby module to encapsulate the behavior. Below are modifed from original [React.js Exmaple on Mixin](http://facebook.github.io/react/docs/reusable-components.html#mixins), [Opal Browser](https://github.com/opal/opal-browser) syntax are used to make it cleaner.
+
+```ruby
+module SetInterval
+  def self.included(base)
+    base.class_eval do
+      before_mount { @interval = [] }
+      before_unmount do
+        # abort associated timer of a component right before unmount
+        @interval.each { |i| i.abort }
+      end
+    end
+  end
+
+  def set_interval(seconds, &block)
+    @interval << $window.every(seconds, &block)
+  end
+end
+
+class TickTock
+  include React::Component
+  include SetInterval
+
+  define_state(:seconds) { 0 }
+
+  before_mount do
+    set_interval(1) { self.seconds = self.seconds + 1 }
+    set_interval(1) { puts "Tick!" }
+  end
+
+  def render
+    span do
+      "React has been running for: #{self.seconds}"
+    end
+  end
+end
+
+React.render(React.create_element(TickTock), $document.body.to_n)
+
+$window.after(5) do
+  React.unmount_component_at_node($document.body.to_n)
+end
+
+# => Tick!
+# => ... for 5 times then stop ticking
+```
+
 ## Example
 
 * React Tutorial: see [example/react-tutorial](example/react-tutorial), the original CommentBox example.
@@ -144,7 +193,6 @@ end
 
 ## TODOS
 
-* Mixins examples
 * Documentation
 * API wrapping coverage of the original js library (pretty close though)
 * React Native?
