@@ -1,6 +1,10 @@
 require "spec_helper"
 
 describe React do
+  after(:each) do
+    React::API.clear_component_class_cache
+  end
+
   describe "is_valid_element" do
     it "should return true if passed a valid element" do
       element = React::Element.new(`React.createElement('div')`)
@@ -78,6 +82,43 @@ describe React do
 
       it "should raise error if provided class doesn't defined `render`" do
         expect { React.create_element(Array) }.to raise_error
+      end
+
+      it "should use the same instance for the same ReactComponent" do
+        Foo.class_eval do
+          attr_accessor :a
+          def initialize(n)
+            self.a = 10
+          end
+
+          def component_will_mount
+            self.a = 20
+          end
+
+          def render
+            React.create_element("div") { self.a.to_s }
+          end
+        end
+
+        expect(React.render_to_static_markup(React.create_element(Foo))).to eq("<div>20</div>")
+      end
+
+      it "should match the instance cycle to ReactComponent life cycle" do
+        `var count = 0;`
+
+        Foo.class_eval do
+          def initialize
+            `count = count + 1;`
+          end
+          def render
+            React.create_element("div")
+          end
+        end
+
+        renderToDocument(Foo)
+        renderToDocument(Foo)
+
+        expect(`count`).to eq(2)
       end
     end
 

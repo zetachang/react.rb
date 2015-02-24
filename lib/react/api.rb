@@ -18,35 +18,44 @@ module React
               return #{type.respond_to?(:initial_state) ? type.initial_state.to_n : `{}`};
             },
             componentWillMount: function() {
-              instance = #{type.new(`this`)};
+              var instance = this._getOpalInstance.apply(this);
               return #{`instance`.component_will_mount if type.method_defined? :component_will_mount};
             },
             componentDidMount: function() {
-              instance = #{type.new(`this`)};
+              var instance = this._getOpalInstance.apply(this);
               return #{`instance`.component_did_mount if type.method_defined? :component_did_mount};
             },
             componentWillReceiveProps: function(next_props) {
-              instance = #{type.new(`this`)};
+              var instance = this._getOpalInstance.apply(this);
               return #{`instance`.component_will_receive_props(`next_props`) if type.method_defined? :component_will_receive_props};
             },
             shouldComponentUpdate: function(next_props, next_state) {
-              instance = #{type.new(`this`)};
+              var instance = this._getOpalInstance.apply(this);
               return #{`instance`.should_component_update?(`next_props`, `next_state`) if type.method_defined? :should_component_update?};
             },
             componentWillUpdate: function(next_props, next_state) {
-              instance = #{type.new(`this`)};
+              var instance = this._getOpalInstance.apply(this);
               return #{`instance`.component_will_update(`next_props`, `next_state`) if type.method_defined? :component_will_update};
             },
             componentDidUpdate: function(prev_props, prev_state) {
-              instance = #{type.new(`this`)};
+              var instance = this._getOpalInstance.apply(this);
               return #{`instance`.component_did_update(`prev_props`, `prev_state`) if type.method_defined? :component_did_update};
             },
             componentWillUnmount: function() {
-              instance = #{type.new(`this`)};
+              var instance = this._getOpalInstance.apply(this);
               return #{`instance`.component_will_unmount if type.method_defined? :component_will_unmount};
             },
+            _getOpalInstance: function() {
+              if (this.__opalInstance == undefined) {
+                var instance = #{type.new(`this`)};
+              } else {
+                var instance = this.__opalInstance;
+              }
+              this.__opalInstance = instance;
+              return instance;
+            },
             render: function() {
-              instance = #{type.new(`this`)};
+              var instance = this._getOpalInstance.apply(this);
               return #{`instance`.render.to_n};
             }
           })
