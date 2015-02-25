@@ -1,5 +1,7 @@
 # React.rb
 
+[![Gem Version](https://badge.fury.io/rb/react.rb.svg)](http://badge.fury.io/rb/react.rb)
+
 **React.rb is an [Opal Ruby](http://opalrb.org) wrapper of [React.js library](http://facebook.github.io/react/)**.
 
 It let you write reactive UI component with Ruby's elegancy and compiled to run in Javascript. :heart:
