@@ -536,6 +536,47 @@ describe React::Component do
       element = React.create_element(Foo)
       expect(React.render_to_static_markup(element)).to eq("<div></div>")
     end
+
+    it "should redefine `p` to make method missing work" do
+      stub_const 'Foo', Class.new
+      Foo.class_eval do
+        include React::Component
+
+        def render
+          p(class_name: "foo") do
+            p
+            div { "lorem ipsum" }
+            p(id: "10")
+          end
+        end
+      end
+
+      element = React.create_element(Foo)
+      expect(React.render_to_static_markup(element)).to eq("<p class=\"foo\"><p></p><div>lorem ipsum</div><p id=\"10\"></p></p>")
+    end
+
+    it "should only override `p` in render context" do
+      stub_const 'Foo', Class.new
+      Foo.class_eval do
+        include React::Component
+
+        before_mount do
+          p "first"
+        end
+
+        after_mount do
+          p "second"
+        end
+
+        def render
+          div
+        end
+      end
+
+      expect(Kernel).to receive(:p).with("first")
+      expect(Kernel).to receive(:p).with("second")
+      renderToDocument(Foo)
+    end
   end
 
   describe "isMounted()" do

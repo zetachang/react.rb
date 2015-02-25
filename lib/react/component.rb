@@ -69,13 +69,25 @@ module React
       self.run_callback(:before_unmount)
     end
 
+    def p(*args, &block)
+      if block || args.count == 0 || (args.count == 1 && args.first.is_a?(Hash))
+        _p_tag(*args, &block)
+      else
+        Kernel.p(*args)
+      end
+    end
+
     def method_missing(name, *args, &block)
-      unless (React::HTML_TAGS.include?(name) || name == 'present')
+      unless (React::HTML_TAGS.include?(name) || name == 'present' || name == '_p_tag')
         return super
       end
 
       if name == "present"
         name = args.shift
+      end
+
+      if name == "_p_tag"
+        name = "p"
       end
 
       @buffer = [] unless @buffer
