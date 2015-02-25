@@ -8,6 +8,7 @@ Gem::Specification.new do |s|
   s.email        = 'zeta11235813@gmail.com'
   s.homepage     = 'https://github.com/zetachang/react.rb'
   s.summary      = 'Opal Ruby wrapper of React.js library.'
+  s.license      = 'MIT'
   s.description  = "Write reactive UI component with Ruby's elegancy and compiled to run in Javascript."
 
   s.files          = `git ls-files`.split("\n")
