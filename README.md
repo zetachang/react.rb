@@ -118,6 +118,21 @@ React.render(React.create_element(App), `document.body`)
 * Use helper method `define_state` to create setter & getter of `this.state` for you
 * For the detailed mapping to the original API, see [this issue](https://github.com/zetachang/react.rb/issues/2) for reference. Complete reference will come soon.
 
+### Element Building DSL
+
+As a replacement of JSX, include `React::Component` and you can build `React.Element` hierarchy without all the `React.create_element` noises.
+
+```ruby
+def render
+  div do
+    h1 { "Title" }
+    h2 { "subtitle"}
+    div(class_name: 'fancy', id: 'foo') { span { "some text #{interpolation}"} }
+    present FancyElement, fancy_props: '10'
+  end
+end
+```
+
 ### Props validation
 
 How about props validation? Inspired by [Grape API](https://github.com/intridea/grape), props validation rule could be created easily through `params` class method as below,
