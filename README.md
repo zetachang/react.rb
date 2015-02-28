@@ -5,7 +5,7 @@
 
 **React.rb is an [Opal Ruby](http://opalrb.org) wrapper of [React.js library](http://facebook.github.io/react/)**.
 
-It let you write reactive UI component with Ruby's elegancy and compiled to run in Javascript. :heart:
+It lets you write reactive UI components, with Ruby's elegance and compiled to run in JavaScript. :heart:
 
 ## Installation
 
