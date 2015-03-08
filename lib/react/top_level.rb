@@ -47,4 +47,8 @@ module React
   def self.unmount_component_at_node(node)
     `React.unmountComponentAtNode(node)`
   end
+
+  def self.expose_native_class(type)
+    `window[#{type.to_s}] = #{React::API.native_component_class(type)}`
+  end
 end
