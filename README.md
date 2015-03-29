@@ -133,6 +133,36 @@ def render
 end
 ```
 
+## JSX Support
+
+Not a fan of using element building DSL? Use file extension `.jsx.rb` to get JSX fragment compiled.
+
+```ruby
+# app.jsx.rb
+class Fancy
+  def render
+    React.create_element('div') { "fancy" }
+  end
+end
+
+class App
+  include React::Component
+
+  def render
+    jsx(%x{
+      <div>
+        <h1>Outer</h1>
+        <Fancy>{ #{5.times.to_a.join(",")} }</Fancy>
+      </div>
+    })
+  end
+end
+
+React.expose_native_class(Fancy)
+
+React.render React.create_element(App), `document.body`
+``` 
+
 ### Props validation
 
 How about props validation? Inspired by [Grape API](https://github.com/intridea/grape), props validation rule could be created easily through `params` class method as below,
@@ -208,6 +238,7 @@ end
 
 * React Tutorial: see [example/react-tutorial](example/react-tutorial), the original CommentBox example.
 * TodoMVC: see [example/todos](example/todos), your beloved TodoMVC <3.
+* JSX Example: see [example/basic-jsx](example/basic-jsx).
 
 ## TODOS
 

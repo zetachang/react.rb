@@ -1,5 +1,5 @@
 PATH
-  remote: .
+  remote: ../..
   specs:
     react.rb (0.0.2)
       opal (~> 0.6.0)
@@ -10,7 +10,7 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    babel-source (4.7.1)
+    babel-source (4.7.3)
     babel-transpiler (0.6.0)
       babel-source (>= 4.0, < 5)
       execjs (~> 2.0)
@@ -22,10 +22,10 @@ GEM
       sprockets
     opal-activesupport (0.1.0)
       opal (>= 0.5.0, < 1.0.0)
-    opal-jquery (0.2.0)
-      opal (>= 0.5.0, < 1.0.0)
-    opal-rspec (0.3.0.beta3)
-      opal (>= 0.6.0, < 1.0.0)
+    opal-browser (0.2.0.beta1)
+      opal (~> 0.6.0)
+      paggio
+    paggio (0.2.4)
     rack (1.6.0)
     rack-protection (1.5.3)
       rack
@@ -51,8 +51,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  opal-jquery
-  opal-rspec (~> 0.3.0.beta3)
-  react-source (~> 0.12)
+  opal-browser
+  react-source
   react.rb!
   sinatra
