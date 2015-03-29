@@ -1,5 +1,6 @@
 # React.rb
 
+[![Build Status](http://img.shields.io/travis/zetachang/react.rb/master.svg)](http://travis-ci.org/zetachang/react.rb)
 [![Gem Version](https://badge.fury.io/rb/react.rb.svg)](http://badge.fury.io/rb/react.rb)
 [![Code Climate](https://codeclimate.com/github/zetachang/react.rb/badges/gpa.svg)](https://codeclimate.com/github/zetachang/react.rb)
 
