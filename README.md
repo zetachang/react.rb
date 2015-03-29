@@ -133,7 +133,7 @@ def render
 end
 ```
 
-## JSX Support
+### JSX Support
 
 Not a fan of using element building DSL? Use file extension `.jsx.rb` to get JSX fragment compiled.
 
