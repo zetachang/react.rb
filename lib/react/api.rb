@@ -18,7 +18,7 @@ module React
       props = {}
       properties.map do |key, value|
          if key == "class_name" && value.is_a?(Hash)
-           props[lower_camelize(key)] = `React.addons.classSet(#{value.to_n})`
+           props[lower_camelize(key)] = value.inject([]) {|ary, (k,v)| v ? ary.push(k) : ary}.join(" ")
          else
            props[React::ATTRIBUTES.include?(lower_camelize(key)) ? lower_camelize(key) : key] = value
          end
