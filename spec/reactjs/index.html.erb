@@ -5,6 +5,41 @@
 <body>
   <%= javascript_include_tag 'es5-shim.min' %>
   <%= javascript_include_tag 'react-with-addons' %>
+  <script>
+  if (!Object.assign) {
+    Object.defineProperty(Object, 'assign', {
+      enumerable: false,
+      configurable: true,
+      writable: true,
+      value: function(target, firstSource) {
+        'use strict';
+        if (target === undefined || target === null) {
+          throw new TypeError('Cannot convert first argument to object');
+        }
+
+        var to = Object(target);
+        for (var i = 1; i < arguments.length; i++) {
+          var nextSource = arguments[i];
+          if (nextSource === undefined || nextSource === null) {
+            continue;
+          }
+
+          var keysArray = Object.keys(Object(nextSource));
+          for (var nextIndex = 0, len = keysArray.length; nextIndex < len; nextIndex++) {
+            var nextKey = keysArray[nextIndex];
+            var desc = Object.getOwnPropertyDescriptor(nextSource, nextKey);
+            if (desc !== undefined && desc.enumerable) {
+              to[nextKey] = nextSource[nextKey];
+            }
+          }
+        }
+        return to;
+      }
+    });
+  }
+  OpalReactElement = new Function();
+  OpalReactElement.prototype = Object.getPrototypeOf(React.createElement(''));
+  </script>
   <%= javascript_include_tag @server.main %>
   <div id="placeholder" style="display: none"></div>
 </body>

@@ -1,16 +1,18 @@
 module React
   module Component
     module API
-      include Native
-
-      alias_native :dom_node, :getDOMNode
-      alias_native :mounted?, :isMounted
-      alias_native :force_update!, :forceUpdate
-
+      def state
+        Native(`#{self}.state`)
+      end
+      
+      def force_update!
+        `#{self}.forceUpdate()`
+      end
+      
       def set_props(prop, &block)
         raise "No native ReactComponent associated" unless @native
         %x{
-          #{@native}.setProps(#{prop.shallow_to_n}, function(){
+          #{self}.setProps(#{prop.shallow_to_n}, function(){
             #{block.call if block}
           });
         }
@@ -19,7 +21,7 @@ module React
       def set_props!(prop, &block)
         raise "No native ReactComponent associated" unless @native
         %x{
-          #{@native}.replaceProps(#{prop.shallow_to_n}, function(){
+          #{self}.replaceProps(#{prop.shallow_to_n}, function(){
             #{block.call if block}
           });
         }
@@ -28,7 +30,7 @@ module React
       def set_state(state, &block)
         raise "No native ReactComponent associated" unless @native
         %x{
-          #{@native}.setState(#{state.shallow_to_n}, function(){
+          #{self}.setState(#{state.shallow_to_n}, function(){
             #{block.call if block}
           });
         }
@@ -37,7 +39,7 @@ module React
       def set_state!(state, &block)
         raise "No native ReactComponent associated" unless @native
         %x{
-          #{@native}.replaceState(#{state.shallow_to_n}, function(){
+          #{self}.replaceState(#{state.shallow_to_n}, function(){
             #{block.call if block}
           });
         }
