@@ -19,7 +19,11 @@ module React
       
       #FIXME: Should be deprecated in favor of sth like, React.find_dom_node(component)
       def dom_node
-        Native(`React.findDOMNode(#{self})`)
+        if self.respond_to?(:getDOMNode)
+          self.getDOMNode
+        else
+          Native(`React.findDOMNode(#{self})`)
+        end
       end
     end
   end

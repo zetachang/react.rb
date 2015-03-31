@@ -104,7 +104,10 @@ module React
       @buffer << element
       element
     end
-
+    
+    def to_n
+      self
+    end
 
     module ClassMethods
       def prop_types
