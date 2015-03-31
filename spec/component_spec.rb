@@ -432,7 +432,7 @@ describe React::Component do
       end
 
       element = renderToDocument(Foo)
-      expect(element.refs.field).not_to be_nil
+      expect(element.refs[:field]).not_to be_nil
     end
 
     it "should access refs through `refs` method" do
@@ -447,7 +447,7 @@ describe React::Component do
       element = renderToDocument(Foo)
       simulateEvent(:click, element)
 
-      expect(element.refs.field.value).to eq("some_stuff")
+      expect(element.refs[:field].value).to eq("some_stuff")
     end
   end
 
