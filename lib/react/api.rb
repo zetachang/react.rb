@@ -56,7 +56,8 @@ module React
           return int;
         };
         f.prototype = #{klass}._alloc.prototype;
-        
+        f.propTypes = #{klass.respond_to?(:prop_types) ? klass.prop_types.to_n : `{}`};
+        f.defaultProps = #{klass.respond_to?(:default_props) ? klass.default_props.to_n : `{}`};    
         Object.assign(f.prototype, React.Component.prototype);
       }
       @@component_classes[klass.to_s] ||= `f`
