@@ -17,15 +17,6 @@ module React
           });
         }
       end
-
-      def set_state!(state, &block)
-        raise "No native ReactComponent associated" unless @native
-        %x{
-          #{self}.replaceState(#{state.shallow_to_n}, function(){
-            #{block.call if block}
-          });
-        }
-      end
       
       #FIXME: Should be deprecated in favor of sth like, React.find_dom_node(component)
       def dom_node

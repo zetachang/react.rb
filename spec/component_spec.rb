@@ -204,19 +204,6 @@ describe React::Component do
       expect(element.state.foo).to be("bar")
     end
 
-    it "should support original `replaceState` as `set_state!` method" do
-      Foo.class_eval do
-        before_mount do
-          self.set_state(foo: "bar")
-          self.set_state!(bar: "lorem")
-        end
-      end
-
-      element = renderToDocument(Foo)
-      expect(element.state.foo).to be_nil
-      expect(element.state.bar).to eq("lorem")
-    end
-
     it "should support originl `state` method" do
       Foo.class_eval do
         before_mount do
