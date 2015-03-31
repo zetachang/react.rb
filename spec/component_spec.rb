@@ -533,22 +533,6 @@ describe React::Component do
     end
   end
 
-  describe "isMounted()" do
-    it "should return true if after mounted" do
-      stub_const 'Foo', Class.new
-      Foo.class_eval do
-        include React::Component
-
-        def render
-          React.create_element("div")
-        end
-      end
-
-      component = renderToDocument(Foo)
-      expect(component.mounted?).to eq(true)
-    end
-  end
-
   describe "Helpers" do
     describe "jsx" do
       it "should wrap passed JS object to React::Element" do
