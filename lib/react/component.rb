@@ -29,10 +29,6 @@ module React
       Hash.new(`#{self}.refs`)
     end
 
-    def state
-      Hash.new(`#{self}.state`)
-    end
-
     def emit(event_name, *args)
       self.params["_on#{event_name.to_s.event_camelize}"].call(*args)
     end

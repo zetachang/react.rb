@@ -59,15 +59,15 @@ describe React do
       it "should render element with only one children correctly" do
         element = React.create_element(Foo) { React.create_element('span') }
         instance = renderElementToDocument(element)
-        expect(instance.props.children).not_to be_a(Array)
-        expect(instance.props.children.type).to eq("span")
+        expect(instance.props[:children]).not_to be_a(Array)
+        expect(instance.props[:children][:type]).to eq("span")
       end
 
       it "should render element with more than one children correctly" do
         element = React.create_element(Foo) { [React.create_element('span'), React.create_element('span')] }
         instance = renderElementToDocument(element)
-        expect(instance.props.children).to be_a(Array)
-        expect(instance.props.children.length).to eq(2)
+        expect(instance.props[:children]).to be_a(Array)
+        expect(instance.props[:children].length).to eq(2)
       end
 
       it "should create a valid element provided class defined `render`" do

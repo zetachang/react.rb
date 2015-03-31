@@ -2,7 +2,11 @@ module React
   module Component
     module API
       def state
-        Native(`#{self}.state`)
+        Hash.new(`#{self}.state`)
+      end
+      
+      def props
+        Hash.new(`#{self}.props`)
       end
       
       def force_update!

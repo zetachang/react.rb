@@ -97,7 +97,7 @@ describe React::Component do
       end
 
       element = renderToDocument(Foo)
-      expect(element.state.foo).to be("bar")
+      expect(element.state[:foo]).to be("bar")
     end
   end
 
@@ -122,7 +122,7 @@ describe React::Component do
       end
 
       element = renderToDocument(Foo)
-      expect(element.state.foo).to be("bar")
+      expect(element.state[:foo]).to be("bar")
     end
 
     it "should define init state by passing a block to `define_state`" do
@@ -131,7 +131,7 @@ describe React::Component do
       end
 
       element = renderToDocument(Foo)
-      expect(element.state.foo).to be(10)
+      expect(element.state[:foo]).to be(10)
     end
 
     it "should define getter using `define_state`" do
@@ -144,7 +144,7 @@ describe React::Component do
       end
 
       element = renderToDocument(Foo)
-      expect(element.state.foo).to be(30)
+      expect(element.state[:foo]).to be(30)
     end
 
     it "should define multiple state accessor by passing symols array to `define_state`" do
@@ -158,8 +158,8 @@ describe React::Component do
       end
 
       element = renderToDocument(Foo)
-      expect(element.state.foo).to be(10)
-      expect(element.state.foo2).to be(20)
+      expect(element.state[:foo]).to be(10)
+      expect(element.state[:foo2]).to be(20)
     end
 
     it "should invoke `define_state` multiple times to define states" do
@@ -169,8 +169,8 @@ describe React::Component do
       end
 
       element = renderToDocument(Foo)
-      expect(element.state.foo).to be(30)
-      expect(element.state.foo2).to be(40)
+      expect(element.state[:foo]).to be(30)
+      expect(element.state[:foo2]).to be(40)
     end
 
     it "should raise error if multiple states and block given at the same time" do
@@ -201,7 +201,7 @@ describe React::Component do
       end
 
       element = renderToDocument(Foo)
-      expect(element.state.foo).to be("bar")
+      expect(element.state[:foo]).to be("bar")
     end
 
     it "should support originl `state` method" do
@@ -374,7 +374,7 @@ describe React::Component do
       element = React.create_element(Foo)
       instance = renderElementToDocument(element)
       simulateEvent(:click, instance)
-      expect(instance.state.clicked).to eq(true)
+      expect(instance.state[:clicked]).to eq(true)
     end
 
     it "should invoke handler on `this.props` using emit" do
