@@ -30,7 +30,7 @@ GEM
     rack-protection (1.5.3)
       rack
     rake (10.4.2)
-    react-source (0.12.2)
+    react-source (0.13.1)
     ref (1.0.5)
     sinatra (1.4.5)
       rack (~> 1.4)
@@ -55,6 +55,6 @@ DEPENDENCIES
   opal-jquery
   opal-rspec (~> 0.3.0.beta3)
   rake
-  react-source (~> 0.12)
+  react-source (~> 0.13)
   react.rb!
   sinatra
