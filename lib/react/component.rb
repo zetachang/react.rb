@@ -21,21 +21,16 @@ module React
       base.extend(ClassMethods)
     end
 
-    def initialize(native_element)
-      @native = native_element
-    end
-
     def params
-      Hash.new(`#{@native}.props`)
+      Hash.new(`#{self}.props`)
     end
 
     def refs
-      Hash.new(`#{@native}.refs`)
+      Hash.new(`#{self}.refs`)
     end
 
     def state
-      raise "No native ReactComponent associated" unless @native
-      Hash.new(`#{@native}.state`)
+      Hash.new(`#{self}.state`)
     end
 
     def emit(event_name, *args)
@@ -151,12 +146,10 @@ module React
         states.each do |name|
           # getter
           define_method("#{name}") do
-            return unless @native
             self.state[name]
           end
           # setter
           define_method("#{name}=") do |new_state|
-            return unless @native
             hash = {}
             hash[name] = new_state
             self.set_state(hash)

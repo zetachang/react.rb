@@ -10,7 +10,6 @@ module React
       end
 
       def set_state(state, &block)
-        raise "No native ReactComponent associated" unless @native
         %x{
           #{self}.setState(#{state.shallow_to_n}, function(){
             #{block.call if block}
