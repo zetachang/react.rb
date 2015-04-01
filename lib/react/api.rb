@@ -88,7 +88,7 @@ module React
           },
           render: function() {
             var instance = this._getOpalInstance.apply(this);
-            return #{`instance`.render.to_n};
+            return instance.$render();
           }
         })
       }
