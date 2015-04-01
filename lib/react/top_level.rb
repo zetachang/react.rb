@@ -27,21 +27,21 @@ module React
   end
 
   def self.render(element, container)
-    component = Native(`React.render(#{element.to_n}, container, function(){#{yield if block_given?}})`)
+    component = Native(`React.render(#{element}, container, function(){#{yield if block_given?}})`)
     component.class.include(React::Component::API)
     component
   end
 
   def self.is_valid_element(element)
-    element.kind_of?(React::Element) && `React.isValidElement(#{element.to_n})`
+    `React.isValidElement(#{element})`
   end
 
   def self.render_to_string(element)
-    `React.renderToString(#{element.to_n})`
+    `React.renderToString(#{element})`
   end
 
   def self.render_to_static_markup(element)
-    `React.renderToStaticMarkup(#{element.to_n})`
+    `React.renderToStaticMarkup(#{element})`
   end
 
   def self.unmount_component_at_node(node)

@@ -32,13 +32,6 @@ GIT
       opal-activesupport
       opal-jquery
 
-PATH
-  remote: ../..
-  specs:
-    react.rb (0.0.1)
-      opal (~> 0.6.0)
-      opal-activesupport
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -56,6 +49,9 @@ GEM
     rack (1.5.2)
     rake (10.1.1)
     react-source (0.12.2)
+    react.rb (0.0.2)
+      opal (~> 0.6.0)
+      opal-activesupport
     source_map (3.0.1)
       json
     sprockets (2.12.3)
@@ -79,6 +75,6 @@ DEPENDENCIES
   opal-rspec (= 0.3.0.beta2)
   rake
   react-source
-  react.rb!
+  react.rb (~> 0.0.2)
   thin
   vienna!

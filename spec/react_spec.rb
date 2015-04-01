@@ -7,12 +7,12 @@ describe React do
 
   describe "is_valid_element" do
     it "should return true if passed a valid element" do
-      element = React::Element.new(`React.createElement('div')`)
+      element = `React.createElement('div')`
       expect(React.is_valid_element(element)).to eq(true)
     end
 
     it "should return false is passed a non React element" do
-      element = React::Element.new(`{}`)
+      element = `{}`
       expect(React.is_valid_element(element)).to eq(false)
     end
   end
@@ -27,7 +27,7 @@ describe React do
       it "should create a valid element with text as only child when block yield String" do
         element = React.create_element('div') { "lorem ipsum" }
         expect(React.is_valid_element(element)).to eq(true)
-        expect(element.props.children).to eq("lorem ipsum")
+        expect(element.children.to_a).to eq(["lorem ipsum"])
       end
 
       it "should create a valid element with children as array when block yield Array of element" do
@@ -35,7 +35,7 @@ describe React do
           [React.create_element('span'), React.create_element('span'), React.create_element('span')]
         end
         expect(React.is_valid_element(element)).to eq(true)
-        expect(element.props.children.length).to eq(3)
+        expect(element.children.length).to eq(3)
       end
 
       it "should render element with children as array when block yield Array of element" do
@@ -56,18 +56,16 @@ describe React do
         end
       end
 
-      it "should render element with only one children correctly" do
+      it "should create element with only one children correctly" do
         element = React.create_element(Foo) { React.create_element('span') }
-        instance = renderElementToDocument(element)
-        expect(instance.props.children).not_to be_a(Array)
-        expect(instance.props.children.type).to eq("span")
+        expect(element.children.count).to eq(1)
+        expect(element.children.map{|e| e.element_type }).to eq(["span"])
       end
 
-      it "should render element with more than one children correctly" do
+      it "should create element with more than one children correctly" do
         element = React.create_element(Foo) { [React.create_element('span'), React.create_element('span')] }
-        instance = renderElementToDocument(element)
-        expect(instance.props.children).to be_a(Array)
-        expect(instance.props.children.length).to eq(2)
+        expect(element.children.count).to eq(2)
+        expect(element.children.map{|e| e.element_type }).to eq(["span", "span"])
       end
 
       it "should create a valid element provided class defined `render`" do
@@ -77,7 +75,7 @@ describe React do
 
       it "should allow creating with properties" do
         element = React.create_element(Foo, foo: "bar")
-        expect(element.props.foo).to eq("bar")
+        expect(element.props[:foo]).to eq("bar")
       end
 
       it "should raise error if provided class doesn't defined `render`" do
@@ -125,17 +123,17 @@ describe React do
     describe "create element with properties" do
       it "should enforce snake-cased property name" do
         element = React.create_element("div", class_name: "foo")
-        expect(element.props.className).to eq("foo")
+        expect(element.props[:className]).to eq("foo")
       end
 
       it "should allow custom property" do
         element = React.create_element("div", foo: "bar")
-        expect(element.props.foo).to eq("bar")
+        expect(element.props[:foo]).to eq("bar")
       end
 
       it "should not camel-case custom property" do
         element = React.create_element("div", foo_bar: "foo")
-        expect(element.props.foo_bar).to eq("foo")
+        expect(element.props[:foo_bar]).to eq("foo")
       end
     end
 
@@ -144,13 +142,13 @@ describe React do
         classes = {foo: true, bar: false, lorem: true}
         element = React.create_element("div", class_name: classes)
 
-        expect(element.props.className).to eq("foo lorem")
+        expect(element.props[:className]).to eq("foo lorem")
       end
 
       it "should not alter behavior when passing a string" do
         element = React.create_element("div", class_name: "foo bar")
 
-        expect(element.props.className).to eq("foo bar")
+        expect(element.props[:className]).to eq("foo bar")
       end
     end
   end
