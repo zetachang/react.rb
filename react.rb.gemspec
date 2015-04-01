@@ -16,13 +16,13 @@ Gem::Specification.new do |s|
   s.test_files     = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.require_paths  = ['lib', 'vendor']
 
-  s.add_runtime_dependency 'opal', '~> 0.6.0'
-  s.add_runtime_dependency 'opal-activesupport'
-  s.add_runtime_dependency 'sprockets-es6'
-  s.add_runtime_dependency 'therubyracer'
+  s.add_runtime_dependency 'opal', '~> 0.6'
+  s.add_runtime_dependency 'opal-activesupport', '~> 0'
+  s.add_runtime_dependency 'sprockets-es6', '~> 0'
+  s.add_runtime_dependency 'therubyracer', '~> 0'
   s.add_development_dependency 'react-source', '~> 0.12'
   s.add_development_dependency 'opal-rspec', '~> 0.3.0.beta3'
-  s.add_development_dependency 'sinatra'
-  s.add_development_dependency 'opal-jquery'
-  s.add_development_dependency 'rake'
+  s.add_development_dependency 'sinatra', '~> 1'
+  s.add_development_dependency 'opal-jquery', '~> 0'
+  s.add_development_dependency 'rake', '~> 10'
 end
