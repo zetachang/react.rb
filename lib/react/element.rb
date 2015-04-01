@@ -60,14 +60,14 @@ module React
         def each(&block)
           if block_given?
             %x{
-              React.Children.forEach(#{self.to_n}, function(context){
+              React.Children.forEach(#{self}, function(context){
                 #{block.call(React::Element.new(`context`))}
               })
             }
           else
-            Enumerator.new(`React.Children.count(#{self.to_n})`) do |y|
+            Enumerator.new(`React.Children.count(#{self})`) do |y|
               %x{
-                React.Children.forEach(#{self.to_n}, function(context){
+                React.Children.forEach(#{self}, function(context){
                   #{y << React::Element.new(`context`)}
                 })
               }

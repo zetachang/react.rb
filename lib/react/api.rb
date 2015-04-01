@@ -28,11 +28,11 @@ module React
       # Children Nodes
       if block_given?
         children = [yield].flatten.each do |ele|
-          params << ele.to_n
+          params << ele
         end
       end
 
-      return React::Element.new(`React.createElement.apply(null, #{params})`)
+      return `React.createElement.apply(null, #{params})`
     end
 
     def self.clear_component_class_cache
@@ -43,10 +43,7 @@ module React
       klass.class_eval do
         native_alias :componentWillMount, :component_will_mount
         native_alias :componentDidMount, :component_did_mount
-        def _render
-          self.render.to_n
-        end
-        native_alias :render, :_render
+        native_alias :render, :render
       end
       %x{
         
