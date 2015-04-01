@@ -150,12 +150,12 @@ class App
   include React::Component
 
   def render
-    jsx(%x{
+    %x{
       <div>
         <h1>Outer</h1>
         <Fancy>{ #{5.times.to_a.join(",")} }</Fancy>
       </div>
-    })
+    }
   end
 end
 

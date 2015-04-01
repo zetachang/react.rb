@@ -1,7 +1,7 @@
 PATH
   remote: ../..
   specs:
-    react.rb (0.0.2)
+    react.rb (0.1.0)
       opal (~> 0.6.0)
       opal-activesupport
       sprockets-es6
@@ -10,7 +10,7 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    babel-source (4.7.3)
+    babel-source (4.7.16)
     babel-transpiler (0.6.0)
       babel-source (>= 4.0, < 5)
       execjs (~> 2.0)
