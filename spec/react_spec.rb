@@ -27,7 +27,7 @@ describe React do
       it "should create a valid element with text as only child when block yield String" do
         element = React.create_element('div') { "lorem ipsum" }
         expect(React.is_valid_element(element)).to eq(true)
-        expect(element.props.children).to eq("lorem ipsum")
+        expect(element.props[:children]).to eq("lorem ipsum")
       end
 
       it "should create a valid element with children as array when block yield Array of element" do
@@ -35,7 +35,7 @@ describe React do
           [React.create_element('span'), React.create_element('span'), React.create_element('span')]
         end
         expect(React.is_valid_element(element)).to eq(true)
-        expect(element.props.children.length).to eq(3)
+        expect(element.props[:children].length).to eq(3)
       end
 
       it "should render element with children as array when block yield Array of element" do
@@ -77,7 +77,7 @@ describe React do
 
       it "should allow creating with properties" do
         element = React.create_element(Foo, foo: "bar")
-        expect(element.props.foo).to eq("bar")
+        expect(element.props[:foo]).to eq("bar")
       end
 
       it "should raise error if provided class doesn't defined `render`" do
@@ -125,17 +125,17 @@ describe React do
     describe "create element with properties" do
       it "should enforce snake-cased property name" do
         element = React.create_element("div", class_name: "foo")
-        expect(element.props.className).to eq("foo")
+        expect(element.props[:className]).to eq("foo")
       end
 
       it "should allow custom property" do
         element = React.create_element("div", foo: "bar")
-        expect(element.props.foo).to eq("bar")
+        expect(element.props[:foo]).to eq("bar")
       end
 
       it "should not camel-case custom property" do
         element = React.create_element("div", foo_bar: "foo")
-        expect(element.props.foo_bar).to eq("foo")
+        expect(element.props[:foo_bar]).to eq("foo")
       end
     end
 
@@ -144,13 +144,13 @@ describe React do
         classes = {foo: true, bar: false, lorem: true}
         element = React.create_element("div", class_name: classes)
 
-        expect(element.props.className).to eq("foo lorem")
+        expect(element.props[:className]).to eq("foo lorem")
       end
 
       it "should not alter behavior when passing a string" do
         element = React.create_element("div", class_name: "foo bar")
 
-        expect(element.props.className).to eq("foo bar")
+        expect(element.props[:className]).to eq("foo bar")
       end
     end
   end

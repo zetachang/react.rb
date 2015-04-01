@@ -1,36 +1,55 @@
 require "./ext/string"
 
 module React
-  class Element
-    include Native
-
-    alias_native :element_type, :type
-    alias_native :props, :props
-
-    def initialize(native_element)
-      @native = native_element
+  class Element < `OpalReactElement`    
+    def self.new(native_element)
+      native_element
+    end
+    
+    def to_n
+      self
+    end
+    
+    def props
+      Hash.new(`#{self}.props`)
+    end
+    
+    def element_type
+      `#{self}.type`
+    end
+    
+    def key
+      `#{self}.key`
     end
 
     def on(event_name)
       name = event_name.to_s.event_camelize
       if React::Event::BUILT_IN_EVENTS.include?("on#{name}")
-        self.props["on#{name}"] = %x{
+        prop_name = "on#{name}"
+        callback = %x{
           function(event){
             #{yield React::Event.new(`event`)}
           }
         }
       else
-        self.props["_on#{name}"] = %x{
+        prop_name = "_on#{name}"
+        callback = %x{
           function(){
             #{yield *Array(`arguments`)}
           }
         }
       end
-      self
+      new_props = `{}`    
+      `new_props[#{prop_name}] = #{callback}`
+      `new_props.ref = #{self}.ref`
+
+      element = `React.addons.cloneWithProps(#{self}, new_props)`
+
+      element
     end
 
     def children
-      nodes = self.props.children
+      nodes = self.props[:children]
       class << nodes
         include Enumerable
 
