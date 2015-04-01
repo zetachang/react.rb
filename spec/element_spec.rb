@@ -106,5 +106,21 @@ describe React::Element do
         expect(ele.children.map {|node| node.element_type}).to eq(['a'])
       end
     end
+    
+    describe "single child as string" do
+      it "should works as Enumerable" do
+        ele = React.create_element('div') { "foo" }
+        expect(ele.children.count).to eq(1)
+        expect(ele.children.map {|node| node}).to eq(['foo'])
+      end
+    end
+    
+    describe "single child as number" do
+      it "should works as Enumerable" do
+        ele = React.create_element('div') { 123 }
+        expect(ele.children.count).to eq(1)
+        expect(ele.children.map {|node| node}).to eq([123])
+      end
+    end
   end
 end

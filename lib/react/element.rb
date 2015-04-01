@@ -51,9 +51,13 @@ module React
       nodes = `self.props.children`
       
       if `React.Children.count(nodes)` == 0
-        []
+        `[]`
       elsif `React.Children.count(nodes)` == 1
-        [`React.Children.only(nodes)`]
+        if `(typeof nodes === 'string') || (typeof nodes === 'number')`
+          [nodes]
+        else
+          `[React.Children.only(nodes)]`
+        end
       else
         # Not sure the overhead of doing this..
         class << nodes
