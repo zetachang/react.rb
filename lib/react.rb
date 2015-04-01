@@ -4,7 +4,7 @@ if RUBY_ENGINE == 'opal'
   require "react/element"
   require "react/event"
   require "react/version"
-  require "react/api"
+  require "react/component_factory"
   require "react/validator"
 else
   require "tilt"

@@ -2,7 +2,7 @@ require "spec_helper"
 
 describe React::Component do
   after(:each) do
-    React::API.clear_component_class_cache
+    React::ComponentFactory.clear_component_class_cache
   end
 
   it "should define component spec methods" do

@@ -5,4 +5,12 @@ class String
       return capitalize ? word.substr(0,1).toUpperCase()+word.substr(1) : word;
     })`
   end
+
+  def lower_camelize
+    # TODO Could be implemented more efficiently
+    words = self.split("_")
+    result = [words.first]
+    result.concat(words[1..-1].map {|word| word[0].upcase + word[1..-1] })
+    result.join("")
+  end
 end

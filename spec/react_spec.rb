@@ -2,7 +2,7 @@ require "spec_helper"
 
 describe React do
   after(:each) do
-    React::API.clear_component_class_cache
+    React::ComponentFactory.clear_component_class_cache
   end
 
   describe "is_valid_element" do
