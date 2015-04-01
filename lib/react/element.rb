@@ -10,8 +10,16 @@ module React
       `self.type`
     end
     
+    def key
+      Native(`self.key`)
+    end
+    
     def props
       Hash.new(`self.props`)
+    end
+    
+    def ref
+      Native(`self.ref`)
     end
     
     def on(event_name)

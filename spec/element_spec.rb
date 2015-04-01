@@ -12,18 +12,41 @@ describe React::Element do
     end
   end
   
-  it "should bridge `element_type` to `type` of native" do
-    element = React.create_element('div')
-    expect(element.element_type).to eq("div")
-  end
-
-  async "should be renderable" do
-    element = React.create_element('span')
-    div = `document.createElement("div")`
-    React.render(element, div) do
-      run_async {
-        expect(`div.children[0].tagName`).to eq("SPAN")
+  describe "#element_type" do
+    it "should bridge to `type` of native" do
+      element = React.create_element('div')
+      expect(element.element_type).to eq("div")
+      %x{
+        var m = React.createClass({
+          render:function(){ return React.createElement('div'); }
+        });
+        var ele = React.createElement(m);
       }
+      expect(`ele`.element_type).to eq(`ele.type`)
+    end
+  end
+  
+  describe "#key" do
+    it "should bridge to `key` of native" do
+      element = React.create_element('div', key: "1")
+      expect(element.key).to eq(`#{element}.key`)
+    end
+    
+    it "should return nil if key is null" do
+      element = React.create_element('div')
+      expect(element.key).to be_nil
+    end
+  end
+  
+  describe "#ref" do
+    it "should bridge to `ref` of native" do
+      element = React.create_element('div', ref: "foo")
+      expect(element.ref).to eq(`#{element}.ref`)
+    end
+    
+    it "should return nil if ref is null" do
+      element = React.create_element('div')
+      expect(element.ref).to be_nil
     end
   end
 
