@@ -100,5 +100,5 @@ end
 
 
 Document.ready? do
-  React.render React.create_element(CommentBox, url: "comments.json", poll_interval: 2000), Element.find('#content').get(0)
+  React.render React.create_element(CommentBox, url: "comments.json", poll_interval: 2000), `document.getElementById('content')`
 end
