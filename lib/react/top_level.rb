@@ -33,7 +33,7 @@ module React
   end
 
   def self.is_valid_element(element)
-    element.kind_of?(React::Element) && `React.isValidElement(#{element.to_n})`
+    `React.isValidElement(#{element})`
   end
 
   def self.render_to_string(element)

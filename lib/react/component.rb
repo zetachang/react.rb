@@ -77,10 +77,6 @@ module React
       end
     end
 
-    def jsx(native)
-      React::Element.new(native)
-    end
-
     def method_missing(name, *args, &block)
       unless (React::HTML_TAGS.include?(name) || name == 'present' || name == '_p_tag')
         return super

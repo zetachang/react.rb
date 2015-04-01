@@ -594,21 +594,4 @@ describe React::Component do
       expect(component.mounted?).to eq(true)
     end
   end
-
-  describe "Helpers" do
-    describe "jsx" do
-      it "should wrap passed JS object to React::Element" do
-        stub_const 'Foo', Class.new
-        Foo.class_eval do
-          include React::Component
-
-          def foo
-            jsx(`React.createElement('div')`)
-          end
-        end
-
-        expect(Foo.new.foo).to be_kind_of(React::Element)
-      end
-    end
-  end
 end

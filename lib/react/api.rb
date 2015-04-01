@@ -32,7 +32,7 @@ module React
         end
       end
 
-      return React::Element.new(`React.createElement.apply(null, #{params})`)
+      return `React.createElement.apply(null, #{params})`
     end
 
     def self.clear_component_class_cache

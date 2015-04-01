@@ -1,7 +1,18 @@
 require "spec_helper"
 
 describe React::Element do
-  it "should bridge `type` of native React.Element attributes" do
+  it "should be toll-free bridged to React.Element" do
+    element = React.create_element('div')
+    expect(`React.isValidElement(#{element})`).to eq(true)
+  end
+  
+  describe "#new" do
+    it "should raise error if invokded" do
+      expect { React::Element.new }.to raise_error
+    end
+  end
+  
+  it "should bridge `element_type` to `type` of native" do
     element = React.create_element('div')
     expect(element.element_type).to eq("div")
   end
