@@ -27,7 +27,7 @@ describe React do
       it "should create a valid element with text as only child when block yield String" do
         element = React.create_element('div') { "lorem ipsum" }
         expect(React.is_valid_element(element)).to eq(true)
-        expect(element.props[:children]).to eq("lorem ipsum")
+        expect(element.children.to_a).to eq(["lorem ipsum"])
       end
 
       it "should create a valid element with children as array when block yield Array of element" do
@@ -35,7 +35,7 @@ describe React do
           [React.create_element('span'), React.create_element('span'), React.create_element('span')]
         end
         expect(React.is_valid_element(element)).to eq(true)
-        expect(element.props[:children].length).to eq(3)
+        expect(element.children.length).to eq(3)
       end
 
       it "should render element with children as array when block yield Array of element" do
@@ -56,18 +56,16 @@ describe React do
         end
       end
 
-      it "should render element with only one children correctly" do
+      it "should create element with only one children correctly" do
         element = React.create_element(Foo) { React.create_element('span') }
-        instance = renderElementToDocument(element)
-        expect(instance.props[:children]).not_to be_a(Array)
-        expect(instance.props[:children].element_type).to eq("span")
+        expect(element.children.count).to eq(1)
+        expect(element.children.map{|e| e.element_type }).to eq(["span"])
       end
 
-      it "should render element with more than one children correctly" do
+      it "should create element with more than one children correctly" do
         element = React.create_element(Foo) { [React.create_element('span'), React.create_element('span')] }
-        instance = renderElementToDocument(element)
-        expect(instance.props[:children]).to be_a(Array)
-        expect(instance.props[:children].length).to eq(2)
+        expect(element.children.count).to eq(2)
+        expect(element.children.map{|e| e.element_type }).to eq(["span", "span"])
       end
 
       it "should create a valid element provided class defined `render`" do
