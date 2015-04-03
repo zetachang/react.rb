@@ -1,3 +1,6 @@
+## 0.2.1
+*  Depends on opal `~> 0.6.0`, which accidentally got loosen in previous release
+
 ## 0.2.0
 
 *  Deprecating `jsx` helper method in component instance

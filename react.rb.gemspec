@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.test_files     = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.require_paths  = ['lib', 'vendor']
 
-  s.add_runtime_dependency 'opal', '~> 0.6'
+  s.add_runtime_dependency 'opal', '~> 0.6.0'
   s.add_runtime_dependency 'opal-activesupport', '~> 0'
   s.add_runtime_dependency 'sprockets-es6', '~> 0'
   s.add_runtime_dependency 'therubyracer', '~> 0'
