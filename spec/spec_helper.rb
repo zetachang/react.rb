@@ -9,18 +9,18 @@ module ReactTestHelpers
   end
 
   def renderElementToDocument(element)
-    instance = Native(`ReactTestUtils.renderIntoDocument(#{element.to_n})`)
+    instance = Native(`ReactTestUtils.renderIntoDocument(#{element})`)
     instance.class.include(React::Component::API)
     return instance
   end
 
-  def simulateEvent(event, element, params = {})
+  def simulateEvent(event, component, params = {})
     simulator = Native(`ReactTestUtils.Simulate`)
-    simulator[event.to_s].call(`#{element.dom_node.to_n}`, params)
+    simulator[event.to_s].call(`#{component.to_n}.getDOMNode()`, params)
   end
 
   def isElementOfType(element, type)
-    `React.addons.TestUtils.isElementOfType(#{element.to_n}, #{type.cached_component_class})`
+    `React.addons.TestUtils.isElementOfType(#{element}, #{type.cached_component_class})`
   end
 end
 

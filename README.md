@@ -142,7 +142,7 @@ Not a fan of using element building DSL? Use file extension `.jsx.rb` to get JSX
 # app.jsx.rb
 class Fancy
   def render
-    React.create_element('div') { "fancy" }
+    `<div>"this is fancy"</div>`
   end
 end
 
@@ -150,12 +150,13 @@ class App
   include React::Component
 
   def render
-    jsx(%x{
+    element = %x{ 
       <div>
         <h1>Outer</h1>
         <Fancy>{ #{5.times.to_a.join(",")} }</Fancy>
       </div>
-    })
+    }
+    element
   end
 end
 

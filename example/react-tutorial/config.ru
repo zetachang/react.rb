@@ -42,7 +42,7 @@ get '/' do
         <link rel="stylesheet" href="base.css" />
         <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
         <script src="http://cdnjs.cloudflare.com/ajax/libs/showdown/0.3.1/showdown.min.js"></script>
-        <script src="/assets/react-with-addons.min.js"></script>
+        <script src="/assets/react-with-addons.js"></script>
         <script src="/assets/example.js"></script>
       </head>
       <body>
