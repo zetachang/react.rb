@@ -1,3 +1,7 @@
+## 0.3.0 
+* Add `React::Testing` helpers
+
+
 ## 0.2.0
 
 *  Deprecating `jsx` helper method in component instance
