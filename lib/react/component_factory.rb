@@ -13,18 +13,18 @@ module React
         native_alias :render, :render
       end
       %x{
-        
-        var f = function() { 
-          var int = #{klass}.$new.call(#{klass}, arguments[0]); 
-          int.state = #{klass.respond_to?(:initial_state) ? klass.initial_state.to_n : `{}`};
-          return int;
+        function ctor(){
+          this.constructor = ctor; 
+          this.state = #{klass.respond_to?(:initial_state) ? klass.initial_state.to_n : `{}`};
+          React.Component.apply(this, arguments);
+          #{klass}._alloc.prototype.$initialize.call(this);
         };
-        f.prototype = #{klass}._alloc.prototype;
-        f.propTypes = #{klass.respond_to?(:prop_types) ? klass.prop_types.to_n : `{}`};
-        f.defaultProps = #{klass.respond_to?(:default_props) ? klass.default_props.to_n : `{}`};    
-        Object.assign(f.prototype, React.Component.prototype);
+        ctor.prototype = klass._proto;
+        Object.assign(ctor.prototype, React.Component.prototype);    
+        ctor.propTypes = #{klass.respond_to?(:prop_types) ? klass.prop_types.to_n : `{}`};
+        ctor.defaultProps = #{klass.respond_to?(:default_props) ? klass.default_props.to_n : `{}`};
       }
-      @@component_classes[klass.to_s] ||= `f`
+      @@component_classes[klass.to_s] ||= `ctor`
     end
   end
 end
