@@ -1,8 +1,8 @@
 PATH
   remote: .
   specs:
-    react.rb (0.2.0)
-      opal (~> 0.6)
+    react.rb (0.2.1)
+      opal (~> 0.6.0)
       opal-activesupport (~> 0)
       sprockets-es6 (~> 0)
       therubyracer (~> 0)
