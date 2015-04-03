@@ -9,9 +9,7 @@ module ReactTestHelpers
   end
 
   def renderElementToDocument(element)
-    instance = Native(`ReactTestUtils.renderIntoDocument(#{element})`)
-    instance.class.include(React::Component::API)
-    return instance
+    `ReactTestUtils.renderIntoDocument(#{element})`
   end
 
   def simulateEvent(event, component, params = {})
