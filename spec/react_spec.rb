@@ -37,14 +37,6 @@ describe React do
         expect(React.is_valid_element(element)).to eq(true)
         expect(element.children.length).to eq(3)
       end
-
-      it "should render element with children as array when block yield Array of element" do
-        element = React.create_element('div') do
-          [React.create_element('span'), React.create_element('span'), React.create_element('span')]
-        end
-        instance = renderElementToDocument(element)
-        expect(instance.getDOMNode.childNodes.length).to eq(3)
-      end
     end
     describe "custom element" do
       before do
