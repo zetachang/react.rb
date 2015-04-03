@@ -1,27 +1,9 @@
 require 'react'
-
-module ReactTestHelpers
-  `var ReactTestUtils = React.addons.TestUtils`
-
-  def renderToDocument(type, options = {})
-    element = React.create_element(type, options)
-    return renderElementToDocument(element)
-  end
-
-  def renderElementToDocument(element)
-    `ReactTestUtils.renderIntoDocument(#{element})`
-  end
-
-  def simulateEvent(event, component, params = {})
-    simulator = Native(`ReactTestUtils.Simulate`)
-    simulator[event.to_s].call(`React.findDOMNode(#{component})`, params)
-  end
-
-  def isElementOfType(element, type)
-    `React.addons.TestUtils.isElementOfType(#{element}, #{type.cached_component_class})`
-  end
-end
+require 'react/testing'
 
 RSpec.configure do |config|
-  config.include ReactTestHelpers
+  config.include React::Testing
+  config.after :each do
+    React::ComponentFactory.clear_component_class_cache
+  end
 end

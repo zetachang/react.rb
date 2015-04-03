@@ -1,10 +1,6 @@
 require "spec_helper"
 
 describe React do
-  after(:each) do
-    React::ComponentFactory.clear_component_class_cache
-  end
-
   describe "is_valid_element" do
     it "should return true if passed a valid element" do
       element = `React.createElement('div')`
@@ -105,8 +101,8 @@ describe React do
           end
         end
 
-        renderToDocument(Foo)
-        renderToDocument(Foo)
+        render_to_document(React.create_element(Foo))
+        render_to_document(React.create_element(Foo))
 
         expect(`count`).to eq(2)
       end
