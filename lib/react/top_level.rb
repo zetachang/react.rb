@@ -83,4 +83,8 @@ module React
       `window[#{klass.to_s}] = #{React::ComponentFactory.native_component_class(klass)}`
     end
   end
+  
+  def self.find_dom_node(component)
+    `React.findDOMNode(component)`
+  end
 end
