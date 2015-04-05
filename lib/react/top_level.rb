@@ -41,7 +41,7 @@ module React
        if key == "class_name" && value.is_a?(Hash)
          props[key.lower_camelize] = value.inject([]) {|ary, (k,v)| v ? ary.push(k) : ary}.join(" ")
        else
-         props[React::ATTRIBUTES.include?(key.lower_camelize) ? key.lower_camelize : key] = value
+         props[key.lower_camelize] = value
        end
     end
     params << props.shallow_to_n

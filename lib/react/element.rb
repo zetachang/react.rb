@@ -25,16 +25,15 @@ module React
     def on(event_name)
       name = event_name.to_s.event_camelize
       
+      prop_key = "on#{name}"
       
-      if React::Event::BUILT_IN_EVENTS.include?("on#{name}")
-        prop_key = "on#{name}"
+      if React::Event::BUILT_IN_EVENTS.include?(prop_key)
         callback =  %x{
           function(event){
             #{yield React::Event.new(`event`)}
           }
         }
       else
-        prop_key = "_on#{name}"
         callback = %x{
           function(){
             #{yield *Array(`arguments`)}
