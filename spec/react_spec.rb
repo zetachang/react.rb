@@ -18,6 +18,16 @@ describe React do
       element = React.create_element('div')
       expect(React.is_valid_element(element)).to eq(true)
     end
+    
+    it "should allow passed a React.Component class (constructor function)" do
+      hello_message = `React.createClass({displayName: "HelloMessage",
+        render: function() {
+            return React.createElement("div", null, "Hello ", this.props.name);
+        }
+      });`
+      element = React.create_element(hello_message, name: "David")
+      expect(React.render_to_static_markup(element)).to eq('<div>Hello David</div>')
+    end
 
     context "with block" do
       it "should create a valid element with text as only child when block yield String" do
