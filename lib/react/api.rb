@@ -6,7 +6,9 @@ module React
       params = []
 
       # Component Spec or Nomral DOM
-      if type.kind_of?(Class)
+      if `(typeof type === 'function')`
+        params << type
+      elsif type.kind_of?(Class)
         raise "Provided class should define `render` method"  if !(type.method_defined? :render)
         params << self.native_component_class(type)
       else
