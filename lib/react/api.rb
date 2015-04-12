@@ -86,6 +86,7 @@ module React
             this.__opalInstance = instance;
             return instance;
           },
+          displayName: #{type.to_s},
           render: function() {
             var instance = this._getOpalInstance.apply(this);
             return instance.$render();
