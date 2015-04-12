@@ -24,7 +24,8 @@ class TodoItem
   def render
     li(class_name: {editing: self.editing}) do
       div(class_name: 'view') do
-        input(class_name: "toggle", type: "checkbox", checked: params[:todo].completed).on(:click) do
+        input(class_name: "toggle", type: "checkbox", checked: params[:todo].completed)
+        .on(:change) do |e|
           todo = params[:todo]
           todo.update(:completed => !todo.completed)
         end
