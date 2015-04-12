@@ -1,5 +1,6 @@
 ## 0.3.0 (Edge)
 *  Set `displayName` of component as the Ruby class name, which make it displayed better in [react-devtools](https://github.com/facebook/react-devtools)
+*  Fix React::Element bridging in React Native environment (#fba2daeb)
 
 ## 0.2.1
 *  Depends on opal `~> 0.6.0`, which accidentally got loosen in previous release
