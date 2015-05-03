@@ -1,16 +1,21 @@
-require "execjs"
+require 'react/jsx'
+require 'tilt'
 require "sprockets"
-require "sprockets/es6"
 
-module ExecJS
-  class Runtime
-    alias_method :orig_compile, :compile
-    def compile(source)
-      context = orig_compile("var console = {error: function(){}, log: function(){}, warn: function(){}, info: function(){}};" + source)
-      context
+module React
+  module JSX
+
+    class Template < Tilt::Template
+      self.default_mime_type = 'application/javascript'
+
+      def prepare
+      end
+
+      def evaluate(scope, locals, &block)
+        @output ||= React::JSX.compile(data)
+      end
     end
   end
 end
 
-Sprockets.register_mime_type 'text/jsx', extensions: ['.jsx']
-Sprockets.register_transformer 'text/jsx', 'application/javascript', Sprockets::ES6.new('whitelist' => ['react'])
+Sprockets.register_engine '.jsx', React::JSX::Template
