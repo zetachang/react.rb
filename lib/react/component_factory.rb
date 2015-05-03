@@ -10,6 +10,11 @@ module React
       klass.class_eval do
         native_alias :componentWillMount, :component_will_mount
         native_alias :componentDidMount, :component_did_mount
+        native_alias :componentWillReceiveProps, :component_will_receive_props
+        native_alias :shouldComponentUpdate, :should_component_update?
+        native_alias :componentWillUpdate, :component_will_update
+        native_alias :componentDidUpdate, :component_did_update
+        native_alias :componentWillUnmount, :component_will_unmount
         native_alias :render, :render
       end
       %x{
