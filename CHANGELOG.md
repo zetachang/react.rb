@@ -1,4 +1,4 @@
-## 0.3.0 (Edge)
+## 0.3.0
 *  Depends on `sprockets < 3` thus source map can still work
 *  Remove sprockets-es6 from dependency
 *  Set `displayName` of component as the Ruby class name, which make it displayed better in [react-devtools](https://github.com/facebook/react-devtools)
