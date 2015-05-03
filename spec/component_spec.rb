@@ -186,7 +186,7 @@ describe React::Component do
       end
 
       instance = render_to_document(React.create_element(Foo))
-      expect(instance.dom_node.textContent).to eq("10")
+      expect(`#{React.find_dom_node(instance)}.textContent`).to eq("10")
     end
 
     it "should support original `setState` as `set_state` method" do
@@ -248,7 +248,7 @@ describe React::Component do
         end
 
         instance = render_to_document(React.create_element(Foo, prop: "foobar"))
-        expect(instance.dom_node.textContent).to eq("foobar")
+        expect(`#{React.find_dom_node(instance)}.textContent`).to eq("foobar")
       end
 
       it "should access nested params as orignal Ruby object" do
@@ -259,7 +259,7 @@ describe React::Component do
         end
 
         instance = render_to_document(React.create_element(Foo, prop: [{foo: 10}]))
-        expect(instance.dom_node.textContent).to eq("10")
+        expect(`#{React.find_dom_node(instance)}.textContent`).to eq("10")
       end
     end
 
