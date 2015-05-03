@@ -1,6 +1,15 @@
-## 0.3.0 
+## react.js v0.13 
 * Add `React::Testing` helpers
 
+## 0.3.0
+*  Depends on `sprockets < 3` thus source map can still work
+*  Remove sprockets-es6 from dependency
+*  Set `displayName` of component as the Ruby class name, which make it displayed better in [react-devtools](https://github.com/facebook/react-devtools)
+*  Fix React::Element bridging in React Native environment (#fba2daeb)
+*  React#create_element accept a native component constructor function
+
+## 0.2.1
+*  Depends on opal `~> 0.6.0`, which accidentally got loosen in previous release
 
 ## 0.2.0
 

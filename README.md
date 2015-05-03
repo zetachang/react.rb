@@ -242,11 +242,14 @@ end
 * TodoMVC: see [example/todos](example/todos), your beloved TodoMVC <3.
 * JSX Example: see [example/basic-jsx](example/basic-jsx).
 
+## React Native
+
+For [React Native](http://facebook.github.io/react-native/) support, please refer to [Opal Native](https://github.com/zetachang/opal-native).
+
 ## TODOS
 
 * Documentation
 * API wrapping coverage of the original js library (pretty close though)
-* React Native?
 
 ## Developing
 
