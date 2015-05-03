@@ -4,13 +4,12 @@ Bundler.require
 
 require "react/source"
 
-Opal::Processor.source_map_enabled = true
-
 opal = Opal::Server.new {|s|
   s.append_path './'
   s.append_path File.dirname(::React::Source.bundled_path_for("react-with-addons.js"))
   s.main = 'example'
   s.debug = true
+  s.index_path = "index.html.erb"
 }
 
 map opal.source_maps.prefix do
@@ -33,23 +32,9 @@ post "/comments.json" do
   JSON.generate(comments)
 end
 
-get '/' do
-  <<-HTML
-    <!doctype html>
-    <html>
-      <head>
-        <title>Hello React</title>
-        <link rel="stylesheet" href="base.css" />
-        <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
-        <script src="http://cdnjs.cloudflare.com/ajax/libs/showdown/0.3.1/showdown.min.js"></script>
-        <script src="/assets/react-with-addons.js"></script>
-        <script src="/assets/example.js"></script>
-      </head>
-      <body>
-        <div id="content"></div>
-      </body>
-    </html>
-  HTML
+map '/' do
+  # Sourcemap won't work if only `assets/example.js` is loaded
+  use Opal::Server::Index, opal
 end
 
 run Sinatra::Application
