@@ -19,11 +19,10 @@ describe React::ComponentFactory do
       expect(`instance.$component_will_mount`).to be(`instance.componentWillMount`)
       expect(`instance.$component_did_mount`).to be(`instance.componentDidMount`)
       expect(`instance.$component_will_receive_props`).to be(`instance.componentWillReceiveProps`)
-      expect(`instance.$should_component_update?`).to be(`instance.shouldComponentUpdate`)
+      expect(`instance["$should_component_update?"]`).to be(`instance.shouldComponentUpdate`)
       expect(`instance.$component_will_update`).to be(`instance.componentWillUpdate`)
       expect(`instance.$component_did_update`).to be(`instance.componentDidUpdate`)
       expect(`instance.$component_will_unmount`).to be(`instance.componentWillUnmount`)
-      
     end
   end
 end
