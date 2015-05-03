@@ -3,7 +3,7 @@ Bundler.require
 
 require "react/source"
 
-Opal::Processor.source_map_enabled = false
+Opal::Processor.source_map_enabled = true
 
 run Opal::Server.new { |s|
   s.append_path 'app'
