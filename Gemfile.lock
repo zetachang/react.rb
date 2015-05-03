@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    react.rb (0.2.1)
+    react.rb (0.3.0)
       opal (~> 0.6.0)
       opal-activesupport (~> 0)
       react-jsx (~> 0.8.0)
