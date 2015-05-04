@@ -24,7 +24,7 @@ require "react"
 React.render(React.create_element('h1'){ "Hello World!" }, `document.body`)
 ```
 
-For integration with server (Sinatra, etc), see setup of [TodoMVC](example/todos) or the [official docs](http://opalrb.org/docs/) of Opal.
+For integration with server (Sinatra, etc), see setup of [TodoMVC](examples/todos) or the [official docs](http://opalrb.org/docs/) of Opal.
 
 ## Usage
 
@@ -238,9 +238,9 @@ end
 
 ## Example
 
-* React Tutorial: see [example/react-tutorial](example/react-tutorial), the original CommentBox example.
-* TodoMVC: see [example/todos](example/todos), your beloved TodoMVC <3.
-* JSX Example: see [example/basic-jsx](example/basic-jsx).
+* React Tutorial: see [examples/react-tutorial](examples/react-tutorial), the original CommentBox example.
+* TodoMVC: see [examples/todos](examples/todos), your beloved TodoMVC <3.
+* JSX Example: see [examples/basic-jsx](examples/basic-jsx).
 
 ## React Native
 
