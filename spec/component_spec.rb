@@ -351,7 +351,7 @@ describe React::Component do
         }
         renderToDocument(Foo, bar: 10, lorem: Lorem.new)
         `window.console = org_console;`
-        expect(`log`).to eq(["Warning: In component `Foo`\nRequired prop `foo` was not specified\nProvided prop `bar` was not the specified type `String`"])
+        expect(`log`).to eq(["Warning: Failed propType: In component `Foo`\nRequired prop `foo` was not specified\nProvided prop `bar` was not the specified type `String`"])
       end
 
       it "should not log anything if validation pass" do

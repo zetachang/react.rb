@@ -1,9 +1,13 @@
 module React
   class Validator
+    
     def self.build(&block)
-      validator = self.new
-      validator.instance_eval(&block)
-      validator
+      self.new.build(&block)
+    end
+    
+    def build(&block)
+      instance_eval(&block)
+      self
     end
 
     def initialize

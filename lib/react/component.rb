@@ -9,7 +9,7 @@ module React
       base.include(API)
       base.include(React::Callbacks)
       base.class_eval do
-        class_attribute :init_state, :validator
+        class_attribute :init_state
         define_callback :before_mount
         define_callback :after_mount
         define_callback :before_receive_props
@@ -78,7 +78,7 @@ module React
     end
 
     def method_missing(name, *args, &block)
-      unless (React::HTML_TAGS.include?(name) || name == 'present' || name == '_p_tag')
+      unless (React::HTML_TAGS.include?(name) || name == 'present' || name == '_p_tag' || (name = React.component?(name)))
         return super
       end
 
@@ -107,6 +107,29 @@ module React
 
 
     module ClassMethods
+      
+      class AutoCallBack
+
+        def initialize(object, action)
+          @object = object
+          @action = action
+        end
+
+        def method_missing(method_sym, *arguments, &block)
+          @action.call @object.send(method_sym, *arguments, &block)
+          self
+        end
+
+        def respond_to?(*args)
+          @object.respond_to? *args
+        end
+
+      end
+      
+      def validator
+        @validator ||= React::Validator.new
+      end
+      
       def prop_types
         if self.validator
           {
@@ -128,12 +151,34 @@ module React
       end
 
       def default_props
-        self.validator ? self.validator.default_props : {}
+        validator.default_props
       end
 
       def params(&block)
-        self.validator = React::Validator.build(&block)
+        validator.build(&block)
       end
+      
+      def define_param_method(name, param_type)
+        if param_type == Proc
+          define_method("#{name}") do |*args, &block|
+            params[name].call *args, &block
+          end
+        else
+          define_method("#{name}") do
+            params[name]
+          end
+        end
+      end
+      
+      def require_param(name, options = {})
+        validator.requires(name, options)
+        define_param_method(name, options[:type])
+      end
+      
+      def optional_param(name, options = {})
+        validator.optional(name, options)
+        define_param_method(name, options[:type])
+      end    
 
       def define_state(*states)
         raise "Block could be only given when define exactly one state" if block_given? && states.count > 1
@@ -157,6 +202,18 @@ module React
             self.set_state(hash)
 
             new_state
+          end
+          # use my_state! when side effects are expected.  my_state! << 12 << 13 for example
+          # or use my_state! x to update value instead of saying self.my_state = x
+          define_method("#{name}!") do |*args|
+            return unless @native
+            if args.count > 0
+              current_value = self.state[name]
+              self.send("#{name}=", args[0])
+              current_value
+            else
+              AutoCallBack.new(self.state[name], lambda { |updated_value| self.send("#{name}=", updated_value)})
+            end
           end
         end
       end
@@ -205,5 +262,10 @@ module React
         }
       end
     end
+    
+    class Base
+      include Component
+    end
+    
   end
 end
