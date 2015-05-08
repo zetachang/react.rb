@@ -192,7 +192,7 @@ module React
           # getter
           define_method("#{name}") do
             return unless @native
-            self.state[name]
+            self.state.merge(@_react_component_current_state || {})[name]
           end
           # setter
           define_method("#{name}=") do |new_state|
@@ -200,7 +200,8 @@ module React
             hash = {}
             hash[name] = new_state
             self.set_state(hash)
-
+            @_react_component_current_state ||= {}
+            @_react_component_current_state.merge!(hash)
             new_state
           end
           # use my_state! when side effects are expected.  my_state! << 12 << 13 for example
@@ -212,6 +213,7 @@ module React
               self.send("#{name}=", args[0])
               current_value
             else
+              self.send("#{name}=", self.send("#{name}"))
               AutoCallBack.new(self.state[name], lambda { |updated_value| self.send("#{name}=", updated_value)})
             end
           end
