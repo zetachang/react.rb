@@ -32,6 +32,7 @@ module React
   end
 
   def self.render(element, container)
+    container = `container.$$class ? container[0] : container`
     component = Native(`React.render(#{element.to_n}, container, function(){#{yield if block_given?}})`)
     component.class.include(React::Component::API)
     component
@@ -50,6 +51,6 @@ module React
   end
 
   def self.unmount_component_at_node(node)
-    `React.unmountComponentAtNode(node)`
+    `React.unmountComponentAtNode(node.$$class ? node[0] : node)`
   end
 end
