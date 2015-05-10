@@ -22,7 +22,10 @@ module React
     end
 
     def params
-      Hash.new(`#{self}.props`)
+      Hash.new(`#{self}.props`).inject({}) do |memo, (k,v)|
+        memo[k.underscore] = v
+        memo
+      end
     end
 
     def refs
@@ -30,7 +33,7 @@ module React
     end
 
     def emit(event_name, *args)
-      self.params["_on#{event_name.to_s.event_camelize}"].call(*args)
+      self.params["on_#{event_name.to_s}"].call(*args)
     end
 
     def component_will_mount

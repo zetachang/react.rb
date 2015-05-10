@@ -11,17 +11,6 @@ module React
                 output p param picture pre progress q rp rt ruby s samp script section select
                 small source span strong style sub summary sup table tbody td textarea tfoot th
                 thead time title tr track u ul var video wbr)
-  ATTRIBUTES = %w(accept acceptCharset accessKey action allowFullScreen allowTransparency alt
-                async autoComplete autoPlay cellPadding cellSpacing charSet checked classID
-                className cols colSpan content contentEditable contextMenu controls coords
-                crossOrigin data dateTime defer dir disabled download draggable encType form
-                formAction formEncType formMethod formNoValidate formTarget frameBorder height
-                hidden href hrefLang htmlFor httpEquiv icon id label lang list loop manifest
-                marginHeight marginWidth max maxLength media mediaGroup method min multiple
-                muted name noValidate open pattern placeholder poster preload radioGroup
-                readOnly rel required role rows rowSpan sandbox scope scrolling seamless
-                selected shape size sizes span spellCheck src srcDoc srcSet start step style
-                tabIndex target title type useMap value width wmode dangerouslySetInnerHTML)
 
   def self.create_element(type, properties = {}, &block)
     params = []
@@ -43,7 +32,7 @@ module React
        if key == "class_name" && value.is_a?(Hash)
          props[key.lower_camelize] = value.inject([]) {|ary, (k,v)| v ? ary.push(k) : ary}.join(" ")
        else
-         props[React::ATTRIBUTES.include?(key.lower_camelize) ? key.lower_camelize : key] = value
+         props[key.lower_camelize] = value
        end
     end
     params << props.shallow_to_n

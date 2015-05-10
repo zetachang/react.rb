@@ -129,9 +129,10 @@ describe React do
         expect(element.props[:foo]).to eq("bar")
       end
 
-      it "should not camel-case custom property" do
-        element = React.create_element("div", foo_bar: "foo")
-        expect(element.props[:foo_bar]).to eq("foo")
+      it "should camel-case all property" do
+        element = React.create_element("div", foo_bar: "foo", class_name: 'fancy')
+        expect(element.props[:fooBar]).to eq("foo")
+        expect(element.props[:className]).to eq("fancy")
       end
     end
 
