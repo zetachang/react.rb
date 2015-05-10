@@ -8,6 +8,7 @@ module React
 
     def self.native_component_class(klass)
       klass.class_eval do
+        include(React::Component::API)
         native_alias :componentWillMount, :component_will_mount
         native_alias :componentDidMount, :component_did_mount
         native_alias :componentWillReceiveProps, :component_will_receive_props
@@ -49,11 +50,11 @@ module React
             }
           });
         }
-        function ctor(){
+        function ctor(props){
           this.constructor = ctor; 
           this.state = #{klass.respond_to?(:initial_state) ? klass.initial_state.to_n : `{}`};
           React.Component.apply(this, arguments);
-          #{klass}._alloc.prototype.$initialize.call(this);
+          #{klass}._alloc.prototype.$initialize.call(this, Opal.Hash.$new(props));
         };
         ctor.prototype = klass._proto;
         Object.assign(ctor.prototype, React.Component.prototype);    

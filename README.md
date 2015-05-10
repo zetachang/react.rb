@@ -46,12 +46,12 @@ puts React.render_to_static_markup(React.create_element(HelloMessage))
 
 ### More complicated one
 
-To hook into native ReactComponent life cycle, the native `this` will be passed to the class's initializer. And all corresponding life cycle methods (`componentDidMount`, etc) will be invoked on the instance using the snake-case method name.
+To hook into native ReactComponent life cycle, the props will be passed as the first argument to the class's initializer. And all corresponding life cycle methods (`componentDidMount`, etc) will be invoked on the instance using the snake-case method name.
 
 ```ruby
 class HelloMessage
-  def initialize(native)
-    @native = Native(native)
+  def initialize(props)
+    puts props
   end
 
   def component_will_mount
@@ -59,12 +59,13 @@ class HelloMessage
   end
 
   def render
-    React.create_element("div") { "Hello #{@native[:props][:name]}!" }
+    React.create_element("div") { "Hello #{self.props[:name]}!" }
   end
 end
 
 puts React.render_to_static_markup(React.create_element(HelloMessage, name: 'John'))
 
+# => {"name"=>"John"}
 # => will_mount!
 # => '<div>Hello John!</div>'
 ```
