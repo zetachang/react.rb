@@ -71,9 +71,12 @@ describe React::Element do
       }.to yield_control
     end
 
-    it "should return self for `on` method" do
-      element = React.create_element("div")
-      expect(element.on(:click){}).to eq(element)
+    it "should return the copied ReactElement for `on` method" do
+      element = React.create_element("div", {foo: "bar"})
+      
+      new_element = element.on(:click){}
+      expect(new_element).to be_a(React::Element)
+      expect(new_element.props[:foo]).to eq('bar')
     end
   end
 

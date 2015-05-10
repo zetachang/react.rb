@@ -41,9 +41,12 @@ module React
         }
       end
       
-      `self.props[#{prop_key}] = #{callback}`
+      new_prop = `{}`
+      `new_prop[prop_key] = callback`
       
-      self
+      new_element = `React.cloneElement(#{self}, #{new_prop})`
+      
+      return new_element
     end
 
     def children
