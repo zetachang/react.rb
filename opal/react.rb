@@ -1,0 +1,6 @@
+require "react/top_level"
+require "react/component"
+require "react/element"
+require "react/event"
+require "react/component_factory"
+require "react/validator"
