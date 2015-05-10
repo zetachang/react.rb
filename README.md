@@ -26,6 +26,27 @@ React.render(React.create_element('h1'){ "Hello World!" }, `document.body`)
 
 For integration with server (Sinatra, etc), see setup of [TodoMVC](example/todos) or the [official docs](http://opalrb.org/docs/) of Opal.
 
+## React.js Dependency
+
+React.js v0.13 is required to use react.rb, you can access the pre-bundled source through `Opal::React.bundled_path` directory, example below shows setup for a basic rack app.
+
+```ruby
+#config.ru
+run Opal::Server.new {|s|
+  s.append_path './'
+  s.append_path Opal::React.bundled_path
+  s.main = 'example'
+  s.debug = true
+  s.index_path = "index.html.erb"
+}
+```
+
+```erb
+<!-- index.html.erb -->
+<%= javascript_include_tag "react" %>
+<%= javascript_include_tag "example" %>
+```
+
 ## Usage
 
 ### A Simple Component
