@@ -1,4 +1,4 @@
-require "./ext/string"
+require "react/ext/string"
 
 module React
   class Element < `(function(){var r = React;var f = function(){};var c = r.createClass({render:function(){return null;}});f.prototype = Object.getPrototypeOf(r.createElement(c));return f;})()`
