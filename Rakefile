@@ -8,4 +8,6 @@ Opal::RSpec::RakeTask.new(:default) do |s|
   s.append_path Opal::React.bundled_path
   s.append_path 'spec/vendor'
   s.index_path = 'spec/reactjs/index.html.erb'
+  # Without this, we only see sprockets runner in the stack trace
+  s.debug = true
 end
