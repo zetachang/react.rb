@@ -16,7 +16,8 @@ Gem::Specification.new do |s|
   s.test_files     = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.require_paths  = ['lib', 'vendor']
 
-  s.add_runtime_dependency 'opal', '0.8.0.beta1'
+  # Use other copy of opal for testing
+  #s.add_runtime_dependency 'opal', '0.8.0.beta1'
   s.add_runtime_dependency 'opal-activesupport', '~> 0'
   s.add_runtime_dependency 'therubyracer', '~> 0'
   s.add_runtime_dependency 'react-jsx', '~> 0.8.0'
