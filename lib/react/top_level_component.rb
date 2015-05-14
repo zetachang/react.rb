@@ -18,7 +18,7 @@ module React
       end
       
       @components_to_mount << {component_class: component_class, mount_point: mount_point, static_init: static_init, init: init}
-      
+
     end
     
     def self.external_update(name, &block)
@@ -46,7 +46,15 @@ module React
     def mount_components
       self.class.components_to_mount.each do |mount|
         init = mount[:static_init]
-        init = init.merge(instance_eval &mount[:init]) if mount[:init]
+        if mount[:init]
+          @dont_update_state = true
+          begin
+            init = init.merge(instance_eval &mount[:init]) 
+          ensure
+            @dont_update_state = nil
+          end
+        end
+        puts "init updated"
         React.render(React.create_element(mount[:component_class], init), ::Element[mount[:mount_point]])
       end
       instance_ready!

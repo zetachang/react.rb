@@ -232,7 +232,8 @@ module React
               self.send("#{name}=", args[0])
               current_value
             else
-              self.send("#{name}=", self.send("#{name}")) rescue nil # in case we are in a render
+              # dont_update_state is set in the top_level_component_class while mounting the components
+              self.send("#{name}=", self.send("#{name}")) unless @dont_update_state rescue nil # rescue in case we in middle of render
               AutoCallBack.new(self.state[name], lambda { |updated_value| self.send("#{name}=", updated_value)})
             end
           end
