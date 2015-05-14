@@ -54,9 +54,9 @@ module React
           this.constructor = ctor; 
           this.state = #{klass.respond_to?(:initial_state) ? klass.initial_state.to_n : `{}`};
           React.Component.apply(this, arguments);
-          #{klass}._alloc.prototype.$initialize.call(this, Opal.Hash.$new(props));
+          #{klass}.$$alloc.prototype.$initialize.call(this, Opal.Hash.$new(props));
         };
-        ctor.prototype = klass._proto;
+        ctor.prototype = klass.$$proto;
         Object.assign(ctor.prototype, React.Component.prototype);    
         ctor.propTypes = #{klass.respond_to?(:prop_types) ? klass.prop_types.to_n : `{}`};
         ctor.defaultProps = #{klass.respond_to?(:default_props) ? klass.default_props.to_n : `{}`};
