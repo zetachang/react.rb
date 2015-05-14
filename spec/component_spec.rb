@@ -299,9 +299,14 @@ describe React::Component do
           var org_console = window.console;
           window.console = {warn: function(str){log.push(str)}}
         }
-        render_to_document(React.create_element(Foo, bar: 10, lorem: Lorem.new))
-        `window.console = org_console;`
-        expect(`log`).to eq(["Warning: Failed propType: In component `Foo`\nRequired prop `foo` was not specified\nProvided prop `bar` was not the specified type `String`"])
+        
+        begin
+          render_to_document(React.create_element(Foo, bar: 10, lorem: Lorem.new))
+        
+          expect(`log`).to eq(["Warning: Failed propType: In component `Foo`\nRequired prop `foo` was not specified\nProvided prop `bar` was not the specified type `String`"])          
+        ensure
+          `window.console = org_console;`
+        end
       end
 
       it "should not log anything if validation pass" do
@@ -321,9 +326,12 @@ describe React::Component do
           var org_console = window.console;
           window.console = {warn: function(str){log.push(str)}}
         }
-        render_to_document(React.create_element(Foo, foo: 10, bar: "10", lorem: Lorem.new))
-        `window.console = org_console;`
-        expect(`log`).to eq([])
+        begin
+          render_to_document(React.create_element(Foo, foo: 10, bar: "10", lorem: Lorem.new))        
+          expect(`log`).to eq([])
+        ensure
+          `window.console = org_console;`
+        end        
       end
     end
 
