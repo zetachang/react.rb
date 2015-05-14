@@ -120,8 +120,16 @@ module React
           self
         end
 
-        def respond_to?(*args)
-          @object.respond_to? *args
+        def respond_to?(method, *args)
+          if method == :call
+            true
+          else
+            @object.respond_to? method, *args
+          end
+        end
+        
+        def call(*args)
+          (@object.respond_to?(:call) ? @object : @action).call *args
         end
 
       end
@@ -170,10 +178,12 @@ module React
         end
       end
       
-      def require_param(name, options = {})
+      def required_param(name, options = {})
         validator.requires(name, options)
         define_param_method(name, options[:type])
       end
+      
+      alias_method :require_param, :required_param
       
       def optional_param(name, options = {})
         validator.optional(name, options)
@@ -199,13 +209,22 @@ module React
             return unless @native
             hash = {}
             hash[name] = new_state
-            self.set_state(hash)
             @_react_component_current_state ||= {}
             @_react_component_current_state.merge!(hash)
+            self.set_state(hash)
             new_state
           end
-          # use my_state! when side effects are expected.  my_state! << 12 << 13 for example
-          # or use my_state! x to update value instead of saying self.my_state = x
+          # update state.  
+          #   example 
+          #   # assuming foo is an array
+          #   foo! << "item"
+          #   foo![3] = "a new value"
+          #   # or just
+          #   foo! # like doing foo = foo
+          #   # and
+          #   foo! "some value" # like doing foo = "some value"
+          #   # foo! can be passed as a parameter to a child component 
+          #   # and will act as a two way binding.
           define_method("#{name}!") do |*args|
             return unless @native
             if args.count > 0
@@ -213,7 +232,7 @@ module React
               self.send("#{name}=", args[0])
               current_value
             else
-              self.send("#{name}=", self.send("#{name}"))
+              self.send("#{name}=", self.send("#{name}")) rescue nil # in case we are in a render
               AutoCallBack.new(self.state[name], lambda { |updated_value| self.send("#{name}=", updated_value)})
             end
           end
@@ -263,10 +282,6 @@ module React
           });
         }
       end
-    end
-    
-    class Base
-      include Component
     end
     
   end
