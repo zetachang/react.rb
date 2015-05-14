@@ -12,6 +12,7 @@ describe React::ComponentFactory do
         def component_will_update; end
         def component_did_update; end
         def component_will_unmount; end
+        def render; end
       end
       
       ctor = React::ComponentFactory.native_component_class(Foo)
