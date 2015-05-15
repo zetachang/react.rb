@@ -54,7 +54,6 @@ module React
             @dont_update_state = nil
           end
         end
-        puts "init updated"
         React.render(React.create_element(mount[:component_class], init), ::Element[mount[:mount_point]])
       end
       instance_ready!
