@@ -220,9 +220,9 @@ module React
           #   foo! << "item"
           #   foo![3] = "a new value"
           #   # or just
-          #   foo! # like doing foo = foo
+          #   foo! # like doing self.foo = foo
           #   # and
-          #   foo! "some value" # like doing foo = "some value"
+          #   foo! "some value" # like doing self.foo = "some value"
           #   # foo! can be passed as a parameter to a child component 
           #   # and will act as a two way binding.
           define_method("#{name}!") do |*args|
