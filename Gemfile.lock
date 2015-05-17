@@ -1,19 +1,19 @@
 GIT
+  remote: https://github.com/opal/opal.git
+  revision: cf3c410a9abe711d7455d9a0d67c14a834177eb5
+  specs:
+    opal (0.8.0.beta1)
+      hike (~> 1.2)
+      sourcemap (~> 0.1.0)
+      sprockets (~> 3.1)
+      tilt (~> 1.4)
+
+GIT
   remote: https://github.com/wied03/opal-rspec.git
   revision: 617560c4048708712a416697fd598d4f08ee1c20
   specs:
     opal-rspec (0.4.2)
       opal (>= 0.7.0, < 0.9)
-
-GIT
-  remote: https://github.com/wied03/opal.git
-  revision: 91aed7cd76c20ecfba041bebc86d0e49b309de9f
-  specs:
-    opal (0.8.0.beta1)
-      hike (~> 1.2)
-      sourcemap (~> 0.1.0)
-      sprockets (>= 2.2.3, < 4.0.0)
-      tilt (~> 1.4)
 
 PATH
   remote: .
