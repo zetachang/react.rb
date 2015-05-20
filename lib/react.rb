@@ -7,6 +7,8 @@ if RUBY_ENGINE == 'opal'
   require "react/version"
   require "react/api"
   require "react/validator"
+  require "react/observable"
+  require "react/rendering_context"
 else
   require "opal"
   require "react/version"

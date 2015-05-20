@@ -2,9 +2,12 @@ require "react/ext/string"
 require 'active_support/core_ext/class/attribute'
 require 'react/callbacks'
 require "react/ext/hash"
+require "react/rendering_context"
+require "react/observable"
 
 module React
   module Component
+    
     def self.included(base)
       base.include(API)
       base.include(React::Callbacks)
@@ -18,6 +21,18 @@ module React
         define_callback :before_unmount
       end
       base.extend(ClassMethods)
+      
+      parent = base.name.split("::").inject([Module]) { |nesting, next_const| nesting + [nesting.last.const_get(next_const)] }[-2]
+      parent.class_eval do
+        
+        def method_missing(n, *args, &block)  
+          unless name = const_get(n) and name.method_defined? :render
+            return super
+          end
+          React::RenderingContext.render(name, *args, &block)
+        end
+        
+      end
     end
 
     def initialize(native_element)
@@ -76,9 +91,22 @@ module React
         Kernel.p(*args)
       end
     end
+    
+    def component?(name)
+      name_list = name.split("::")
+      scope_list = self.class.name.split("::").inject([Module]) { |nesting, next_const| nesting + [nesting.last.const_get(next_const)] }.reverse
+      scope_list.each do |scope|
+        component = name_list.inject(scope) do |scope, class_name| 
+          scope.const_get(class_name)
+        end rescue nil
+        return component if component and component.method_defined? :render
+      end
+      nil
+    end
 
-    def method_missing(name, *args, &block)
-      unless (React::HTML_TAGS.include?(name) || name == 'present' || name == '_p_tag' || (name = React.component?(name)))
+    def method_missing(n, *args, &block)
+      name = n
+      unless (React::HTML_TAGS.include?(name) || name == 'present' || name == '_p_tag' || (name = component?(name, self)))
         return super
       end
 
@@ -90,49 +118,14 @@ module React
         name = "p"
       end
 
-      @buffer = [] unless @buffer
-      if block
-        current = @buffer
-        @buffer = []
-        result = block.call
-        element = React.create_element(name, *args) { @buffer.count == 0 ? result : @buffer }
-        @buffer = current
-      else
-        element = React.create_element(name, *args)
-      end
-
-      @buffer << element
-      element
+      React::RenderingContext.render(name, *args, &block)
+    end
+    
+    def watch(value, &on_change)
+      React::Observable.new(value, on_change)
     end
 
-
     module ClassMethods
-      
-      class AutoCallBack
-
-        def initialize(object, action)
-          @object = object
-          @action = action
-        end
-
-        def method_missing(method_sym, *arguments, &block)
-          @action.call @object.send(method_sym, *arguments, &block)
-          self
-        end
-
-        def respond_to?(method, *args)
-          if method == :call
-            true
-          else
-            @object.respond_to? method, *args
-          end
-        end
-        
-        def call(*args)
-          (@object.respond_to?(:call) ? @object : @action).call *args
-        end
-
-      end
       
       def validator
         @validator ||= React::Validator.new
@@ -167,7 +160,23 @@ module React
       end
       
       def define_param_method(name, param_type)
-        if param_type == Proc
+        if param_type == React::Observable
+          (@two_way_params ||= []) << name
+          define_method("#{name}") do
+            params[name].value
+          end
+          define_method("#{name}!") do |*args|
+            if args.count > 0
+              current_value = params[name].value
+              params[name].call args[0]
+              current_value
+            else
+              current_value = params[name].value
+              params[name].call current_value unless @dont_update_state rescue nil # rescue in case we in middle of render
+              params[name]
+            end
+          end
+        elsif param_type == Proc
           define_method("#{name}") do |*args, &block|
             params[name].call *args, &block
           end
@@ -188,7 +197,7 @@ module React
       def optional_param(name, options = {})
         validator.optional(name, options)
         define_param_method(name, options[:type])
-      end    
+      end 
 
       def define_state(*states)
         raise "Block could be only given when define exactly one state" if block_given? && states.count > 1
@@ -214,17 +223,7 @@ module React
             self.set_state(hash)
             new_state
           end
-          # update state.  
-          #   example 
-          #   # assuming foo is an array
-          #   foo! << "item"
-          #   foo![3] = "a new value"
-          #   # or just
-          #   foo! # like doing self.foo = foo
-          #   # and
-          #   foo! "some value" # like doing self.foo = "some value"
-          #   # foo! can be passed as a parameter to a child component 
-          #   # and will act as a two way binding.
+          # observable object
           define_method("#{name}!") do |*args|
             return unless @native
             if args.count > 0
@@ -234,7 +233,7 @@ module React
             else
               # dont_update_state is set in the top_level_component_class while mounting the components
               self.send("#{name}=", self.send("#{name}")) unless @dont_update_state rescue nil # rescue in case we in middle of render
-              AutoCallBack.new(self.state[name], lambda { |updated_value| self.send("#{name}=", updated_value)})
+              watch(self.state[name]) {|new_value| self.send("#{name}=", new_value)}
             end
           end
         end

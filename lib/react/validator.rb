@@ -25,7 +25,7 @@ module React
       options[:required] = false
       @rules[prop_name] = options
     end
-
+  
     def validate(props)
       errors = []
       props.keys.each do |prop_name|
@@ -56,7 +56,7 @@ module React
           errors << "Value `#{value}` for prop `#{prop_name}` is not an allowed value" unless values.include?(value)
         end
       end
-
+      
       errors
     end
 
