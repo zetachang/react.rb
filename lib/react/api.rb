@@ -5,9 +5,10 @@ module React
     def self.create_element(type, properties = {}, &block)
       params = []
 
-      # Component Spec or Nomral DOM
+      # Component Spec or Normal DOM
       if type.kind_of?(Class)
         raise "Provided class should define `render` method"  if !(type.method_defined? :render)
+        render_fn = (type.method_defined? :_render_debug_wrapper) ? :_render_debug_wrapper : :render
         @@component_classes[type.to_s] ||= %x{
           React.createClass({
             propTypes: #{type.respond_to?(:prop_types) ? type.prop_types.to_n : `{}`},
@@ -56,7 +57,7 @@ module React
             },
             render: function() {
               var instance = this._getOpalInstance.apply(this);
-              return #{`instance`.render.to_n};
+              return #{`instance`.send(render_fn).to_n};
             }
           })
         }

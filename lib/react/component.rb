@@ -124,6 +124,12 @@ module React
     def watch(value, &on_change)
       React::Observable.new(value, on_change)
     end
+    
+    def _render_debug_wrapper
+      render
+    rescue Exception => e
+      puts "Exception raised while rendering #{self.class.name}: #{e}"
+    end
 
     module ClassMethods
       
