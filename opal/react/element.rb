@@ -2,7 +2,18 @@ require "react/ext/string"
 
 module React
   class Element < %x{
-    (function(){var r = React;var f = function(){};var c = r.createClass({render:function(){return null;}});f.prototype = Object.getPrototypeOf(r.createElement(c));return f;})()
+    (function() {
+        var r = React;
+        var f = function() {};
+        var c = r.createClass({
+          render: function() {
+            return null;
+            }
+            });
+        f.prototype = Object.getPrototypeOf(r.createElement(c));
+        return f;
+      }
+      )()
   }
     def self.new
       raise "use React.create_element instead"
