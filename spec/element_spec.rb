@@ -1,6 +1,11 @@
 require "spec_helper"
 
 describe React::Element do
+  # Don't want to step on opal-jquery's Element class
+  it "should not define a top level Element class" do
+    expect(::Element).to be_nil
+  end
+  
   it "should be toll-free bridged to React.Element" do
     element = React.create_element('div')
     expect(`React.isValidElement(#{element})`).to eq(true)
