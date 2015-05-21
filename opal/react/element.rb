@@ -1,6 +1,7 @@
 require "react/ext/string"
 
 module React
+  # Need to make the React Element class/prototype inherit from this class
   class Element < %x{
     (function() {
         var r = React;
