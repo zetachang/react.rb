@@ -1,3 +1,4 @@
+require 'opal/jquery'
 require 'element_collision'
 require 'react'
 require 'react/testing'

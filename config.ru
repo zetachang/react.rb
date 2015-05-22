@@ -2,6 +2,7 @@ require 'bundler'
 Bundler.require
 
 require "opal-rspec"
+require 'opal-jquery'
 
 Opal.append_path File.expand_path('../spec', __FILE__)
 
