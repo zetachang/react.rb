@@ -52,6 +52,7 @@ module React
   end
   
   def self.process_value_link(arguments)
+    arguments = arguments.call if arguments.is_a? Proc
     {value: arguments[:value], requestChange: arguments[:request_change]}.to_n
   end
 

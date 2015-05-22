@@ -284,6 +284,29 @@ describe React do
         
         it { is_expected.to eq '2' }
       end   
+    end
+    
+    context 'via lambda' do
+      let(:actual_value) { {} }
+      let(:value_link) {
+        handle_change = lambda {|new_val| actual_value[:set] = new_val }
+        
+        lambda {
+          {value: 3, request_change: handle_change}          
+        }        
+      }
+      
+      it { is_expected.to contain_dom_element(:select).with_selected_value(3) }      
+      
+      describe 'after change' do
+        before do
+          change_value_in_element_select element, '2'
+        end
+        
+        subject { actual_value[:set] }
+        
+        it { is_expected.to eq '2' }
+      end
     end        
   end
 end
