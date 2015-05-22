@@ -51,7 +51,7 @@ module React
   
   def self.process_value_link(arg)
     value, request_change = arg
-    `{value: #{value}, requestChange: function(newVal){ console.log("got value "+newVal); return true; } }`
+    `{value: #{value}, requestChange: #{request_change}}`
   end
 
   def self.render(element, container)
