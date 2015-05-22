@@ -10,7 +10,8 @@ GIT
 
 GIT
   remote: https://github.com/wied03/opal-rspec.git
-  revision: 617560c4048708712a416697fd598d4f08ee1c20
+  revision: e12bdab34480f598a2db25cf988c1b3a3368dd4c
+  branch: opal-0.8-other/rspec-3.1
   specs:
     opal-rspec (0.4.2)
       opal (>= 0.7.0, < 0.9)
