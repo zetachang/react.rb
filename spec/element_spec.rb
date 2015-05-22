@@ -1,9 +1,11 @@
 require "spec_helper"
 
 describe React::Element do
-  # Don't want to step on opal-jquery's Element class
-  it "should not define a top level Element class" do
-    expect(::Element).to be_nil
+  context 'existing Element object defined' do    
+    subject { Element.new.do_stuff }
+    
+    # Don't want to step on opal-jquery's Element class, Opal bridged class get defined at the root scope
+    it { is_expected.to eq 'nope'}
   end
   
   it "should be toll-free bridged to React.Element" do
@@ -12,7 +14,7 @@ describe React::Element do
   end
   
   describe "#new" do
-    it "should raise error if invokded" do
+    it "should raise error if invoked" do
       expect { React::Element.new }.to raise_error
     end
   end

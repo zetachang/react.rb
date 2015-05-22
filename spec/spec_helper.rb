@@ -1,3 +1,4 @@
+require 'element_collision'
 require 'react'
 require 'react/testing'
 require 'debug_formatter'
@@ -10,3 +11,4 @@ RSpec.configure do |config|
   # Want some stack traces
   config.formatter = DebugFormatter
 end
+
