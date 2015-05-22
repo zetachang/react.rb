@@ -259,33 +259,31 @@ describe React do
     }
     
     context 'via method' do      
-      context 'request_change is lambda' do
-        let(:actual_value) { {} }
-        let(:value_link) { method_value_link }
-        
-        def req_change_via_method(new_value)
-          actual_value[:set] = new_value
+      let(:actual_value) { {} }
+      let(:value_link) { method_value_link }
+      
+      def req_change_via_method(new_value)
+        actual_value[:set] = new_value
+      end
+      
+      def method_value_link
+        do_it = lambda do |new_value|
+          req_change_via_method new_value
+        end
+        return 3, do_it
+      end        
+
+      it { is_expected.to contain_dom_element(:select).with_selected_value(3) }       
+      
+      describe 'after change' do
+        before do
+          change_value_in_element_select element, '2'
         end
         
-        def method_value_link
-          do_it = lambda do |new_value|
-            req_change_via_method new_value
-          end
-          return 3, do_it
-        end        
-
-        it { is_expected.to contain_dom_element(:select).with_selected_value(3) }       
+        subject { actual_value[:set] }
         
-        describe 'after change' do
-          before do
-            change_value_in_element_select element, '2'
-          end
-          
-          subject { actual_value[:set] }
-          
-          it { is_expected.to eq '2' }
-        end       
-      end
+        it { is_expected.to eq '2' }
+      end      
     end        
   end
 end
