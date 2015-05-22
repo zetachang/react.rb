@@ -169,15 +169,15 @@ module React
         if param_type == React::Observable
           (@two_way_params ||= []) << name
           define_method("#{name}") do
-            params[name].value
+            params[name].instance_variable_get("@value")
           end
           define_method("#{name}!") do |*args|
             if args.count > 0
-              current_value = params[name].value
+              current_value = params[name].instance_variable_get("@value")
               params[name].call args[0]
               current_value
             else
-              current_value = params[name].value
+              current_value = params[name].instance_variable_get("@value")
               params[name].call current_value unless @dont_update_state rescue nil # rescue in case we in middle of render
               params[name]
             end
