@@ -1,20 +1,22 @@
 GIT
-  remote: https://github.com/opal/opal.git
-  revision: cf3c410a9abe711d7455d9a0d67c14a834177eb5
+  remote: https://github.com/wied03/opal-rspec.git
+  revision: 7e818fb02d97e744efb64f07e340b1e80d0789be
+  branch: opal-0.8-other/rspec-3.1
+  specs:
+    opal-rspec (0.4.2)
+      opal (>= 0.7.0, < 0.9)
+      opal-minitest (~> 0.0)
+
+GIT
+  remote: https://github.com/wied03/opal.git
+  revision: 719a1452594b73b5987ff3455096b68e61ad7659
+  branch: feature/bridge_class_tweak
   specs:
     opal (0.8.0.beta1)
       hike (~> 1.2)
       sourcemap (~> 0.1.0)
       sprockets (~> 3.1)
-      tilt (~> 1.4)
-
-GIT
-  remote: https://github.com/wied03/opal-rspec.git
-  revision: e12bdab34480f598a2db25cf988c1b3a3368dd4c
-  branch: opal-0.8-other/rspec-3.1
-  specs:
-    opal-rspec (0.4.2)
-      opal (>= 0.7.0, < 0.9)
+      tilt (>= 1.4)
 
 PATH
   remote: .
@@ -37,6 +39,9 @@ GEM
       opal (>= 0.5.0, < 1.0.0)
     opal-jquery (0.2.0)
       opal (>= 0.5.0, < 1.0.0)
+    opal-minitest (0.0.4)
+      opal (>= 0.6)
+      rake (~> 10.3)
     rack (1.6.1)
     rack-protection (1.5.3)
       rack
@@ -57,7 +62,7 @@ GEM
     therubyracer (0.12.2)
       libv8 (~> 3.16.14.0)
       ref
-    tilt (1.4.1)
+    tilt (2.0.1)
 
 PLATFORMS
   ruby
