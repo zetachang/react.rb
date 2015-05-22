@@ -1,21 +1,22 @@
 require "react/ext/string"
 
-module React
+module React    
   # Need to make the React Element class/prototype inherit from this class
   class Element < %x{
     (function() {
-        var r = React;
-        var f = function() {};
-        var c = r.createClass({
-          render: function() {
-            return null;
-            }
-            });
-        f.prototype = Object.getPrototypeOf(r.createElement(c));
-        return f;
+      // can't get the prototype for this directly, need to go go in a roundabout way
+      var r = React;
+      var c = r.createClass({
+        render: function() {
+          return null;
+          }
+          });
+      var f = function() {};
+      f.prototype = Object.getPrototypeOf(r.createElement(c));
+      return f;       
       }
       )()
-  }
+    }
     def self.new
       raise "use React.create_element instead"
     end
@@ -109,5 +110,5 @@ module React
     def to_n
       self
     end
-  end
+  end  
 end
