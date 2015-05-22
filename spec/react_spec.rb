@@ -249,13 +249,31 @@ describe React do
      end
    end
 
-  describe 'value_link' do    
-    subject(:element) {
-      React.create_element('div') do
-        React.create_element('select', id: 'the_select_box', value_link: value_link) do
-          [React.create_element('option', value: '2') {'first choice'}, React.create_element('option', value: '3') {'second choice'}]
+  describe 'value_link' do
+    class ::OptionTest
+      include React::Component
+      
+      def render
+        option value: params[:value]
+      end
+    end
+    
+    class ::ValueLinkTest
+      include React::Component
+      
+      def render
+        div do
+          select id: 'the_select_box', value_link: params[:value_link] do
+            params[:options].map do |option|
+              present OptionTest, value: option[:value]
+            end          
+          end
         end
       end
+    end
+    
+    subject(:element) {
+      React.create_element ::ValueLinkTest, value_link: value_link, options: [{value:'2'}, {value: '3'}]     
     }
     
     context 'via method' do      
