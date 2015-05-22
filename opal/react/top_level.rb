@@ -27,17 +27,19 @@ module React
     end
 
     # Passed in properties
-    props = {}
-    properties.map do |key, value|
-       props[key.lower_camelize] = if key == "class_name" && value.is_a?(Hash)
-         value.inject([]) {|ary, (k,v)| v ? ary.push(k) : ary}.join(" ")
-       elsif key == 'value_link'
-         process_value_link value
-       else
-         value
-       end
-    end
-    params << props.shallow_to_n
+    props = properties.map do |key, value|
+      new_key = key.lower_camelize
+      new_value = if key == "class_name" && value.is_a?(Hash)
+        value.inject([]) {|ary, (k,v)| v ? ary.push(k) : ary}.join(" ")
+      elsif key == 'value_link'
+        process_value_link value
+      else
+        value
+      end
+      [new_key, new_value]
+    end    
+    
+    params << Hash[props].shallow_to_n
 
     # Children Nodes
     if block_given?
@@ -49,9 +51,8 @@ module React
     return `React.createElement.apply(null, #{params})`
   end
   
-  def self.process_value_link(arg)
-    value, request_change = arg
-    `{value: #{value}, requestChange: #{request_change}}`
+  def self.process_value_link(arguments)
+    {value: arguments[:value], requestChange: arguments[:request_change]}.to_n
   end
 
   def self.render(element, container)

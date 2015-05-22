@@ -270,7 +270,7 @@ describe React do
         do_it = lambda do |new_value|
           req_change_via_method new_value
         end
-        return 3, do_it
+        {value: 3, request_change: do_it}
       end        
 
       it { is_expected.to contain_dom_element(:select).with_selected_value(3) }       
@@ -283,7 +283,7 @@ describe React do
         subject { actual_value[:set] }
         
         it { is_expected.to eq '2' }
-      end      
+      end   
     end        
   end
 end
