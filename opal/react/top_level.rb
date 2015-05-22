@@ -16,14 +16,14 @@ module React
     params = []
     
     # Component Spec or Nomral DOM
-    if `(typeof type === 'function')`
-      params << type
+    params << if `(typeof type === 'function')`
+      type
     elsif type.kind_of?(Class)
       raise "Provided class should define `render` method"  if !(type.method_defined? :render)
-      params << React::ComponentFactory.native_component_class(type)
+      React::ComponentFactory.native_component_class(type)
     else
       raise "#{type} not implemented" unless HTML_TAGS.include?(type)
-      params << type
+      type
     end
 
     # Passed in properties
