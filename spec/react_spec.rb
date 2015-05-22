@@ -203,4 +203,71 @@ describe React do
     end
   end
 
+  RSpec::Matchers.define :contain_dom_element do |element_type|
+    def get_dom_node(react_element)
+      rendered_element = `React.addons.TestUtils.renderIntoDocument(#{react_element})`
+      React.find_dom_node rendered_element
+    end
+
+    def get_jq_node(react_element)
+      dom_node = get_dom_node react_element
+      dom_node ? Element.find(dom_node) : nil
+    end
+
+    def find_element_jq_node(react_element, element_type)
+      jq_dom_node = get_jq_node react_element
+      return nil unless jq_dom_node
+      elements = jq_dom_node.find(element_type)
+      elements.any? ? elements : nil
+    end
+
+     match do |react_element|
+       @element = find_element_jq_node react_element, element_type
+       next false unless @element
+       # Don't make the test get the type exactly right
+       @element.value.to_s == @expected_value.to_s
+     end
+
+     failure_message do |react_element|
+       if @element
+         "Found select, but value was '#{@element.value}' and we expected '#{@expected_value}'"
+       else
+         "Expected rendered element to contain a #{element_type}, but it did not, did contain this: #{Native(get_dom_node(react_element)).outerHTML}"
+       end
+     end
+
+     chain :with_selected_value do |expected_value|
+       @expected_value = expected_value
+     end
+   end
+
+  describe 'value_link' do    
+    subject {
+      React.create_element('div') do
+        React.create_element('select', id: 'the_select_box', value_link: value_link) do
+          [React.create_element('option', value: '2') {'first choice'}, React.create_element('option', value: '3') {'second choice'}]
+        end
+      end
+    }
+    
+    context 'via method' do      
+      context 'request_change is method' do
+        before do
+          @actual_value = nil
+        end
+        
+        let(:value_link) { method_value_link }
+        
+        def req_change_via_method(new_value)
+          @actual_value = new_value
+        end
+        
+        def method_value_link
+          return 3, req_change_via_method
+        end        
+
+        it { is_expected.to contain_dom_element(:select).with_selected_value(3) }        
+      end
+    end        
+  end
 end

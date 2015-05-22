@@ -29,10 +29,12 @@ module React
     # Passed in properties
     props = {}
     properties.map do |key, value|
-       if key == "class_name" && value.is_a?(Hash)
-         props[key.lower_camelize] = value.inject([]) {|ary, (k,v)| v ? ary.push(k) : ary}.join(" ")
+       props[key.lower_camelize] = if key == "class_name" && value.is_a?(Hash)
+         value.inject([]) {|ary, (k,v)| v ? ary.push(k) : ary}.join(" ")
+       elsif key == 'value_link'
+         process_value_link value
        else
-         props[key.lower_camelize] = value
+         value
        end
     end
     params << props.shallow_to_n
@@ -45,6 +47,11 @@ module React
     end
 
     return `React.createElement.apply(null, #{params})`
+  end
+  
+  def self.process_value_link(arg)
+    value, request_change = arg
+    `{value: #{value}, requestChange: function(newVal){ console.log("got value "+newVal); return true; } }`
   end
 
   def self.render(element, container)
