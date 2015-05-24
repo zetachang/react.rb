@@ -22,4 +22,15 @@ module React
     
   end
   
+  class ::String
+    
+    alias_method :old_display, :display
+    
+    def display(*args, &block)
+      React::RenderingContext.render(self)
+      old_display *args, &block if respond_to? :old_display
+    end
+    
+  end
+  
 end

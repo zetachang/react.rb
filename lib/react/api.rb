@@ -63,9 +63,12 @@ module React
         }
 
         params << @@component_classes[type.to_s]
-      else
-        raise "#{type} not implemented" unless HTML_TAGS.include?(type)
+      elsif HTML_TAGS.include?(type)
         params << type
+      elsif type.is_a? String
+        return React::Element.new(type)
+      else
+        raise "#{type} not implemented"
       end
 
       # Passed in properties

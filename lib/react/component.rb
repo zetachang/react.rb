@@ -105,12 +105,13 @@ module React
     end
 
     def method_missing(n, *args, &block)
+      return params[n] if params.key? n
       name = n
       unless (React::HTML_TAGS.include?(name) || name == 'present' || name == '_p_tag' || (name = component?(name, self)))
         return super
       end
 
-      if name == "present"
+      if name == "present" 
         name = args.shift
       end
 
@@ -206,14 +207,13 @@ module React
       end 
 
       def define_state(*states)
-        raise "Block could be only given when define exactly one state" if block_given? && states.count > 1
-
-        self.init_state = {} unless self.init_state
-
-        if block_given?
-          self.init_state[states[0]] = yield
-        end
-        states.each do |name|
+        
+        self.init_state ||= {} 
+        default_initial_value = block_given? ? yield : nil
+        states_hash = (states.last.is_a? Hash) ? states.pop : {}
+        states.each { |name| states_hash[name] = default_initial_value }
+        self.init_state.merge! states_hash
+        states_hash.each do |name, initial_value|
           # getter
           define_method("#{name}") do
             return unless @native
