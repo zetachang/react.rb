@@ -2,13 +2,13 @@ module React
   
   class Observable
 
-    def initialize(value, on_change)
+    def initialize(value, on_change = nil, &block)
       @value = value
-      @on_change = on_change 
+      @on_change = on_change || block
     end
 
     def method_missing(method_sym, *args, &block)
-      @value.send(method_sym, *args, &block).tap { |result| @on_change.call result}
+      @value.send(method_sym, *args, &block).tap { |result| @on_change.call result }
     end
 
     def respond_to?(method, *args)

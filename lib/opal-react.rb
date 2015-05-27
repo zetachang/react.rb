@@ -1,7 +1,6 @@
 if RUBY_ENGINE == 'opal'
   require "opal-react/top_level"
   require "opal-react/component"  
-  require "opal-react/top_level_component"
   require "opal-react/element"
   require "opal-react/event"
   require "opal-react/version"

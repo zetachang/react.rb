@@ -5,16 +5,13 @@ module React
     
     def self.create_native_react_class(type)
       raise "Provided class should define `render` method"  if !(type.method_defined? :render)
-      render_fn = (type.method_defined? :_render_debug_wrapper) ? :_render_debug_wrapper : :render
+      render_fn = (type.method_defined? :_render_wrapper) ? :_render_wrapper : :render
       @@component_classes[type.to_s] ||= %x{
         React.createClass({
           propTypes: #{type.respond_to?(:prop_types) ? type.prop_types.to_n : `{}`},
           getDefaultProps: function(){
             return #{type.respond_to?(:default_props) ? type.default_props.to_n : `{}`};
           },
-          /* getInitialState: function(){
-            return #{type.respond_to?(:initial_state) ? type.initial_state.to_n : `{}`};
-          }, */
           componentWillMount: function() {
             var instance = this._getOpalInstance.apply(this);
             return #{`instance`.component_will_mount if type.method_defined? :component_will_mount};

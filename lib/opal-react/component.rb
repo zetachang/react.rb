@@ -6,6 +6,8 @@ require "opal-react/rendering_context"
 require "opal-react/observable"
 require "opal-react/state"
 
+require 'native'
+
 module React
   module Component
     
@@ -20,6 +22,11 @@ module React
         define_callback :before_update
         define_callback :after_update
         define_callback :before_unmount
+        
+        def render
+          raise "no render defined"
+        end unless method_defined? :render
+        
       end
       base.extend(ClassMethods)
       
@@ -54,7 +61,6 @@ module React
     end
     
     def update_react_js_state(object, name, value)
-      puts "update_react_js_state(#{object}, #{name}, #{value})"
       set_state({"#{object.class.to_s+'.' unless object == self}name" => value}) rescue nil # in case we are in render
     end
 
@@ -64,30 +70,27 @@ module React
 
     def component_will_mount
       React::State.initialize_states(self, initial_state)
-      React::State.set_state_context_to(self) { puts "#{self} will mount"; self.run_callback(:before_mount) }
+      React::State.set_state_context_to(self) { self.run_callback(:before_mount) }
     end
 
     def component_did_mount
-      React::State.set_state_context_to(self) { puts "#{self} did mount"; self.run_callback(:after_mount) }
-    rescue Exception => e
-      puts "did mount exception #{e}"
+      React::State.set_state_context_to(self) { self.run_callback(:after_mount) }
     end
 
     def component_will_receive_props(next_props)
-      React::State.set_state_context_to(self) { puts "#{self} new props"; self.run_callback(:before_receive_props, Hash.new(next_props)) }
+      React::State.set_state_context_to(self) { self.run_callback(:before_receive_props, Hash.new(next_props)) }
     end
 
     def should_component_update?(next_props, next_state)
-      React::State.set_state_context_to(self) { puts "#{self} should update?"; self.respond_to?(:needs_update?) ? self.needs_update?(Hash.new(next_props), Hash.new(next_state)) : true }
+      React::State.set_state_context_to(self) { self.respond_to?(:needs_update?) ? self.needs_update?(Hash.new(next_props), Hash.new(next_state)) : true }
     end
 
     def component_will_update(next_props, next_state)
-      React::State.set_state_context_to(self) { puts "#{self} will update"; self.run_callback(:before_update, Hash.new(next_props), Hash.new(next_state)) }
+      React::State.set_state_context_to(self) { self.run_callback(:before_update, Hash.new(next_props), Hash.new(next_state)) }
     end
 
     def component_did_update(prev_props, prev_state)
       React::State.set_state_context_to(self) do
-        puts "#{self} did update"; 
         self.run_callback(:after_update, Hash.new(prev_props), Hash.new(prev_state))
       end
     end
@@ -141,9 +144,8 @@ module React
       React::Observable.new(value, on_change)
     end
     
-    def _render_debug_wrapper
+    def _render_wrapper
       React::State.set_state_context_to(self) do
-        puts "#{self} about to render"
         render_result = render
         React::State.update_states_to_observe
         render_result
@@ -173,10 +175,6 @@ module React
           {}
         end
       end
-
-      #def initial_state
-      #  self.init_state || {}
-      #end
 
       def default_props
         validator.default_props
@@ -234,8 +232,6 @@ module React
         states_hash.each do |name, initial_value|
           define_state_methods(self, name)
         end
-      rescue Exception => e
-        puts "failed to define state #{e}"
       end
       
       def export_state(*states) 
@@ -264,13 +260,18 @@ module React
             current_value
           else
             current_state = React::State.get_state(from || self, name)
-            # @dont_update_state is set in the top_level_component_class while mounting the components
-            React::State.set_state(from || self, name, current_state) unless @dont_update_state 
-            watch(current_state) {|new_value| React::State.set_state(from || self, name, new_value)}
+            React::State.set_state(from || self, name, current_state)
+            React::Observable.new(current_state) {|new_value| React::State.set_state(from || self, name, new_value)}
+            #watch(current_state) {|new_value| React::State.set_state(from || self, name, new_value)}
           end
         end
       end
-
+      
+      def export_component(opts = {})
+        export_name = opts[:as] || name.to_s.gsub("::", "_")
+        Native(`window`)[export_name] = React::API.create_native_react_class(self)
+      end
+      
     end
 
     module API
