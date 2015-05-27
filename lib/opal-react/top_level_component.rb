@@ -1,5 +1,5 @@
-require 'react/component'
-require 'opal-jquery'
+require 'opal-react/component'
+#require 'opal-jquery'
 
 module React
   
@@ -13,7 +13,12 @@ module React
         @components_to_mount = []
         top_level_component_class = Module.const_get(self.name)
         Document.ready.then do
+          begin
           React.render(React.create_element(top_level_component_class), ::Element['<div></div>'])
+          puts "should be rendered"
+        rescue Exception => e
+        puts e
+      end
         end
       end
       
@@ -23,7 +28,7 @@ module React
     
     def self.external_update(name, &block)
       define_singleton_method name do |*args|
-        instance_ready? { |instance| instance.instance_exec *args, &block }
+        instance_ready? { |instance| State.set_state_context_to(instance) { instance.instance_exec *args, &block } }
       end
     end
     
@@ -44,19 +49,25 @@ module React
     end
     
     def mount_components
-      self.class.components_to_mount.each do |mount|
-        init = mount[:static_init]
-        if mount[:init]
-          @dont_update_state = true
-          begin
-            init = init.merge(instance_eval &mount[:init]) 
-          ensure
-            @dont_update_state = nil
+      puts "mounting components now #{self}"
+      State.set_state_context_to(self) do
+        self.class.components_to_mount.each do |mount|
+          init = mount[:static_init]
+          if mount[:init]
+            @dont_update_state = true
+            begin
+              init = init.merge(instance_eval &mount[:init]) 
+            ensure
+              @dont_update_state = nil
+            end
           end
+          #React.render(React.create_element(mount[:component_class], init), ::Element[mount[:mount_point]])
         end
-        React.render(React.create_element(mount[:component_class], init), ::Element[mount[:mount_point]])
+        State.update_states_to_observe
+        instance_ready!
       end
-      instance_ready!
+    rescue Exception => e
+      puts e
     end
     
     after_mount  :mount_components

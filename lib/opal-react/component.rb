@@ -1,9 +1,10 @@
-require "react/ext/string"
+require "opal-react/ext/string"
 require 'active_support/core_ext/class/attribute'
-require 'react/callbacks'
-require "react/ext/hash"
-require "react/rendering_context"
-require "react/observable"
+require 'opal-react/callbacks'
+require "opal-react/ext/hash"
+require "opal-react/rendering_context"
+require "opal-react/observable"
+require "opal-react/state"
 
 module React
   module Component
@@ -12,7 +13,7 @@ module React
       base.include(API)
       base.include(React::Callbacks)
       base.class_eval do
-        class_attribute :init_state
+        class_attribute :initial_state
         define_callback :before_mount
         define_callback :after_mount
         define_callback :before_receive_props
@@ -51,37 +52,51 @@ module React
       raise "No native ReactComponent associated" unless @native
       Hash.new(`#{@native}.state`)
     end
+    
+    def update_react_js_state(object, name, value)
+      puts "update_react_js_state(#{object}, #{name}, #{value})"
+      set_state({"#{object.class.to_s+'.' unless object == self}name" => value}) rescue nil # in case we are in render
+    end
 
     def emit(event_name, *args)
       self.params["_on#{event_name.to_s.event_camelize}"].call(*args)
     end
 
     def component_will_mount
-      self.run_callback(:before_mount)
+      React::State.initialize_states(self, initial_state)
+      React::State.set_state_context_to(self) { puts "#{self} will mount"; self.run_callback(:before_mount) }
     end
 
     def component_did_mount
-      self.run_callback(:after_mount)
+      React::State.set_state_context_to(self) { puts "#{self} did mount"; self.run_callback(:after_mount) }
+    rescue Exception => e
+      puts "did mount exception #{e}"
     end
 
     def component_will_receive_props(next_props)
-      self.run_callback(:before_receive_props, Hash.new(next_props))
+      React::State.set_state_context_to(self) { puts "#{self} new props"; self.run_callback(:before_receive_props, Hash.new(next_props)) }
     end
 
     def should_component_update?(next_props, next_state)
-      self.respond_to?(:needs_update?) ? self.needs_update?(Hash.new(next_props), Hash.new(next_state)) : true
+      React::State.set_state_context_to(self) { puts "#{self} should update?"; self.respond_to?(:needs_update?) ? self.needs_update?(Hash.new(next_props), Hash.new(next_state)) : true }
     end
 
     def component_will_update(next_props, next_state)
-      self.run_callback(:before_update, Hash.new(next_props), Hash.new(next_state))
+      React::State.set_state_context_to(self) { puts "#{self} will update"; self.run_callback(:before_update, Hash.new(next_props), Hash.new(next_state)) }
     end
 
     def component_did_update(prev_props, prev_state)
-      self.run_callback(:after_update, Hash.new(prev_props), Hash.new(prev_state))
+      React::State.set_state_context_to(self) do
+        puts "#{self} did update"; 
+        self.run_callback(:after_update, Hash.new(prev_props), Hash.new(prev_state))
+      end
     end
 
     def component_will_unmount
-      self.run_callback(:before_unmount)
+      React::State.set_state_context_to(self) do 
+        self.run_callback(:before_unmount)
+        React::State.remove
+      end
     end
 
     def p(*args, &block)
@@ -127,7 +142,12 @@ module React
     end
     
     def _render_debug_wrapper
-      render
+      React::State.set_state_context_to(self) do
+        puts "#{self} about to render"
+        render_result = render
+        React::State.update_states_to_observe
+        render_result
+      end
     rescue Exception => e
       puts "Exception raised while rendering #{self.class.name}: #{e}"
     end
@@ -154,9 +174,9 @@ module React
         end
       end
 
-      def initial_state
-        self.init_state || {}
-      end
+      #def initial_state
+      #  self.init_state || {}
+      #end
 
       def default_props
         validator.default_props
@@ -205,45 +225,52 @@ module React
         validator.optional(name, options)
         define_param_method(name, options[:type])
       end 
-
-      def define_state(*states)
-        
-        self.init_state ||= {} 
+      
+      def define_state(*states) 
         default_initial_value = block_given? ? yield : nil
         states_hash = (states.last.is_a? Hash) ? states.pop : {}
         states.each { |name| states_hash[name] = default_initial_value }
-        self.init_state.merge! states_hash
+        (self.initial_state ||= {}).merge! states_hash
         states_hash.each do |name, initial_value|
-          # getter
-          define_method("#{name}") do
-            return unless @native
-            self.state.merge(@_react_component_current_state || {})[name]
-          end
-          # setter
-          define_method("#{name}=") do |new_state|
-            return unless @native
-            hash = {}
-            hash[name] = new_state
-            @_react_component_current_state ||= {}
-            @_react_component_current_state.merge!(hash)
-            self.set_state(hash)
-            new_state
-          end
-          # observable object
-          define_method("#{name}!") do |*args|
-            return unless @native
-            if args.count > 0
-              current_value = self.state[name]
-              self.send("#{name}=", args[0])
-              current_value
-            else
-              # dont_update_state is set in the top_level_component_class while mounting the components
-              self.send("#{name}=", self.send("#{name}")) unless @dont_update_state rescue nil # rescue in case we in middle of render
-              watch(self.state[name]) {|new_value| self.send("#{name}=", new_value)}
-            end
+          define_state_methods(self, name)
+        end
+      rescue Exception => e
+        puts "failed to define state #{e}"
+      end
+      
+      def export_state(*states) 
+        default_initial_value = block_given? ? yield : nil
+        states_hash = (states.last.is_a? Hash) ? states.pop : {}
+        states.each { |name| states_hash[name] = default_initial_value }
+        React::State.initialize_states(self, states_hash)
+        states_hash.each do |name, initial_value|
+          define_state_methods(self, name, self)
+          define_state_methods(singleton_class, name, self)
+        end
+      end
+      
+      def define_state_methods(this, name, from = nil)
+        this.define_method("#{name}") do
+          React::State.get_state(from || self, name)
+        end
+        this.define_method("#{name}=") do |new_state|
+          React::State.set_state(from || self, name, new_state)
+        end
+        this.define_method("#{name}!") do |*args|
+          #return unless @native
+          if args.count > 0
+            current_value = React::State.get_state(from || self, name)
+            React::State.set_state(from || self, name, args[0])
+            current_value
+          else
+            current_state = React::State.get_state(from || self, name)
+            # @dont_update_state is set in the top_level_component_class while mounting the components
+            React::State.set_state(from || self, name, current_state) unless @dont_update_state 
+            watch(current_state) {|new_value| React::State.set_state(from || self, name, new_value)}
           end
         end
       end
+
     end
 
     module API
