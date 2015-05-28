@@ -268,8 +268,10 @@ module React
       end
       
       def export_component(opts = {})
-        export_name = opts[:as] || name.to_s.gsub("::", "_")
-        Native(`window`)[export_name] = React::API.create_native_react_class(self)
+        export_name = (opts[:as] || name).split("::")
+        Native(`window`)[export_name.first] = ([React::API.create_native_react_class(self)] + export_name[1..-1].reverse).inject do |memo, sub_name| 
+          {sub_name => memo}.to_n
+        end
       end
       
     end
