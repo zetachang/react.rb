@@ -271,8 +271,10 @@ module React
         export_name = (opts[:as] || name).split("::")
         Native(`window`)[export_name.first] = ([React::API.create_native_react_class(self)] + export_name[1..-1].reverse).inject do |memo, sub_name| 
           {sub_name => memo}
-        end.to_n     
+        end.to_n
       end
+      
+    end
 
     module API
       include Native
