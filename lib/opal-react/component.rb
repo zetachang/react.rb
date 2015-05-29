@@ -269,9 +269,17 @@ module React
       
       def export_component(opts = {})
         export_name = (opts[:as] || name).split("::")
-        Native(`window`)[export_name.first] = ([React::API.create_native_react_class(self)] + export_name[1..-1].reverse).inject do |memo, sub_name| 
-          {sub_name => memo}
-        end.to_n
+        first_name = export_name.first
+        Native(`window`)[first_name] = add_item_to_tree(Native(`window`)[first_name], [React::API.create_native_react_class(self)] + export_name[1..-1].reverse).to_n
+      end
+        
+      def add_item_to_tree(current_tree, new_item)
+        if Native(current_tree).class != Native::Object or new_item.length == 1
+          new_item.inject do |memo, sub_name| {sub_name => memo} end
+        else
+          Native(current_tree)[new_item.last] = add_item_to_tree(Native(current_tree)[new_item.last], new_item[0..-2])
+          current_tree
+        end
       end
       
     end
