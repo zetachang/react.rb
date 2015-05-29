@@ -13,6 +13,7 @@ else
   require "opal"
   require "opal-react/version"
   require "opal-activesupport"
+  require "rails-helpers/react_component"
 
   Opal.append_path File.expand_path('../', __FILE__).untaint
   Opal.append_path File.expand_path('../../vendor', __FILE__).untaint
