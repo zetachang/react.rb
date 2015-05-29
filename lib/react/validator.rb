@@ -9,6 +9,10 @@ module React
     def initialize
       @rules = {}
     end
+    
+    def evaluate_more_rules(&block)
+       self.instance_eval(&block)
+    end
 
     def requires(prop_name, options = {})
       rule = options
