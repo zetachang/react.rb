@@ -1,23 +1,6 @@
 GIT
-  remote: https://github.com/opal/opal-jquery.git
-  revision: 7b5c300533641e08de503e06e0d1ac40c024f2a3
-  specs:
-    opal-jquery (0.3.0)
-      opal (>= 0.7.0, < 0.9.0)
-
-GIT
-  remote: https://github.com/wied03/opal-rspec.git
-  revision: 7e818fb02d97e744efb64f07e340b1e80d0789be
-  branch: opal-0.8-other/rspec-3.1
-  specs:
-    opal-rspec (0.4.2)
-      opal (>= 0.7.0, < 0.9)
-      opal-minitest (~> 0.0)
-
-GIT
-  remote: https://github.com/wied03/opal.git
-  revision: 719a1452594b73b5987ff3455096b68e61ad7659
-  branch: feature/bridge_class_tweak
+  remote: https://github.com/opal/opal.git
+  revision: 4a437686876597ea371917f0129f70296cde01b1
   specs:
     opal (0.8.0.beta1)
       hike (~> 1.2)
@@ -36,6 +19,13 @@ PATH
       sprockets (~> 3.1)
       therubyracer (~> 0)
 
+PATH
+  remote: ./opal-rspec
+  specs:
+    opal-rspec (0.5.0.beta1)
+      opal (>= 0.7.0, < 0.9)
+      opal-minitest (~> 0.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -44,6 +34,8 @@ GEM
     json (1.8.2)
     libv8 (3.16.14.7)
     opal-activesupport (0.1.0)
+      opal (>= 0.5.0, < 1.0.0)
+    opal-jquery (0.2.0)
       opal (>= 0.5.0, < 1.0.0)
     opal-minitest (0.0.4)
       opal (>= 0.6)
@@ -75,7 +67,7 @@ PLATFORMS
 
 DEPENDENCIES
   opal!
-  opal-jquery!
+  opal-jquery (~> 0)
   opal-rspec!
   rake (~> 10)
   react.rb!

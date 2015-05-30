@@ -4,3 +4,7 @@ rvm:
   - 1.9.3
   - 2.0.0
   - 2.1
+
+before_install:
+  - git submodule update --init
+  - cd opal-rspec; git submodule update --init
