@@ -18,7 +18,7 @@ describe React do
       element = React.create_element('div')
       expect(React.is_valid_element(element)).to eq(true)
     end
-    
+
     it "should allow passed a React.Component class (constructor function)" do
       hello_message = `React.createClass({displayName: "HelloMessage",
         render: function() {
@@ -203,4 +203,128 @@ describe React do
     end
   end
 
+  def get_dom_node(react_element)
+    rendered_element = `React.addons.TestUtils.renderIntoDocument(#{react_element})`
+    React.find_dom_node rendered_element
+  end
+
+  def get_jq_node(react_element)
+    dom_node = get_dom_node react_element
+    dom_node ? Element.find(dom_node) : nil
+  end
+
+  def find_element_jq_node(react_element, element_type)
+    jq_dom_node = get_jq_node react_element
+    return nil unless jq_dom_node
+    elements = jq_dom_node.find(element_type)
+    elements.any? ? elements : nil
+  end
+  
+  def change_value_in_element_select(element, value)
+    rendered = `React.addons.TestUtils.renderIntoDocument(#{element})`          
+    parent_node = React.find_dom_node rendered
+    select = Element.find(parent_node).find('select')
+    select_native = select.get()[0]         
+    `React.addons.TestUtils.Simulate.change(#{select_native}, {target: {value: #{value}}})`
+  end
+  
+  RSpec::Matchers.define :contain_dom_element do |element_type|
+     match do |react_element|
+       @element = find_element_jq_node react_element, element_type
+       next false unless @element
+       # Don't make the test get the type exactly right
+       @element.value.to_s == @expected_value.to_s
+     end
+
+     failure_message do |react_element|
+       if @element
+         "Found select, but value was '#{@element.value}' and we expected '#{@expected_value}'"
+       else
+         "Expected rendered element to contain a #{element_type}, but it did not, did contain this: #{Native(get_dom_node(react_element)).outerHTML}"
+       end
+     end
+
+     chain :with_selected_value do |expected_value|
+       @expected_value = expected_value
+     end
+   end
+
+  describe 'value_link' do
+    class ::OptionTest
+      include React::Component
+      
+      def render
+        option value: params[:value]
+      end
+    end
+    
+    class ::ValueLinkTest
+      include React::Component
+      
+      def render
+        div do
+          select id: 'the_select_box', value_link: params[:value_link] do
+            params[:options].map do |option|
+              present OptionTest, value: option[:value]
+            end          
+          end
+        end
+      end
+    end
+    
+    subject(:element) {
+      React.create_element ::ValueLinkTest, value_link: value_link, options: [{value:'2'}, {value: '3'}]     
+    }
+    
+    context 'via method' do      
+      let(:actual_value) { {} }
+      let(:value_link) { method_value_link }
+      
+      def req_change_via_method(new_value)
+        actual_value[:set] = new_value
+      end
+      
+      def method_value_link
+        do_it = lambda do |new_value|
+          req_change_via_method new_value
+        end
+        {value: 3, request_change: do_it}
+      end        
+
+      it { is_expected.to contain_dom_element(:select).with_selected_value(3) }       
+      
+      describe 'after change' do
+        before do
+          change_value_in_element_select element, '2'
+        end
+        
+        subject { actual_value[:set] }
+        
+        it { is_expected.to eq '2' }
+      end   
+    end
+    
+    context 'via lambda' do
+      let(:actual_value) { {} }
+      let(:value_link) {
+        handle_change = lambda {|new_val| actual_value[:set] = new_val }
+        
+        lambda {
+          {value: 3, request_change: handle_change}          
+        }        
+      }
+      
+      it { is_expected.to contain_dom_element(:select).with_selected_value(3) }      
+      
+      describe 'after change' do
+        before do
+          change_value_in_element_select element, '2'
+        end
+        
+        subject { actual_value[:set] }
+        
+        it { is_expected.to eq '2' }
+      end
+    end        
+  end
 end

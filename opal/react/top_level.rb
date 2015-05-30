@@ -16,25 +16,27 @@ module React
     params = []
     
     # Component Spec or Nomral DOM
-    if `(typeof type === 'function')`
-      params << type
+    params << if `(typeof type === 'function')`
+      type
     elsif type.kind_of?(Class)
       raise "Provided class should define `render` method"  if !(type.method_defined? :render)
-      params << React::ComponentFactory.native_component_class(type)
+      React::ComponentFactory.native_component_class(type)
     else
       raise "#{type} not implemented" unless HTML_TAGS.include?(type)
-      params << type
+      type
     end
 
     # Passed in properties
-    props = {}
-    properties.map do |key, value|
-       if key == "class_name" && value.is_a?(Hash)
-         props[key.lower_camelize] = value.inject([]) {|ary, (k,v)| v ? ary.push(k) : ary}.join(" ")
-       else
-         props[key.lower_camelize] = value
-       end
-    end
+    props = camel_case_hash_keys(properties) do |key, value|
+      if key == "class_name" && value.is_a?(Hash)
+        value.inject([]) {|ary, (k,v)| v ? ary.push(k) : ary}.join(" ")
+      elsif key == 'value_link'
+        process_value_link value
+      else
+        value
+      end
+    end      
+    
     params << props.shallow_to_n
 
     # Children Nodes
@@ -45,6 +47,19 @@ module React
     end
 
     return `React.createElement.apply(null, #{params})`
+  end
+  
+  def self.camel_case_hash_keys(input)
+    as_array = input.map do |key, value|
+      new_value = block_given? ? yield(key, value) : value
+      [key.lower_camelize, new_value]
+    end
+    Hash[as_array]
+  end
+  
+  def self.process_value_link(arguments)
+    arguments = arguments.call if arguments.is_a? Proc
+    camel_case_hash_keys(arguments).to_n
   end
 
   def self.render(element, container)
