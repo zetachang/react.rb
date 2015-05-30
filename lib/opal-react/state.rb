@@ -45,7 +45,6 @@ module React
           end
         end
         current_observers.delete(@current_observer)
-        new_observer.delete(@current_observer)
       end
 
       def set_state_context_to(observer) # wrap all execution that may set or get states in a block so we know which observer is executing
