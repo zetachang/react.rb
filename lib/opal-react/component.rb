@@ -144,6 +144,10 @@ module React
       React::Observable.new(value, on_change)
     end
     
+    def define_state(*args, &block)
+      React::State.initialize_states(self.class, self.class.define_state(*args, &block))
+    end
+    
     def _render_wrapper
       React::State.set_state_context_to(self) do
         render_result = render
@@ -224,45 +228,50 @@ module React
         define_param_method(name, options[:type])
       end 
       
-      def define_state(*states) 
-        default_initial_value = block_given? ? yield : nil
+      def define_state(*states, &block) 
+        default_initial_value = (block and block.arity == 0) ? yield : nil
         states_hash = (states.last.is_a? Hash) ? states.pop : {}
         states.each { |name| states_hash[name] = default_initial_value }
         (self.initial_state ||= {}).merge! states_hash
         states_hash.each do |name, initial_value|
-          define_state_methods(self, name)
+          define_state_methods(self, name, &block)
         end
       end
       
-      def export_state(*states) 
-        default_initial_value = block_given? ? yield : nil
+      def export_state(*states, &block) 
+        default_initial_value = (block and block.arity == 0) ? yield : nil
         states_hash = (states.last.is_a? Hash) ? states.pop : {}
         states.each { |name| states_hash[name] = default_initial_value }
         React::State.initialize_states(self, states_hash)
         states_hash.each do |name, initial_value|
-          define_state_methods(self, name, self)
-          define_state_methods(singleton_class, name, self)
+          define_state_methods(self, name, self, &block)
+          define_state_methods(singleton_class, name, self, &block)
         end
       end
       
-      def define_state_methods(this, name, from = nil)
+      def define_state_methods(this, name, from = nil, &block)
         this.define_method("#{name}") do
           React::State.get_state(from || self, name)
         end
         this.define_method("#{name}=") do |new_state|
+          yield name, React::State.get_state(from || self, name), new_state if block and block.arity > 0
           React::State.set_state(from || self, name, new_state)
         end
         this.define_method("#{name}!") do |*args|
           #return unless @native
           if args.count > 0
+            yield name, React::State.get_state(from || self, name), args[0] if block and block.arity > 0
             current_value = React::State.get_state(from || self, name)
             React::State.set_state(from || self, name, args[0])
             current_value
           else
             current_state = React::State.get_state(from || self, name)
+            yield name, React::State.get_state(from || self, name), current_state if block and block.arity > 0
             React::State.set_state(from || self, name, current_state)
-            React::Observable.new(current_state) {|new_value| React::State.set_state(from || self, name, new_value)}
-            #watch(current_state) {|new_value| React::State.set_state(from || self, name, new_value)}
+            React::Observable.new(current_state) do |new_value| 
+              yield name, React::State.get_state(from || self, name), new_value if block and block.arity > 0
+              React::State.set_state(from || self, name, new_value)
+            end
           end
         end
       end
