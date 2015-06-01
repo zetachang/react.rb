@@ -145,7 +145,7 @@ module React
     end
     
     def define_state(*args, &block)
-      React::State.initialize_states(self.class, self.class.define_state(*args, &block))
+      React::State.initialize_states(self, self.class.define_state(*args, &block))
     end
     
     def _render_wrapper
