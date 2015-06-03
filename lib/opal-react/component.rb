@@ -38,6 +38,7 @@ module React
             return super
           end
           React::RenderingContext.render(name, *args, &block)
+        rescue 
         end
         
       end
