@@ -39,11 +39,11 @@ module React
   end
 
   def self.render_to_string(element)
-    `React.renderToString(#{element.to_n})`
+    React::RenderingContext.build { `React.renderToString(#{element.to_n})` }
   end
 
   def self.render_to_static_markup(element)
-    `React.renderToStaticMarkup(#{element.to_n})`
+    React::RenderingContext.build { `React.renderToStaticMarkup(#{element.to_n})` }
   end
 
   def self.unmount_component_at_node(node)

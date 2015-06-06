@@ -89,7 +89,6 @@ module React
           params << ele.to_n
         end
       end
-
       return React::Element.new(`React.createElement.apply(null, #{params})`)
     end
 
