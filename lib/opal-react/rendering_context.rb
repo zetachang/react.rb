@@ -2,47 +2,26 @@ module React
   
   class RenderingContext
     
-    def initialize
-      @buffer = []
-    end
-    
-    def count
-      @buffer.count
-    end
-    
-    def <<(item)
-      @buffer << item
-    end
-    
-    def to_n
-      @buffer.to_n
-    end
-    
     def self.render(name, *args, &block)
-      @buffer = new unless @buffer
+      @buffer = [] unless @buffer
       if block
         element = build do
           result = block.call
-          React.create_element(name, *args) { @buffer.count == 0 ? result : @buffer }
+          @buffer << result unless @buffer.count > 0 and @buffer.last == result
+          React.create_element(name, *args) { @buffer }
         end
       else
         element = React.create_element(name, *args)
       end
 
       @buffer << element
-      element.attach(@buffer)
       element
       
     end
     
-    def detach(element)
-      @buffer.delete(element)
-      element
-    end
-    
     def self.build(&block)
       current = @buffer
-      @buffer = new
+      @buffer = []
       return_val = yield
     ensure
       @buffer = current
@@ -58,6 +37,20 @@ module React
     def display(*args, &block)
       React::RenderingContext.render(self)
       old_display *args, &block if respond_to? :old_display
+    end
+    
+    def span(*args)
+      args.unshift('span')
+      React::RenderingContext.render(*args) { self }
+    end
+    
+    def br
+      React::RenderingContext.render("span") { self.display; React::RenderingContext.render("br") }
+    end
+    
+    def para(*args)
+      args.unshift('para')
+      React::RenderingContext.render(*args) { self }
     end
     
   end

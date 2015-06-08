@@ -33,11 +33,20 @@ module React
       parent = base.name.split("::").inject([Module]) { |nesting, next_const| nesting + [nesting.last.const_get(next_const)] }[-2]
       parent.class_eval do
         
-        def method_missing(n, *args, &block)  
-          unless name = const_get(n) and name.method_defined? :render
+        def method_missing(n, *args, &block)
+          name = n
+          if name =~ /_as_node$/ 
+            node_only = true
+            name = name.gsub(/_as_node$/, "")
+          end
+          unless name = const_get(name) and name.method_defined? :render
             return super
           end
-          React::RenderingContext.render(name, *args, &block)
+          if node_only
+            React::RenderingContext.build { React::RenderingContext.render(name, *args, &block) }.to_n
+          else
+            React::RenderingContext.render(name, *args, &block)
+          end
         rescue 
         end
         
@@ -126,7 +135,11 @@ module React
     def method_missing(n, *args, &block)
       return params[n] if params.key? n
       name = n
-      unless (React::HTML_TAGS.include?(name) || name == 'present' || name == '_p_tag' || (name = component?(name, self)))
+      if name =~ /_as_node$/ 
+        node_only = true
+        name = name.gsub(/_as_node$/, "")
+      end
+      unless (React::HTML_TAGS.include?(name) || name == 'present'  || name == '_p_tag' || (name = component?(name, self)))
         return super
       end
 
@@ -137,8 +150,13 @@ module React
       if name == "_p_tag"
         name = "p"
       end
-
-      React::RenderingContext.render(name, *args, &block)
+      
+      if node_only 
+        React::RenderingContext.build { React::RenderingContext.render(name, *args, &block) }.to_n
+      else
+        React::RenderingContext.render(name, *args, &block)
+      end
+      
     end
     
     def watch(value, &on_change)

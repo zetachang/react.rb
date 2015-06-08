@@ -10,16 +10,6 @@ module React
     def initialize(native_element)
       @native = native_element
     end
-    
-    def attach(rendering_context)
-      @rendering_context = rendering_context
-      self
-    end
-    
-    def detach
-      @rendering_context.detach(self) if @rendering_context
-      self
-    end
 
     def on(event_name)
       name = event_name.to_s.event_camelize

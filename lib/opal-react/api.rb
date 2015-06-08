@@ -1,7 +1,70 @@
 module React
+
+  class NativeLibrary
+    
+    def self.renames_and_exclusions
+      @renames_and_exclusions ||= {}
+    end
+    
+    def self.libraries
+      @libraries ||= []
+    end
+    
+    def self.const_missing(name)
+      if renames_and_exclusions.has_key? name
+        if native_name = renames_and_exclusions[name]
+          native_name 
+        else
+          super
+        end
+      else
+        libraries.each do |library|
+          native_name = "#{library}.#{name}"
+          native_component = `eval(#{native_name})` rescue nil
+          React::API.import_native_component(name, native_component) and return name if native_component and `native_component != undefined`
+        end 
+        name
+      end
+    end
+    
+    def self.method_missing(n, *args, &block)
+      name = n
+      if name =~ /_as_node$/ 
+        node_only = true
+        name = name.gsub(/_as_node$/, "")
+      end
+      unless name = const_get(name) 
+        return super
+      end
+      if node_only
+        React::RenderingContext.build { React::RenderingContext.render(name, *args, &block) }.to_n
+      else
+        React::RenderingContext.render(name, *args, &block)
+      end
+    rescue 
+    end
+        
+    def self.imports(library)
+      libraries << library
+    end
+    
+    def self.rename(rename_list={})
+      renames_and_exclusions.merge!(rename_list.invert)
+    end
+    
+    def self.exclude(*exclude_list)
+      renames_and_exclusions.merge(Hash[exclude_list.map {|k| [k, nil]}])
+    end
+    
+  end
+  
   class API
     
     @@component_classes = {}
+    
+    def self.import_native_component(opal_class, native_class)  
+      @@component_classes[opal_class.to_s] = native_class
+    end 
     
     def self.create_native_react_class(type)
       raise "Provided class should define `render` method"  if !(type.method_defined? :render)
@@ -61,8 +124,10 @@ module React
     def self.create_element(type, properties = {}, &block)
       params = []
 
-      # Component Spec or Normal DOM
-      if type.kind_of?(Class)
+      # Component Spec, Normal DOM, String or Native Component
+      if @@component_classes[type]
+        params << @@component_classes[type]
+      elsif type.kind_of?(Class)
         params << create_native_react_class(type)
       elsif HTML_TAGS.include?(type)
         params << type
@@ -77,6 +142,8 @@ module React
       properties.map do |key, value|
          if key == "class_name" && value.is_a?(Hash)
            props[lower_camelize(key)] = `React.addons.classSet(#{value.to_n})`
+         elsif key == "class"
+           props["className"] = value
          else
            props[React::ATTRIBUTES.include?(lower_camelize(key)) ? lower_camelize(key) : key] = value
          end
