@@ -7,7 +7,7 @@ module React
       if block
         element = build do
           result = block.call
-          @buffer << result if @buffer.empty? 
+          @buffer << result if result.is_a? String
           React.create_element(name, *args) { @buffer }
         end
       else
