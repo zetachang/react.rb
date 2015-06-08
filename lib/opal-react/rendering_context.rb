@@ -7,7 +7,7 @@ module React
       if block
         element = build do
           result = block.call
-          @buffer << result unless @buffer.count > 0 and @buffer.last == result
+          @buffer << result if @buffer.empty? 
           React.create_element(name, *args) { @buffer }
         end
       else
