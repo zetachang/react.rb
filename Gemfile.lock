@@ -61,3 +61,6 @@ DEPENDENCIES
   rake (~> 10)
   react.rb!
   sinatra (~> 1)
+
+BUNDLED WITH
+   1.10.2
