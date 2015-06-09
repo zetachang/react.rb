@@ -1,0 +1,42 @@
+
+observable_spec.rb
+
+native_library_spec.rb  <- no big interaction, just hooks into @@component_classes
+  importing native react components (like bootstrap)
+
+
+export_component_spec.rb <- completely stand alone 
+  export_component
+  
+
+rendering_context_spec.rb
+    NOTE: rendering context primarily exists so that we can say Foo::Bar in the dsl, because we have no way of knowing the caller, so we have to track it via RenderingContext
+    NOTE: put the component lookup method in here I think
+  components can be directly named in the dsl (i.e. if class Foo, then you can just say Foo)
+  _as_node will return the native node without pushing into the buffer
+  if element returned from the child block is a string it is added to the buffer
+  test to make sure subclassing components works
+  
+exception_handling_spec.rb
+  you don't have to have render method, if you just want to export state  <- not sure what is going on here, but there is a render method now in the component, that raises an error unless its subclassed
+  catch and print rendering method if rendering fails.
+    I'm figuring that there will more exception cases (like misnamed components) that can go in this file.
+
+state_spec.rb
+  states all get methods  - states define methods foo, foo= and foo!
+  export / import states
+  states can be defined from within components instances (i.e. before_mount)
+  define_state extended syntax:  strings/symbols are initialized to the default initializer (nil or provided by block), the hash gives name => value pairs
+  if default initializer excepts params then it is considered a state listener and will receive |state_name, current_value, new_value| on state changes
+  
+
+params_spec.rb
+  NOTE: probably updates validator
+  can require param on a single line: required_param or optional_param
+  can require param of type Proc
+  params get methods 
+  proc params automatically call
+  ReactObserver params interact with the observer
+
+
+depends on react-source <- does it have to (i.e. perhaps for react-rails to work?, if not then do a separate PR at end)
