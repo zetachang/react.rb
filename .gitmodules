@@ -1,4 +1,3 @@
 [submodule "opal-rspec"]
 	path = opal-rspec
 	url = https://github.com/wied03/opal-rspec.git
-	branch = opal-0.8-other/rspec-3.1
