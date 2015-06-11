@@ -20,6 +20,14 @@ module React
       end
       base.extend(ClassMethods)
     end
+    
+    def _render_wrapper
+      render
+    rescue Exception => e
+      message = "Exception raised while rendering #{self.class.name}: #{e}"
+      `console.error(#{message})` rescue nil
+      React.create_element("div") # return a valid element so error does not propogate, and we can keep rendering
+    end
 
     def params
       Hash.new(`#{self}.props`).inject({}) do |memo, (k,v)|

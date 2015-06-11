@@ -22,6 +22,7 @@ module React
         optional_native_alias[:componentDidUpdate, :component_did_update]
         optional_native_alias[:componentWillUnmount, :component_will_unmount]
         native_alias :render, :render
+        optional_native_alias[:render, :_render_wrapper]
       end
       %x{
         if (!Object.assign) {
