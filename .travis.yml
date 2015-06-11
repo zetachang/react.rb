@@ -7,4 +7,4 @@ rvm:
 
 before_install:
   - git submodule update --init
-  - cd opal-rspec; git submodule update --init
+  - (cd opal-rspec; git submodule update --init)
