@@ -41,3 +41,9 @@ params_spec.rb
 
 
 depends on react-source <- does it have to (i.e. perhaps for react-rails to work?, if not then do a separate PR at end)
+
+Branch map... 
+
+v13_base is synced with v13 BUT already has observable.rb added.   (todo if possible, shuffle this around)
+ <- exception_handling branched fro v13_base
+ <- export_component branched from v13_base
