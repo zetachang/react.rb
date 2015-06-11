@@ -2,7 +2,7 @@ require "spec_helper"
 
 describe React::ComponentFactory do
   describe "native_component_class" do
-    it "should bridge the defined life cycle methods" do
+    it "should bridge the defined life cycle methods and the render method" do
       stub_const 'Foo', Class.new
       Foo.class_eval do
         def component_will_mount; end
@@ -12,6 +12,7 @@ describe React::ComponentFactory do
         def component_will_update; end
         def component_did_update; end
         def component_will_unmount; end
+        def render; end
       end
       
       ctor = React::ComponentFactory.native_component_class(Foo)
@@ -23,6 +24,7 @@ describe React::ComponentFactory do
       expect(`instance.$component_will_update`).to be(`instance.componentWillUpdate`)
       expect(`instance.$component_did_update`).to be(`instance.componentDidUpdate`)
       expect(`instance.$component_will_unmount`).to be(`instance.componentWillUnmount`)
+      expect(`instance.$render`).to be(`instance.render`)
     end
   end
 end
