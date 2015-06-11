@@ -2,6 +2,7 @@
 observable_spec.rb
 
 native_library_spec.rb  <- no big interaction, just hooks into @@component_classes - but depends on RenderingContext
+
   importing native react components (like bootstrap)
 
 
