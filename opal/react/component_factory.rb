@@ -62,6 +62,7 @@ module React
           #{klass}.$$alloc.prototype.$initialize.call(this, Opal.Hash.$new(props));
         };
         ctor.prototype = klass.$$proto;
+        ctor.displayName = #{klass.to_s};
         Object.assign(ctor.prototype, React.Component.prototype);    
         ctor.propTypes = #{klass.respond_to?(:prop_types) ? klass.prop_types.to_n : `{}`};
         ctor.defaultProps = #{klass.respond_to?(:default_props) ? klass.default_props.to_n : `{}`};
