@@ -48,9 +48,7 @@ module React
   end
 
   def self.render(element, container)
-    component = Native(`React.render(#{element}, container, function(){#{yield if block_given?}})`)
-    component.class.include(React::Component::API)
-    component
+    `React.render(#{element}, container, function(){#{yield if block_given?}})`
   end
 
   def self.is_valid_element(element)
