@@ -16,7 +16,7 @@ describe React::Event do
       expect(event).to respond_to(:prevent_default)
       expect(event).to respond_to(:stop_propagation)
     end
-    instance = renderElementToDocument(element)
-    simulateEvent(:click, instance)
+    instance = render_to_document(element)
+    simulate_event(:click, React.find_dom_node(instance))
   end
 end

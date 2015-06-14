@@ -1,10 +1,6 @@
 require "spec_helper"
 
 describe React::Component do
-  after(:each) do
-    React::API.clear_component_class_cache
-  end
-
   it "should define component spec methods" do
     stub_const 'Foo', Class.new
     Foo.class_eval do
@@ -50,7 +46,7 @@ describe React::Component do
       expect_any_instance_of(Foo).to receive(:bar)
       expect_any_instance_of(Foo).to receive(:bar2)
 
-      renderToDocument(Foo)
+      render_to_document(React.create_element(Foo))
     end
 
     it "should invoke `after_mount` registered methods when `componentDidMount()`" do
@@ -63,7 +59,7 @@ describe React::Component do
       expect_any_instance_of(Foo).to receive(:bar3)
       expect_any_instance_of(Foo).to receive(:bar4)
 
-      renderToDocument(Foo)
+      render_to_document(React.create_element(Foo))
     end
 
     it "should allow multiple class declared life cycle hooker" do
@@ -84,7 +80,7 @@ describe React::Component do
 
       expect_any_instance_of(Foo).to receive(:bar)
 
-      renderToDocument(Foo)
+      render_to_document(React.create_element(Foo))
     end
 
     it "should allow block for life cycle callback" do
@@ -96,8 +92,8 @@ describe React::Component do
         end
       end
 
-      element = renderToDocument(Foo)
-      expect(element.state.foo).to be("bar")
+      instance = render_to_document(React.create_element(Foo))
+      expect(instance.state[:foo]).to be("bar")
     end
   end
 
@@ -121,8 +117,8 @@ describe React::Component do
         end
       end
 
-      element = renderToDocument(Foo)
-      expect(element.state.foo).to be("bar")
+      instance = render_to_document(React.create_element(Foo))
+      expect(instance.state[:foo]).to be("bar")
     end
 
     it "should define init state by passing a block to `define_state`" do
@@ -130,8 +126,8 @@ describe React::Component do
         define_state(:foo) { 10 }
       end
 
-      element = renderToDocument(Foo)
-      expect(element.state.foo).to be(10)
+      instance = render_to_document(React.create_element(Foo))
+      expect(instance.state[:foo]).to be(10)
     end
 
     it "should define getter using `define_state`" do
@@ -143,8 +139,8 @@ describe React::Component do
         end
       end
 
-      element = renderToDocument(Foo)
-      expect(element.state.foo).to be(30)
+      instance = render_to_document(React.create_element(Foo))
+      expect(instance.state[:foo]).to be(30)
     end
 
     it "should define multiple state accessor by passing symols array to `define_state`" do
@@ -157,9 +153,9 @@ describe React::Component do
         end
       end
 
-      element = renderToDocument(Foo)
-      expect(element.state.foo).to be(10)
-      expect(element.state.foo2).to be(20)
+      instance = render_to_document(React.create_element(Foo))
+      expect(instance.state[:foo]).to be(10)
+      expect(instance.state[:foo2]).to be(20)
     end
 
     it "should invoke `define_state` multiple times to define states" do
@@ -168,9 +164,9 @@ describe React::Component do
         define_state(:foo2) { 40 }
       end
 
-      element = renderToDocument(Foo)
-      expect(element.state.foo).to be(30)
-      expect(element.state.foo2).to be(40)
+      instance = render_to_document(React.create_element(Foo))
+      expect(instance.state[:foo]).to be(30)
+      expect(instance.state[:foo2]).to be(40)
     end
 
     it "should raise error if multiple states and block given at the same time" do
@@ -189,8 +185,8 @@ describe React::Component do
         end
       end
 
-      element = renderToDocument(Foo)
-      expect(element.getDOMNode.textContent).to eq("10")
+      instance = render_to_document(React.create_element(Foo))
+      expect(`#{React.find_dom_node(instance)}.textContent`).to eq("10")
     end
 
     it "should support original `setState` as `set_state` method" do
@@ -200,21 +196,8 @@ describe React::Component do
         end
       end
 
-      element = renderToDocument(Foo)
-      expect(element.state.foo).to be("bar")
-    end
-
-    it "should support original `replaceState` as `set_state!` method" do
-      Foo.class_eval do
-        before_mount do
-          self.set_state(foo: "bar")
-          self.set_state!(bar: "lorem")
-        end
-      end
-
-      element = renderToDocument(Foo)
-      expect(element.state.foo).to be_nil
-      expect(element.state.bar).to eq("lorem")
+      instance = render_to_document(React.create_element(Foo))
+      expect(instance.state[:foo]).to be("bar")
     end
 
     it "should support originl `state` method" do
@@ -264,8 +247,8 @@ describe React::Component do
           end
         end
 
-        element = renderToDocument(Foo, prop: "foobar")
-        expect(element.getDOMNode.textContent).to eq("foobar")
+        instance = render_to_document(React.create_element(Foo, prop: "foobar"))
+        expect(`#{React.find_dom_node(instance)}.textContent`).to eq("foobar")
       end
 
       it "should access nested params as orignal Ruby object" do
@@ -275,41 +258,8 @@ describe React::Component do
           end
         end
 
-        element = renderToDocument(Foo, prop: [{foo: 10}])
-        expect(element.getDOMNode.textContent).to eq("10")
-      end
-    end
-
-    describe "Props Updating" do
-      before do
-        stub_const 'Foo', Class.new
-        Foo.class_eval do
-          include React::Component
-        end
-      end
-
-      it "should support original `setProps` as method `set_props`" do
-        Foo.class_eval do
-          def render
-            React.create_element("div") { params[:foo] }
-          end
-        end
-
-        element = renderToDocument(Foo, {foo: 10})
-        element.set_props(foo: 20)
-        expect(element.dom_node.innerHTML).to eq('20')
-      end
-
-      it "should support original `replaceProps` as method `set_props!`" do
-        Foo.class_eval do
-          def render
-            React.create_element("div") { params[:foo] ? "exist" : "null" }
-          end
-        end
-
-        element = renderToDocument(Foo, {foo: 10})
-        element.set_props!(bar: 20)
-        expect(element.dom_node.innerHTML).to eq('null')
+        instance = render_to_document(React.create_element(Foo, prop: [{foo: 10}]))
+        expect(`#{React.find_dom_node(instance)}.textContent`).to eq("10")
       end
     end
 
@@ -349,9 +299,14 @@ describe React::Component do
           var org_console = window.console;
           window.console = {warn: function(str){log.push(str)}}
         }
-        renderToDocument(Foo, bar: 10, lorem: Lorem.new)
-        `window.console = org_console;`
-        expect(`log`).to eq(["Warning: In component `Foo`\nRequired prop `foo` was not specified\nProvided prop `bar` was not the specified type `String`"])
+        
+        begin
+          render_to_document(React.create_element(Foo, bar: 10, lorem: Lorem.new))
+        
+          expect(`log`).to eq(["Warning: Failed propType: In component `Foo`\nRequired prop `foo` was not specified\nProvided prop `bar` was not the specified type `String`"])          
+        ensure
+          `window.console = org_console;`
+        end
       end
 
       it "should not log anything if validation pass" do
@@ -371,9 +326,12 @@ describe React::Component do
           var org_console = window.console;
           window.console = {warn: function(str){log.push(str)}}
         }
-        renderToDocument(Foo, foo: 10, bar: "10", lorem: Lorem.new)
-        `window.console = org_console;`
-        expect(`log`).to eq([])
+        begin
+          render_to_document(React.create_element(Foo, foo: 10, bar: "10", lorem: Lorem.new))        
+          expect(`log`).to eq([])
+        ensure
+          `window.console = org_console;`
+        end        
       end
     end
 
@@ -417,10 +375,9 @@ describe React::Component do
         end
       end
 
-      element = React.create_element(Foo)
-      instance = renderElementToDocument(element)
-      simulateEvent(:click, instance)
-      expect(instance.state.clicked).to eq(true)
+      instance = render_to_document(React.create_element(Foo))
+      simulate_event(:click, React.find_dom_node(instance))
+      expect(instance.state[:clicked]).to eq(true)
     end
 
     it "should invoke handler on `this.props` using emit" do
@@ -438,7 +395,7 @@ describe React::Component do
 
       expect { |b|
         element = React.create_element(Foo).on(:foo_submit, &b)
-        renderElementToDocument(element)
+        render_to_document(element)
       }.to yield_with_args("bar")
     end
 
@@ -457,7 +414,7 @@ describe React::Component do
 
       expect { |b|
         element = React.create_element(Foo).on(:foo_invoked, &b)
-        renderElementToDocument(element)
+        render_to_document(element)
       }.to yield_with_args([1,2,3], "bar")
     end
   end
@@ -477,23 +434,24 @@ describe React::Component do
         end
       end
 
-      element = renderToDocument(Foo)
-      expect(element.refs.field).not_to be_nil
+      instance = render_to_document(React.create_element(Foo))
+      expect(`#{React.find_dom_node(instance.refs[:field])}.tagName`).to eq('INPUT')
     end
 
     it "should access refs through `refs` method" do
       Foo.class_eval do
         def render
           React.create_element("input", type: :text, ref: :field).on(:click) do
-            refs[:field].value = "some_stuff"
+            input_field = Native(React.find_dom_node(refs[:field]))
+            input_field.value = "some_stuff"
           end
         end
       end
 
-      element = renderToDocument(Foo)
-      simulateEvent(:click, element)
+      instance = render_to_document(React.create_element(Foo))
+      simulate_event(:click, React.find_dom_node(instance))
 
-      expect(element.refs.field.value).to eq("some_stuff")
+      expect(`#{React.find_dom_node(instance.refs[:field])}.value`).to eq("some_stuff")
     end
   end
 
@@ -575,23 +533,7 @@ describe React::Component do
 
       expect(Kernel).to receive(:p).with("first")
       expect(Kernel).to receive(:p).with("second")
-      renderToDocument(Foo)
-    end
-  end
-
-  describe "isMounted()" do
-    it "should return true if after mounted" do
-      stub_const 'Foo', Class.new
-      Foo.class_eval do
-        include React::Component
-
-        def render
-          React.create_element("div")
-        end
-      end
-
-      component = renderToDocument(Foo)
-      expect(component.mounted?).to eq(true)
+      render_to_document(React.create_element(Foo))
     end
   end
 end

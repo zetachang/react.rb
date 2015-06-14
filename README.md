@@ -28,6 +28,27 @@ React.render(React.create_element('h1'){ "Hello World!" }, `document.body`)
 
 For integration with server (Sinatra, etc), see setup of [TodoMVC](examples/todos) or the [official docs](http://opalrb.org/docs/) of Opal.
 
+## React.js Dependency
+
+React.js v0.13 is required to use react.rb, you can access the pre-bundled source through `Opal::React.bundled_path` directory, example below shows setup for a basic rack app.
+
+```ruby
+#config.ru
+run Opal::Server.new {|s|
+  s.append_path './'
+  s.append_path Opal::React.bundled_path
+  s.main = 'example'
+  s.debug = true
+  s.index_path = "index.html.erb"
+}
+```
+
+```erb
+<!-- index.html.erb -->
+<%= javascript_include_tag "react" %>
+<%= javascript_include_tag "example" %>
+```
+
 ## Usage
 
 ### A Simple Component
@@ -48,12 +69,12 @@ puts React.render_to_static_markup(React.create_element(HelloMessage))
 
 ### More complicated one
 
-To hook into native ReactComponent life cycle, the native `this` will be passed to the class's initializer. And all corresponding life cycle methods (`componentDidMount`, etc) will be invoked on the instance using the snake-case method name.
+To hook into native ReactComponent life cycle, the props will be passed as the first argument to the class's initializer. And all corresponding life cycle methods (`componentDidMount`, etc) will be invoked on the instance using the snake-case method name.
 
 ```ruby
 class HelloMessage
-  def initialize(native)
-    @native = Native(native)
+  def initialize(props)
+    puts props
   end
 
   def component_will_mount
@@ -61,12 +82,13 @@ class HelloMessage
   end
 
   def render
-    React.create_element("div") { "Hello #{@native[:props][:name]}!" }
+    React.create_element("div") { "Hello #{self.props[:name]}!" }
   end
 end
 
 puts React.render_to_static_markup(React.create_element(HelloMessage, name: 'John'))
 
+# => {"name"=>"John"}
 # => will_mount!
 # => '<div>Hello John!</div>'
 ```

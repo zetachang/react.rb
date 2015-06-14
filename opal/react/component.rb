@@ -1,7 +1,8 @@
-require "./ext/string"
+require "react/ext/string"
 require 'active_support/core_ext/class/attribute'
 require 'react/callbacks'
 require "react/ext/hash"
+require "react/component/api"
 
 module React
   module Component
@@ -20,25 +21,15 @@ module React
       base.extend(ClassMethods)
     end
 
-    def initialize(native_element)
-      @native = native_element
-    end
-
     def params
-      Hash.new(`#{@native}.props`)
-    end
-
-    def refs
-      Hash.new(`#{@native}.refs`)
-    end
-
-    def state
-      raise "No native ReactComponent associated" unless @native
-      Hash.new(`#{@native}.state`)
+      Hash.new(`#{self}.props`).inject({}) do |memo, (k,v)|
+        memo[k.underscore] = v
+        memo
+      end
     end
 
     def emit(event_name, *args)
-      self.params["_on#{event_name.to_s.event_camelize}"].call(*args)
+      self.params["on_#{event_name.to_s}"].call(*args)
     end
 
     def component_will_mount
@@ -104,7 +95,10 @@ module React
       @buffer << element
       element
     end
-
+    
+    def to_n
+      self
+    end
 
     module ClassMethods
       def prop_types
@@ -146,12 +140,10 @@ module React
         states.each do |name|
           # getter
           define_method("#{name}") do
-            return unless @native
             self.state[name]
           end
           # setter
           define_method("#{name}=") do |new_state|
-            return unless @native
             hash = {}
             hash[name] = new_state
             self.set_state(hash)
@@ -159,50 +151,6 @@ module React
             new_state
           end
         end
-      end
-    end
-
-    module API
-      include Native
-
-      alias_native :dom_node, :getDOMNode
-      alias_native :mounted?, :isMounted
-      alias_native :force_update!, :forceUpdate
-
-      def set_props(prop, &block)
-        raise "No native ReactComponent associated" unless @native
-        %x{
-          #{@native}.setProps(#{prop.shallow_to_n}, function(){
-            #{block.call if block}
-          });
-        }
-      end
-
-      def set_props!(prop, &block)
-        raise "No native ReactComponent associated" unless @native
-        %x{
-          #{@native}.replaceProps(#{prop.shallow_to_n}, function(){
-            #{block.call if block}
-          });
-        }
-      end
-
-      def set_state(state, &block)
-        raise "No native ReactComponent associated" unless @native
-        %x{
-          #{@native}.setState(#{state.shallow_to_n}, function(){
-            #{block.call if block}
-          });
-        }
-      end
-
-      def set_state!(state, &block)
-        raise "No native ReactComponent associated" unless @native
-        %x{
-          #{@native}.replaceState(#{state.shallow_to_n}, function(){
-            #{block.call if block}
-          });
-        }
       end
     end
   end

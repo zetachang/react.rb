@@ -1,3 +1,6 @@
+## react.js v0.13 
+* Add `React::Testing` helpers
+
 ## 0.3.0
 *  Depends on `sprockets < 3` thus source map can still work
 *  Remove sprockets-es6 from dependency

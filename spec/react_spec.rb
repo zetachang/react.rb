@@ -1,10 +1,6 @@
 require "spec_helper"
 
 describe React do
-  after(:each) do
-    React::API.clear_component_class_cache
-  end
-
   describe "is_valid_element" do
     it "should return true if passed a valid element" do
       element = `React.createElement('div')`
@@ -46,14 +42,6 @@ describe React do
         end
         expect(React.is_valid_element(element)).to eq(true)
         expect(element.children.length).to eq(3)
-      end
-
-      it "should render element with children as array when block yield Array of element" do
-        element = React.create_element('div') do
-          [React.create_element('span'), React.create_element('span'), React.create_element('span')]
-        end
-        instance = renderElementToDocument(element)
-        expect(instance.getDOMNode.childNodes.length).to eq(3)
       end
     end
     describe "custom element" do
@@ -123,8 +111,8 @@ describe React do
           end
         end
 
-        renderToDocument(Foo)
-        renderToDocument(Foo)
+        render_to_document(React.create_element(Foo))
+        render_to_document(React.create_element(Foo))
 
         expect(`count`).to eq(2)
       end
@@ -141,9 +129,10 @@ describe React do
         expect(element.props[:foo]).to eq("bar")
       end
 
-      it "should not camel-case custom property" do
-        element = React.create_element("div", foo_bar: "foo")
-        expect(element.props[:foo_bar]).to eq("foo")
+      it "should camel-case all property" do
+        element = React.create_element("div", foo_bar: "foo", class_name: 'fancy')
+        expect(element.props[:fooBar]).to eq("foo")
+        expect(element.props[:className]).to eq("fancy")
       end
     end
 
@@ -178,14 +167,6 @@ describe React do
     it "should work without providing a block" do
       div = `document.createElement("div")`
       React.render(React.create_element('span') { "lorem" }, div)
-    end
-
-    it "should return a React::Component::API compatible object" do
-      div = `document.createElement("div")`
-      component = React.render(React.create_element('span') { "lorem" }, div)
-      React::Component::API.public_instance_methods(true).each do |method_name|
-        expect(component).to respond_to(method_name)
-      end
     end
 
     pending "should return nil to prevent abstraction leakage" do

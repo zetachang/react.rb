@@ -54,26 +54,29 @@ describe React::Element do
     it "should be subscribable through `on(:event_name)` method" do
       expect { |b|
         element = React.create_element("div").on(:click, &b)
-        instance = renderElementToDocument(element)
-        simulateEvent(:click, instance)
+        instance = render_to_document(element)
+        simulate_event(:click, React.find_dom_node(instance))
       }.to yield_with_args(React::Event)
 
       expect { |b|
         element = React.create_element("div").on(:key_down, &b)
-        instance = renderElementToDocument(element)
-        simulateEvent(:keyDown, instance, {key: "Enter"})
+        instance = render_to_document(element)
+        simulate_event(:keyDown, React.find_dom_node(instance), {key: "Enter"})
       }.to yield_control
 
       expect { |b|
         element = React.create_element("form").on(:submit, &b)
-        instance = renderElementToDocument(element)
-        simulateEvent(:submit, instance, {})
+        instance = render_to_document(element)
+        simulate_event(:submit, React.find_dom_node(instance), {})
       }.to yield_control
     end
 
-    it "should return self for `on` method" do
-      element = React.create_element("div")
-      expect(element.on(:click){}).to eq(element)
+    it "should return the copied ReactElement for `on` method" do
+      element = React.create_element("div", {foo: "bar"})
+      
+      new_element = element.on(:click){}
+      expect(new_element).to be_a(React::Element)
+      expect(new_element.props[:foo]).to eq('bar')
     end
   end
 
