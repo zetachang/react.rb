@@ -23,7 +23,6 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'sprockets', '~> 3.1'
   s.add_runtime_dependency 'react-source', '~> 0.13'
 
-  s.add_development_dependency 'opal-rspec', '~> 0.4.2'
   s.add_development_dependency 'sinatra', '~> 1'
   s.add_development_dependency 'opal-jquery', '~> 0'
   s.add_development_dependency 'rake', '~> 10'

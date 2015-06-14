@@ -1,3 +1,10 @@
+GIT
+  remote: git://github.com/opal/opal-rspec.git
+  revision: e2290d56ff5147e5a2b96258ef5bdc2b54a9e6af
+  specs:
+    opal-rspec (0.4.2)
+      opal (>= 0.7.0, < 0.9)
+
 PATH
   remote: .
   specs:
@@ -16,17 +23,15 @@ GEM
     hike (1.2.3)
     json (1.8.3)
     libv8 (3.16.14.7)
-    opal (0.7.1)
+    opal (0.8.0.rc1)
       hike (~> 1.2)
       sourcemap (~> 0.1.0)
-      sprockets (>= 2.2.3, < 4.0.0)
-      tilt (~> 1.4)
+      sprockets (~> 3.1)
+      tilt (>= 1.4)
     opal-activesupport (0.1.0)
       opal (>= 0.5.0, < 1.0.0)
     opal-jquery (0.2.0)
       opal (>= 0.5.0, < 1.0.0)
-    opal-rspec (0.4.2)
-      opal (~> 0.7.0)
     rack (1.6.1)
     rack-protection (1.5.3)
       rack
@@ -47,14 +52,15 @@ GEM
     therubyracer (0.12.2)
       libv8 (~> 3.16.14.0)
       ref
-    tilt (1.4.1)
+    tilt (2.0.1)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
+  opal (= 0.8.0.rc1)
   opal-jquery (~> 0)
-  opal-rspec (~> 0.4.2)
+  opal-rspec!
   rake (~> 10)
   react.rb!
   sinatra (~> 1)
