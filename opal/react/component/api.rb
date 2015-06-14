@@ -20,6 +20,21 @@ module React
           });
         }
       end
+            
+      def refs
+        hash = {}
+        
+        %x{
+          var refs = self.refs;
+          for (var property in refs) {
+            if (refs.hasOwnProperty(property)) {
+              #{hash[`property`] = `refs[property]`}
+            }
+          }
+        }
+
+        hash
+      end
       
       def dom_node
         raise "`dom_node` is deprecated in favor of `React.find_dom_node`"

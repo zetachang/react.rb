@@ -435,14 +435,15 @@ describe React::Component do
       end
 
       instance = render_to_document(React.create_element(Foo))
-      expect(instance.refs[:field]).not_to be_nil
+      expect(`#{React.find_dom_node(instance.refs[:field])}.tagName`).to eq('INPUT')
     end
 
     it "should access refs through `refs` method" do
       Foo.class_eval do
         def render
           React.create_element("input", type: :text, ref: :field).on(:click) do
-            refs[:field].value = "some_stuff"
+            input_field = Native(React.find_dom_node(refs[:field]))
+            input_field.value = "some_stuff"
           end
         end
       end
@@ -450,7 +451,7 @@ describe React::Component do
       instance = render_to_document(React.create_element(Foo))
       simulate_event(:click, React.find_dom_node(instance))
 
-      expect(instance.refs[:field].value).to eq("some_stuff")
+      expect(`#{React.find_dom_node(instance.refs[:field])}.value`).to eq("some_stuff")
     end
   end
 

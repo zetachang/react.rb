@@ -28,10 +28,6 @@ module React
       end
     end
 
-    def refs
-      Hash.new(`#{self}.refs`)
-    end
-
     def emit(event_name, *args)
       self.params["on_#{event_name.to_s}"].call(*args)
     end
