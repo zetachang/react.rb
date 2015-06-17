@@ -184,9 +184,9 @@ class App
   end
 	
 	# Will append to the params above
-	params do
-		requires :password, type: String
-	end
+  params do
+    requires :password, type: String
+  end
 
   def render
     div
