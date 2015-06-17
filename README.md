@@ -183,7 +183,7 @@ class App
     optional :flash_message, type: String, default: 'Welcome!' # no need to feed through `getDefaultProps`
   end
 	
-	# Will append to the params above
+  # Will append to the params above
   params do
     requires :password, type: String
   end
