@@ -107,6 +107,7 @@ module React
             if (this.__opalInstance == undefined) {
               var instance = #{type.new(`this`)};
             } else {
+              console.log('__opalInstance is defined!')
               var instance = this.__opalInstance;
             }
             this.__opalInstance = instance;

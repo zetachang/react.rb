@@ -131,6 +131,10 @@ module React
       end
       nil
     end
+    
+    def while_loading(&block)
+      RenderingContext.render(nil, &block)
+    end
 
     def method_missing(n, *args, &block)
       return params[n] if params.key? n
@@ -169,7 +173,7 @@ module React
     
     def _render_wrapper
       React::State.set_state_context_to(self) do
-        render_result = render
+        render_result = RenderingContext.render(nil) {render}
         React::State.update_states_to_observe
         render_result
       end
@@ -297,6 +301,7 @@ module React
       
       def export_component(opts = {})
         export_name = (opts[:as] || name).split("::")
+        puts "exporting #{export_name}"
         first_name = export_name.first
         Native(`window`)[first_name] = add_item_to_tree(Native(`window`)[first_name], [React::API.create_native_react_class(self)] + export_name[1..-1].reverse).to_n
       end

@@ -4,16 +4,20 @@ module React
     
     class << self
       
+      attr_reader :current_observer
+      
       def initialize_states(object, initial_values) # initialize objects' name/value pairs
         states[object].merge!(initial_values || {})
       end
 
       def get_state(object, name) # get current value of name for object, remember that the current object depends on this state
+        #puts "get_state(#{object}, #{name}) @current_observer = #{@current_observer}"
         new_observers[@current_observer][object] << name if @current_observer and !new_observers[@current_observer][object].include? name
         states[object][name]
       end
 
       def set_state(object, name, value)  # set object's name state to value, tell all observers it has changed.  Observers must implement update_react_js_state
+        #puts "set_state(#{object}, #{name}, #{value})"
         states[object][name] = value
         observers_by_name[object][name].dup.each do |observer|
           observer.update_react_js_state(object, name, value)
@@ -22,6 +26,7 @@ module React
       end
 
       def update_states_to_observe  # called after the last after_render callback
+        #puts "update states to observe"
         raise "update_states_to_observer called outside of watch block" unless @current_observer
         current_observers[@current_observer].each do |object, names|
           names.each do |name| 

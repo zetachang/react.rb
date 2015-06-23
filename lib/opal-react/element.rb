@@ -28,6 +28,10 @@ module React
       end
       self
     end
+    
+    def delete
+      RenderingContext.delete(self)
+    end
 
     def children
       nodes = self.props.children

@@ -25,6 +25,20 @@ module React
       options[:required] = false
       @rules[prop_name] = options
     end
+    
+    def type_check_with_conversion(errors, error_prefix, object, klass)
+      is_native = !object.respond_to?(:is_a?) rescue true
+      if is_native
+        begin
+          object = klass.new(object) 
+        rescue 
+          errors << "#{error_prefix} could not be converted to #{klass}"
+        end
+      elsif !object.is_a? klass
+        errors << "#{error_prefix} was not of type #{klass[0]}"
+      end
+      object
+    end
   
     def validate(props)
       errors = []
@@ -39,13 +53,21 @@ module React
         errors << "Required prop `#{prop_name}` was not specified" if @rules[prop_name][:required]
       end
 
-      # type
+      # type with conversion from native if necessary
       props.each do |prop_name, value|
         if klass = @rules[prop_name][:type]
-          if klass.is_a?(Array)
-            errors <<  "Provided prop `#{prop_name}` was not an Array of the specified type `#{klass[0]}`" unless value.all?{ |ele| ele.is_a?(klass[0]) }
+          is_klass_array = klass.is_a?(Array) and klass.length > 0 rescue nil
+          if is_klass_array
+            value_is_array_like = value.respond_to?(:each_with_index) rescue nil
+            if value_is_array_like
+              value.each_with_index do |ele, i|
+                value[i] = type_check_with_conversion(errors, "Provided prop `#{prop_name}`[#{i}]", ele, klass[0])
+              end
+            else
+              errors << "Provided prop `#{prop_name}` was not an Array"
+            end
           else
-            errors <<  "Provided prop `#{prop_name}` was not the specified type `#{klass}`" unless value.is_a?(klass)
+            value = type_check_with_conversion(errors, "Provided prop `#{prop_name}`", value, klass)
           end
         end
       end
