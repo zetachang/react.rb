@@ -99,6 +99,7 @@ module React
     end
     
     def br
+      return self.method_missing(*["br"]) if self.is_a? React::Component
       React::RenderingContext.render("span") { React::RenderingContext.render(self.to_s); React::RenderingContext.render("br") }
     end
     
