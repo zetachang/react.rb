@@ -180,7 +180,7 @@ module React
     
     def _render_wrapper
       React::State.set_state_context_to(self) do
-        RenderingContext.render(nil) {render}.tap { |element| @waiting_on_resources = element.waiting_on_resources if element.respond_to? :waiting_on_resources }
+        RenderingContext.render(nil) {render || ""}.tap { |element| @waiting_on_resources = element.waiting_on_resources if element.respond_to? :waiting_on_resources }
       end
     rescue Exception => e
       self.class.process_exception(e, self)
