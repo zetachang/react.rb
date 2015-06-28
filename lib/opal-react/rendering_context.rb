@@ -91,8 +91,9 @@ module React
     alias_method :old_method_missing, :method_missing
     
     ["span", "para", "td", "th", "while_loading"].each do |tag|
-      define_method(tag) do | *args |
+      define_method(tag) do | *args, &block |
         args.unshift(tag)
+        return self.method_missing(*args, &block) if self.is_a? React::Component 
         React::RenderingContext.render(*args) { self.to_s }
       end
     end
