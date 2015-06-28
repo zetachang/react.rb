@@ -48,6 +48,7 @@ module React
             React::RenderingContext.render(name, *args, &block)
           end
         rescue 
+          puts "rescue in method_missing #{n}"
         end
         
       end
@@ -56,7 +57,7 @@ module React
     def initialize(native_element)
       @native = native_element
     end
-
+    
     def params
       Hash.new(`#{@native}.props`)
     end
@@ -79,16 +80,23 @@ module React
     end
 
     def component_will_mount
+      @processed_params = {}
       React::State.initialize_states(self, initial_state)
       React::State.set_state_context_to(self) { self.run_callback(:before_mount) }
     end
 
     def component_did_mount
-      React::State.set_state_context_to(self) { self.run_callback(:after_mount) }
+      React::State.set_state_context_to(self) do
+        self.run_callback(:after_mount) 
+        React::State.update_states_to_observe
+      end
     end
 
     def component_will_receive_props(next_props)
+      # need to rethink how this works in opal-react, or if its actually that useful within the react.rb environment
+      # for now we are just using it to clear processed_params
       React::State.set_state_context_to(self) { self.run_callback(:before_receive_props, Hash.new(next_props)) }
+      @processed_params = {}
     end
 
     def should_component_update?(next_props, next_state)
@@ -102,6 +110,7 @@ module React
     def component_did_update(prev_props, prev_state)
       React::State.set_state_context_to(self) do
         self.run_callback(:after_update, Hash.new(prev_props), Hash.new(prev_state))
+        React::State.update_states_to_observe
       end
     end
 
@@ -130,10 +139,6 @@ module React
         return component if component and component.method_defined? :render
       end
       nil
-    end
-    
-    def while_loading(&block)
-      RenderingContext.render(nil, &block)
     end
 
     def method_missing(n, *args, &block)
@@ -171,17 +176,34 @@ module React
       React::State.initialize_states(self, self.class.define_state(*args, &block))
     end
     
+    attr_reader :waiting_on_resources
+    
     def _render_wrapper
       React::State.set_state_context_to(self) do
-        render_result = RenderingContext.render(nil) {render}
-        React::State.update_states_to_observe
-        render_result
+        RenderingContext.render(nil) {render}.tap { |element| @waiting_on_resources = element.waiting_on_resources if element.respond_to? :waiting_on_resources }
       end
     rescue Exception => e
-      puts "Exception raised while rendering #{self.class.name}: #{e}"
+      self.class.process_exception(e, self)
     end
 
     module ClassMethods
+      
+      def full_backtrace(*args)
+        @full_backtrace_on = (args.count == 0 or (args[0] != :off and args[0]))
+      end
+      
+      def process_exception(e, component, reraise = nil)
+        message = ["Exception raised while rendering #{component}"]
+        if @full_backtrace_on
+          message << "    #{e.backtrace[0]}"
+          message += e.backtrace[1..-1].collect { |line| line } 
+        else
+          message[0] += ": #{e.message}"
+        end
+        message = message.join("\n")
+        `console.error(message)`
+        raise e if reraise
+      end
       
       def validator
         @validator ||= React::Validator.new
@@ -234,7 +256,13 @@ module React
           end
         else
           define_method("#{name}") do
-            params[name]
+            @processed_params[name] ||= if param_type.respond_to? :_react_param_conversion
+              param_type._react_param_conversion params[name]
+            elsif param_type.is_a? Array and param_type[0].respond_to? :_react_param_conversion
+              params[name].collect { |param| param_type[0]._react_param_conversion param }
+            else
+              params[name]
+            end
           end
         end
       end
@@ -301,7 +329,6 @@ module React
       
       def export_component(opts = {})
         export_name = (opts[:as] || name).split("::")
-        puts "exporting #{export_name}"
         first_name = export_name.first
         Native(`window`)[first_name] = add_item_to_tree(Native(`window`)[first_name], [React::API.create_native_react_class(self)] + export_name[1..-1].reverse).to_n
       end

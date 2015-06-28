@@ -10,9 +10,10 @@ module React
         states[object].merge!(initial_values || {})
       end
 
-      def get_state(object, name) # get current value of name for object, remember that the current object depends on this state
-        #puts "get_state(#{object}, #{name}) @current_observer = #{@current_observer}"
-        new_observers[@current_observer][object] << name if @current_observer and !new_observers[@current_observer][object].include? name
+      def get_state(object, name, current_observer = @current_observer) 
+        # get current value of name for object, remember that the current object depends on this state, current observer can be overriden with last param
+        #puts "get_state(#{object}, #{name}) current_observer = #{current_observer}"
+        new_observers[current_observer][object] << name if current_observer and !new_observers[current_observer][object].include? name
         states[object][name]
       end
 
@@ -24,20 +25,30 @@ module React
         end
         value
       end
+      
+      def will_be_observing?(object, name, current_observer)
+        #puts "will_be_observing(#{object}, #{name}, #{current_observer}) new_observers = #{new_observers}"
+        current_observer and new_observers[current_observer][object].include?(name)
+      end
+      
+      def is_observing?(object, name, current_observer)
+        #puts "is_observing?(#{object}, #{name}, #{current_observer}) #{observers_by_name[object][name]}"
+        current_observer and observers_by_name[object][name].include?(current_observer)
+      end
 
-      def update_states_to_observe  # called after the last after_render callback
-        #puts "update states to observe"
-        raise "update_states_to_observer called outside of watch block" unless @current_observer
-        current_observers[@current_observer].each do |object, names|
+      def update_states_to_observe(current_observer = @current_observer)  # should be called after the last after_render callback, currently called after components render method
+        #puts "update states to observe current_observer: #{current_observer}, new_observers: [#{new_observers[current_observer]}]"
+        raise "update_states_to_observer called outside of watch block" unless current_observer
+        current_observers[current_observer].each do |object, names|
           names.each do |name| 
-            observers_by_name[object][name].delete(@current_observer)
+            observers_by_name[object][name].delete(current_observer)
           end
         end
-        observers = current_observers[@current_observer] = new_observers[@current_observer]
-        new_observers.delete(@current_observer)
+        observers = current_observers[current_observer] = new_observers[current_observer]
+        new_observers.delete(current_observer)
         observers.each do |object, names|
           names.each do |name|
-            observers_by_name[object][name] << @current_observer
+            observers_by_name[object][name] << current_observer
           end
         end
       end

@@ -107,7 +107,6 @@ module React
             if (this.__opalInstance == undefined) {
               var instance = #{type.new(`this`)};
             } else {
-              console.log('__opalInstance is defined!')
               var instance = this.__opalInstance;
             }
             this.__opalInstance = instance;
@@ -157,7 +156,7 @@ module React
           params << ele.to_n
         end
       end
-      return React::Element.new(`React.createElement.apply(null, #{params})`)
+      return React::Element.new(`React.createElement.apply(null, #{params})`, type, properties, block)
     end
 
     def self.clear_component_class_cache

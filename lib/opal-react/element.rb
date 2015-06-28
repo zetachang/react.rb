@@ -6,8 +6,17 @@ module React
 
     alias_native :element_type, :type
     alias_native :props, :props
+    
+    attr_reader :type
+    attr_reader :properties
+    attr_reader :block
+    
+    attr_accessor :waiting_on_resources
 
-    def initialize(native_element)
+    def initialize(native_element, type, properties, block)
+      @type = type
+      @properties = properties
+      @block = block
       @native = native_element
     end
 

@@ -1,79 +1,71 @@
 module React
   
-  class Element
-    
-    attr_accessor :has_uncleared_loads
-    
-    def setup_while_loading(original_name, original_block)
-      #puts "setup_while_loading(#{original_name}, #{original_block})"
-      @has_uncleared_loads = true
-      @original_name = original_name
-      @original_block = original_block
-    end
-    
-    def while_loading_show(opts={}, &block)
-      #puts "while_loading_show: block: (#{!!block}) @original_name: (#{@original_name}) uncleared_loads: #{has_uncleared_loads}"
-      return self unless has_uncleared_loads
-      RenderingContext.delete(self) 
-      #puts "should have deleted myself"
-      @has_uncleared_loads = nil
-      block ||= @original_block
-      RenderingContext.render(@original_name, opts, &block).tap { |element| element.has_uncleared_loads = nil}
-    end
-    
-    alias_method :show, :while_loading_show
-    
-  end
-  
   class RenderingContext
     
-    def self.push(element)
-      @buffer << element
-      element
+    class << self
+      attr_accessor :waiting_on_resources
     end
     
     def self.render(name, *args, &block)
-      #puts "RenderingContext.render(#{name}, [#{args}], #{!!block})"
+      #puts "RenderingContext.render(#{name}, [#{args}], #{!!block}), (#{waiting_on_resources})"
       @buffer = [] unless @buffer
       if block
         element = build do
+          saved_waiting_on_resources = waiting_on_resources
+          self.waiting_on_resources = nil
           result = block.call
-          
+          # Todo figure out how children rendering should happen, probably should have special method that pushes children into the buffer
+          # i.e. render_child/render_children that takes Element/Array[Element] and does the push into the buffer
           if !name and (  # !name means called from outer render so we check that it has rendered correctly
               (@buffer.count > 1) or # should only render one element
               (@buffer.count == 1 and @buffer.last != result) or # it should return that element 
-              (@buffer.count == 0 and !(result.is_a? String)) # for convience we will also convert the return value to a span if its a string
+              (@buffer.count == 0 and !(result.is_a? String or result.is_a? Element)) #for convience we will also convert the return value to a span if its a string
             )
             #puts "render result incorrect: name: #{name}, @buffer: [#{@buffer}], result: #{result}, result.is_a? String (#{result.is_a? String})"
-            raise "a components render or while_loading method must generate and return exactly 1 element or a string"
+            raise "a components render method must generate and return exactly 1 element or a string"
           end
-          @buffer.each { |ele| @last_element_loading_flag ||= ele.has_uncleared_loads  }
+          
           @buffer << result.to_s if result.is_a? String # For convience we push the last return value on if its a string
+          @buffer << result if result.is_a? Element and @buffer.count == 0
           if name
             #puts "about to create a new element #{name}, [#{args}], { [#{@buffer}] } #{@buffer.last.class.name}"
-            React.create_element(name, *args) { @buffer }
+            buffer = @buffer.dup
+            React.create_element(name, *args) { buffer }.tap do |element| 
+              element.waiting_on_resources = saved_waiting_on_resources || !!buffer.detect { |e| e.waiting_on_resources if e.respond_to? :waiting_on_resources }
+              #puts "1 #{element}.waiting_on_resources set to #{element.waiting_on_resources}"
+            end
           elsif @buffer.last.is_a? React::Element
-            @buffer.last
+            @buffer.last.tap { |element| 
+              #puts "2 #{element}.waiting_on_resources is = #{element.waiting_on_resources}"
+              element.waiting_on_resources ||= saved_waiting_on_resources
+              #puts "2 #{element}.waiting_on_resources set to #{element.waiting_on_resources}" 
+              }
           else
-            @buffer.last.to_s.span
+            @buffer.last.to_s.span.tap { |element| 
+              element.waiting_on_resources = saved_waiting_on_resources 
+              #puts "3 #{element}.waiting_on_resources set to #{element.waiting_on_resources}"
+              }
           end
         end
       else
         element = React.create_element(name, *args)
+        element.waiting_on_resources = waiting_on_resources
+        #puts "4 #{element}.waiting_on_resources set to #{element.waiting_on_resources}"
       end
-      element.setup_while_loading(name, block) if @last_element_loading_flag
       @buffer << element 
-      @last_element_loading_flag = nil 
+      self.waiting_on_resources = nil
+      #puts "CLEARED WAITING ON RESOURCES"
       element
+      #puts "HEY !!!!!!!!!!!! this is why it aint clearng #{e}"
     #ensure
-    #  @last_element_loading_flag = nil 
+    #  waiting_on_resources = nil 
     #  element
     end
     
     def self.build(&block)
       current = @buffer
       @buffer = []
-      return_val = yield
+      return_val = yield @buffer
       @buffer = current
       return_val
     #ensure
@@ -88,33 +80,27 @@ module React
     
     class << self; alias_method :delete, :as_node; end
     
-    def self.element_loading!
-      @last_element_loading_flag = true
+    def self.replace(e1, e2)
+      @buffer[@buffer.index(e1)] = e2 
     end
     
   end
-  
-  class ::String
+ 
+  class ::Object
     
-    alias_method :old_display, :display
+    alias_method :old_method_missing, :method_missing
     
-    def display(*args, &block)
-      React::RenderingContext.render(self)
-      old_display *args, &block if respond_to? :old_display
-    end
-    
-    ["span", "para", "td", "th"].each do |tag|
-      define_method(tag) do |*args|
+    ["span", "para", "td", "th", "while_loading"].each do |tag|
+      define_method(tag) do | *args |
         args.unshift(tag)
-        React::RenderingContext.render(*args) { self }
+        React::RenderingContext.render(*args) { self.to_s }
       end
     end
     
     def br
-      React::RenderingContext.render("span") { self.display; React::RenderingContext.render("br") }
+      React::RenderingContext.render("span") { React::RenderingContext.render(self.to_s); React::RenderingContext.render("br") }
     end
     
-    
   end
-  
+
 end

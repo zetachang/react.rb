@@ -26,18 +26,13 @@ module React
       @rules[prop_name] = options
     end
     
-    def type_check_with_conversion(errors, error_prefix, object, klass)
+    def type_check(errors, error_prefix, object, klass)
       is_native = !object.respond_to?(:is_a?) rescue true
-      if is_native
-        begin
-          object = klass.new(object) 
-        rescue 
-          errors << "#{error_prefix} could not be converted to #{klass}"
+      if is_native or !object.is_a? klass
+        unless klass.respond_to? :_react_param_conversion and klass._react_param_conversion object, :validate_only
+          errors << "#{error_prefix} could not be converted to #{klass}" unless klass._react_param_conversion object, :validate_only
         end
-      elsif !object.is_a? klass
-        errors << "#{error_prefix} was not of type #{klass[0]}"
       end
-      object
     end
   
     def validate(props)
@@ -52,22 +47,19 @@ module React
       (@rules.keys - props.keys).each do |prop_name|
         errors << "Required prop `#{prop_name}` was not specified" if @rules[prop_name][:required]
       end
-
-      # type with conversion from native if necessary
+      # type checking
       props.each do |prop_name, value|
         if klass = @rules[prop_name][:type]
           is_klass_array = klass.is_a?(Array) and klass.length > 0 rescue nil
           if is_klass_array
             value_is_array_like = value.respond_to?(:each_with_index) rescue nil
             if value_is_array_like
-              value.each_with_index do |ele, i|
-                value[i] = type_check_with_conversion(errors, "Provided prop `#{prop_name}`[#{i}]", ele, klass[0])
-              end
+              value.each_with_index { |ele, i| type_check(errors, "Provided prop `#{prop_name}`[#{i}]", ele, klass[0]) }
             else
               errors << "Provided prop `#{prop_name}` was not an Array"
             end
           else
-            value = type_check_with_conversion(errors, "Provided prop `#{prop_name}`", value, klass)
+            type_check(errors, "Provided prop `#{prop_name}`", value, klass)
           end
         end
       end
