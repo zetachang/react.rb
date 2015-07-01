@@ -83,6 +83,8 @@ module React
       @processed_params = {}
       React::State.initialize_states(self, initial_state)
       React::State.set_state_context_to(self) { self.run_callback(:before_mount) }
+    rescue Exception => e
+      self.class.process_exception(e, self)
     end
 
     def component_did_mount
@@ -90,6 +92,8 @@ module React
         self.run_callback(:after_mount) 
         React::State.update_states_to_observe
       end
+    rescue Exception => e
+      self.class.process_exception(e, self)
     end
 
     def component_will_receive_props(next_props)
@@ -97,21 +101,30 @@ module React
       # for now we are just using it to clear processed_params
       React::State.set_state_context_to(self) { self.run_callback(:before_receive_props, Hash.new(next_props)) }
       @processed_params = {}
+    rescue Exception => e
+      self.class.process_exception(e, self)
     end
 
     def should_component_update?(next_props, next_state)
       React::State.set_state_context_to(self) { self.respond_to?(:needs_update?) ? self.needs_update?(Hash.new(next_props), Hash.new(next_state)) : true }
+    rescue Exception => e
+      self.class.process_exception(e, self)
     end
 
     def component_will_update(next_props, next_state)
       React::State.set_state_context_to(self) { self.run_callback(:before_update, Hash.new(next_props), Hash.new(next_state)) }
+    rescue Exception => e
+      self.class.process_exception(e, self)
     end
+    
 
     def component_did_update(prev_props, prev_state)
       React::State.set_state_context_to(self) do
         self.run_callback(:after_update, Hash.new(prev_props), Hash.new(prev_state))
         React::State.update_states_to_observe
       end
+    rescue Exception => e
+      self.class.process_exception(e, self)
     end
 
     def component_will_unmount
@@ -119,6 +132,8 @@ module React
         self.run_callback(:before_unmount)
         React::State.remove
       end
+    rescue Exception => e
+      self.class.process_exception(e, self)
     end
 
     def p(*args, &block)
@@ -188,13 +203,13 @@ module React
 
     module ClassMethods
       
-      def full_backtrace(*args)
-        @full_backtrace_on = (args.count == 0 or (args[0] != :off and args[0]))
+      def backtrace(*args)
+        @backtrace_on = (args.count == 0 or (args[0] != :off and args[0]))
       end
       
       def process_exception(e, component, reraise = nil)
         message = ["Exception raised while rendering #{component}"]
-        if @full_backtrace_on
+        if @backtrace_on
           message << "    #{e.backtrace[0]}"
           message += e.backtrace[1..-1].collect { |line| line } 
         else
