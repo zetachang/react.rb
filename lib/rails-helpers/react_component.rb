@@ -1,7 +1,7 @@
 begin
   
   require 'react-rails'
-  #require 'react/prerender_data_interface'
+  require 'opal-react' #'/prerender_data_interface'
   
   module React
     module Rails
