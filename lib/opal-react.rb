@@ -17,6 +17,7 @@ else
   require "opal-activesupport"
   require "rails-helpers/react_component"
   require "opal-react/prerender_data_interface"
+  require "opal-react/serializers"
 
   Opal.append_path File.expand_path('../', __FILE__).untaint
   Opal.append_path File.expand_path('../../vendor', __FILE__).untaint

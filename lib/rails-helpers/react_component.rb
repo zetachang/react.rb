@@ -25,9 +25,9 @@ begin
             render_options[:prerender][:context].merge!({"ServerSidePrerenderDataInterface" => @prerender_data_interface})
             
           end
-
-          component_rendering = raw(pre_opal_react_component(js_name, props, render_options, &block))
-          initial_data_string = raw(render_options[:prerender] ? @prerender_data_interface.generate_next_footer : "")
+          
+          component_rendering = raw(pre_opal_react_component(js_name, props.react_serializer, render_options, &block))
+          initial_data_string = raw(@prerender_data_interface.generate_next_footer) #render_options[:prerender] ? @prerender_data_interface.generate_next_footer : "")
           
           component_rendering+initial_data_string
         end
