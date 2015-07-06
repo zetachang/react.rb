@@ -1,4 +1,4 @@
-[Bignum, Fixnum, Float, Integer, NilClass, String, Symbol, Time, TrueClass].each do |klass|
+[BigDecimal, Bignum, FalseClass, Fixnum, Float, Integer, NilClass, String, Symbol, Time, TrueClass].each do |klass|
   klass.send(:define_method, :react_serializer) do 
     as_json
   end
