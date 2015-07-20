@@ -9,15 +9,28 @@ It lets you write reactive UI components, with Ruby's elegance and compiled to r
 
 ## Installation
 
+Currently this branch (0.8 in catprint labs) is being used with the following configuration.  
+It is suggested to begin with this
+set of gems which is known to work and then add / remove them as needed.  Let us know if you discover anything.
+
+Currently we are using rails 3.x
+
 ```ruby
 # Gemfile
-gem "react.rb"
+# gem 'react-rails', git: "https://github.com/catprintlabs/react-rails.git" # include if you want integration with rails
+gem 'opal', git: "https://github.com/catprintlabs/opal.git"  # you can probably use the latest opal if you are on rails 4.0 this one works with rails 3.x
+gem 'opal-jquery', git: "https://github.com/catprintlabs/opal-jquery.git" # same as above
+gem 'opal-rails' # include if you want integration with rails
+gem 'opal-browser'
+gem 'opal-react', git: "https://github.com/catprintlabs/react.rb.git", :branch => 'opal-0.8'
+# gem 'reactive_record', git: "https://github.com/catprintlabs/reactive-record.git"  # access active record models from opal!
+# gem 'react-bootstrap-rails' # include if you want bootstrap 
 ```
 
 and in your Opal application,
 
 ```ruby
-require "opal"
+require "opal-react"
 require "react"
 
 React.render(React.create_element('h1'){ "Hello World!" }, `document.body`)
@@ -27,71 +40,34 @@ For integration with server (Sinatra, etc), see setup of [TodoMVC](example/todos
 
 ## Usage
 
-### A Simple Component
-
-A ruby class which define method `render` is a valid component.
-
-```ruby
-class HelloMessage
-  def render
-    React.create_element("div") { "Hello World!" }
-  end
-end
-
-puts React.render_to_static_markup(React.create_element(HelloMessage))
-
-# => '<div>Hello World!</div>'
-```
-
-### More complicated one
-
-To hook into native ReactComponent life cycle, the native `this` will be passed to the class's initializer. And all corresponding life cycle methods (`componentDidMount`, etc) will be invoked on the instance using the snake-case method name.
-
-```ruby
-class HelloMessage
-  def initialize(native)
-    @native = Native(native)
-  end
-
-  def component_will_mount
-    puts "will mount!"
-  end
-
-  def render
-    React.create_element("div") { "Hello #{@native[:props][:name]}!" }
-  end
-end
-
-puts React.render_to_static_markup(React.create_element(HelloMessage, name: 'John'))
-
-# => will_mount!
-# => '<div>Hello John!</div>'
-```
-
 ### React::Component
 
-Hey, we are using Ruby, simply include `React::Component` to save your typing and have some handy methods defined.
+Include the `React::Component` mixin in a class to turn it into a react component
 
 ```ruby
 class HelloMessage
+
   include React::Component
+  
   MSG = {great: 'Cool!', bad: 'Cheer up!'}
 
-  define_state(:foo) { "Default greeting" }
+  required_param :mood
+  required_param :name
+  define_state :foo, "Default greeting"
 
   before_mount do
-    self.foo = "#{self.foo}: #{MSG[params[:mood]]}"
+    foo! "#{foo}: #{MSG[mood]}"  # change the state of foo using foo!, read the state using foo
   end
 
-  after_mount :log
+  after_mount :log               # notice the two forms of callback
 
   def log
     puts "mounted!"
   end
 
-  def render
+  def render                     # render method MUST return just one component
     div do
-      span { self.foo + " #{params[:name]}!" }
+      span { "foo #{name}!" }    
     end
   end
 end
@@ -100,7 +76,7 @@ class App
   include React::Component
 
   def render
-    present HelloMessage, name: 'John', mood: 'great'
+    HelloMessage name: 'John', mood: :great   # new components are accessed via the class name
   end
 end
 
@@ -204,6 +180,47 @@ end
 # => ... for 5 times then stop ticking after 5 seconds
 ```
 
+
+### A Simple Component
+
+A ruby class which define method `render` is a valid component.
+
+```ruby
+class HelloMessage
+  def render
+    React.create_element("div") { "Hello World!" }
+  end
+end
+
+puts React.render_to_static_markup(React.create_element(HelloMessage))
+
+# => '<div>Hello World!</div>'
+```
+
+### More complicated one
+
+To hook into native ReactComponent life cycle, the native `this` will be passed to the class's initializer. And all corresponding life cycle methods (`componentDidMount`, etc) will be invoked on the instance using the snake-case method name.
+
+```ruby
+class HelloMessage
+  def initialize(native)
+    @native = Native(native)
+  end
+
+  def component_will_mount
+    puts "will mount!"
+  end
+
+  def render
+    React.create_element("div") { "Hello #{@native[:props][:name]}!" }
+  end
+end
+
+puts React.render_to_static_markup(React.create_element(HelloMessage, name: 'John'))
+
+# => will_mount!
+# => '<div>Hello John!</div>'
+```
 ## Example
 
 * React Tutorial: see [example/react-tutorial](example/react-tutorial), the original CommentBox example.
