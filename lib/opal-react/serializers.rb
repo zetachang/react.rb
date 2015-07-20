@@ -1,8 +1,10 @@
-[BigDecimal, Bignum, FalseClass, Fixnum, Float, Integer, NilClass, String, Symbol, Time, TrueClass].each do |klass|
+[Bignum, FalseClass, Fixnum, Float, Integer, NilClass, String, Symbol, Time, TrueClass].each do |klass|
   klass.send(:define_method, :react_serializer) do 
     as_json
   end
 end
+
+BigDecimal.send(:define_method, :react_serializer) { as_json } rescue nil
 
 Array.send(:define_method, :react_serializer) do 
   self.collect { |e| e.react_serializer }.as_json

@@ -45,29 +45,32 @@ For integration with server (Sinatra, etc), see setup of [TodoMVC](example/todos
 Include the `React::Component` mixin in a class to turn it into a react component
 
 ```ruby
+require 'opal'
+require 'opal-react'
+
 class HelloMessage
 
-  include React::Component
+  include React::Component                    # will create a new component named HelloMessage
   
   MSG = {great: 'Cool!', bad: 'Cheer up!'}
 
-  required_param :mood
+  optional_param :mood
   required_param :name
-  define_state :foo, "Default greeting"
+  define_state   :foo, "Default greeting"
 
-  before_mount do
-    foo! "#{foo}: #{MSG[mood]}"  # change the state of foo using foo!, read the state using foo
+  before_mount do                             # you can define life cycle callbacks inline
+    foo! "#{name}: #{MSG[mood]}" if mood      # change the state of foo using foo!, read the state using foo
   end
 
-  after_mount :log               # notice the two forms of callback
+  after_mount :log                            # you can also define life cycle callbacks by reference to a method
 
   def log
     puts "mounted!"
   end
-
-  def render                     # render method MUST return just one component
-    div do
-      span { "foo #{name}!" }    
+  
+  def render                                  # render method MUST return just one component  
+    div do                                    # basic dsl syntax component_name(options) { ...children... }                                    
+      span { "#{foo} #{name}!" }              # all html5 components are defined with lower case text
     end
   end
 end
@@ -80,13 +83,12 @@ class App
   end
 end
 
-puts React.render_to_static_markup(React.create_element(App))
+# later we will talk about nicer ways to do this:  For now wait till doc is loaded
+# then tell React to create an "App" and render it into the document body.
 
-# => '<div><span>Default greeting: Cool! John!</span></div>'
+`window.onload = #{lambda {React.render(React.create_element(App), `document.body`)}}`
 
-React.render(React.create_element(App), `document.body`)
-
-# mounted!
+# -> console says: mounted!
 ```
 
 * Callback of life cycle could be created through helpers `before_mount`, `after_mount`, etc

@@ -35,5 +35,5 @@ begin
     end
   end
   
-#rescue LoadError
+rescue LoadError
 end
