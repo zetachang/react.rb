@@ -1,7 +1,7 @@
 source 'http://rubygems.org'
 
-gem 'opal', git: "https://github.com/catprintlabs/opal.git"
+gem 'opal'
 gem 'opal-react', :path => '../..'
 gem 'sinatra'
-gem 'opal-jquery'
+#gem 'opal-jquery'
 gem 'react-source'

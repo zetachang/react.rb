@@ -1,13 +1,3 @@
-GIT
-  remote: https://github.com/catprintlabs/opal.git
-  revision: 3682db6f2b23a584787a68d5338a7ee9cb35565a
-  specs:
-    opal (0.7.1)
-      hike (~> 1.2)
-      sourcemap (~> 0.1.0)
-      sprockets (>= 2.2.3, < 4.0.0)
-      tilt (~> 1.4)
-
 PATH
   remote: ../..
   specs:
@@ -19,6 +9,11 @@ GEM
   remote: http://rubygems.org/
   specs:
     hike (1.2.3)
+    opal (0.8.0)
+      hike (~> 1.2)
+      sourcemap (~> 0.1.0)
+      sprockets (~> 3.1)
+      tilt (>= 1.4)
     opal-activesupport (0.1.0)
       opal (>= 0.5.0, < 1.0.0)
     opal-jquery (0.4.0)
@@ -34,13 +29,13 @@ GEM
     sourcemap (0.1.1)
     sprockets (3.2.0)
       rack (~> 1.0)
-    tilt (1.4.1)
+    tilt (2.0.1)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
-  opal!
+  opal
   opal-jquery
   opal-react!
   react-source

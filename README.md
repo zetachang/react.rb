@@ -18,13 +18,24 @@ Currently we are using rails 3.x
 ```ruby
 # Gemfile
 # gem 'react-rails', git: "https://github.com/catprintlabs/react-rails.git" # include if you want integration with rails
-gem 'opal', git: "https://github.com/catprintlabs/opal.git"  # you can probably use the latest opal if you are on rails 4.0 this one works with rails 3.x
-gem 'opal-jquery', git: "https://github.com/catprintlabs/opal-jquery.git" # same as above
-gem 'opal-rails' # include if you want integration with rails
-gem 'opal-browser'
+gem 'opal'
+
+# gem 'opal', git: "https://github.com/catprintlabs/opal.git"  # use this if you are stuck on rails 3.x
+# gem 'opal-jquery', git: "https://github.com/catprintlabs/opal-jquery.git" # same as above
+
+# include if you want integration with rails
+# gem 'opal-rails' 
+
+# while not absolutely necessary you will probably want this at least for timers and such
+# gem 'opal-browser'
+
 gem 'opal-react', git: "https://github.com/catprintlabs/react.rb.git", :branch => 'opal-0.8'
-# gem 'reactive_record', git: "https://github.com/catprintlabs/reactive-record.git"  # access active record models from opal!
-# gem 'react-bootstrap-rails' # include if you want bootstrap 
+
+# access active record models from opal!
+# gem 'reactive_record', git: "https://github.com/catprintlabs/reactive-record.git"  
+
+# include if you want to use bootstrap
+# gem 'react-bootstrap-rails' 
 ```
 
 and in your Opal application,
@@ -36,11 +47,31 @@ require "react"
 React.render(React.create_element('h1'){ "Hello World!" }, `document.body`)
 ```
 
-For integration with server (Sinatra, etc), see setup of [TodoMVC](example/todos) or the [official docs](http://opalrb.org/docs/) of Opal.
+For a complete example covering most key features, as well as integration with a server (Sinatra, etc), see setup of [Examples](example/tutorial).  For additional information on integrating Opal with a server see the [official docs](http://opalrb.org/docs/) of Opal.
 
-## Usage
+## React Overview
 
-### React::Component
+### Basics
+
+The biggest problem with react is that its almost too simple.
+
+In react you define components.  Components are simply classes that have a "render" method.   The render method "draws" a chunk of
+HTML.  
+
+Here is a very simple component:
+
+```ruby
+
+require 'opal'
+require 'opal-react'
+
+class Hello
+  def render
+    "hello world"
+  end
+end
+
+# to use the component we first create an instance o
 
 Include the `React::Component` mixin in a class to turn it into a react component
 

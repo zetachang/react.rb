@@ -144,6 +144,8 @@ module React
            props[lower_camelize(key)] = `React.addons.classSet(#{value.to_n})`
          elsif key == "class"
            props["className"] = value
+         elsif ["style", "dangerously_set_inner_HTML"].include? key
+           props[lower_camelize(key)] = value.to_n
          else
            props[React::ATTRIBUTES.include?(lower_camelize(key)) ? lower_camelize(key) : key] = value
          end
