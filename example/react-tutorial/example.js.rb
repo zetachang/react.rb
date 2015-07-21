@@ -67,6 +67,7 @@ class CommentBox
   # once we have things up and displayed lets start polling for updates
     
   after_mount do
+    puts "start me up!"
     @fetcher.start
   end
   
@@ -263,7 +264,7 @@ class Showdown
     
     # then we will take our markup param, and convert it to html
     
-    raw_markup = @converter.makeHtml(markup)
+    raw_markup = @converter.makeHtml(markup) if markup
     
     # React.js takes a very dim view of passing raw html so its purposefully made
     # difficult so you won't do it by accident.  After all think of how dangerous what we 
