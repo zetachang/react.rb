@@ -239,7 +239,9 @@ class Comment
 
   def render
     div.comment do
-      h2.commentAuthor { author }
+      h2.comment_author { author } # NOTE: single underscores in haml style class names are converted to dashes
+                                   # so comment_author becomes comment-author, but comment__author would be comment_author
+                                   # this is handy for boot strap names like col-md-push-9 which can be written as col_md_push_9
       Showdown markup: text
     end
   end
