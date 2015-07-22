@@ -38,6 +38,15 @@ module React
       self
     end
     
+    def method_missing(class_name, args = {}, &new_block)
+      new_props = properties.dup
+      new_props["class"] = "#{new_props['class']} #{class_name} #{args['class']} #{args['className']}".split(" ").uniq.join(" ")
+      RenderingContext.replace(
+        self,
+        React::RenderingContext.build { React::RenderingContext.render(type, new_props, &new_block) }
+      )
+    end
+    
     def delete
       RenderingContext.delete(self)
     end

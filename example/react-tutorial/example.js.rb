@@ -99,7 +99,7 @@ class CommentBox
     
     # the dsl syntax is simply a method call, with params hash, followed by a block
     # the built in dsl methods correspond to the standard HTML5 tags such as div, h1, table, tr, td, span etc.
-    
+    #return div.comment { h1 {"hello"} }
     div class: "commentBox" do          # just like <div class="commentBox">
       
       h1 { "Comments" }                 # yep just like <h1>Comments</h1>
@@ -155,7 +155,7 @@ class CommentList
     # When a tag method (such as div, or Comment) is called its "output" is internally pushed into a render buffer.
     # This simplifies the DSL by separating the control flow from the output, but can sometimes be a bit confusing.
      
-    div class: "commentList" do
+    div.commentList.and_another_class.and_another do   # you can also include the class haml style (tx to @dancinglightning!)
       comments.each do |comment|
         # By now we are getting used to the react paradigm:  Stuff comes in, is processed, and then
         # passed to next lower level.  In this case we pass along each author-text pair to the Comment component.
@@ -238,8 +238,8 @@ class Comment
   required_param :text
 
   def render
-    div class: "comment" do
-      h2(class: "commentAuthor") { author }
+    div.comment do
+      h2.commentAuthor { author }
       Showdown markup: text
     end
   end
