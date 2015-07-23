@@ -138,7 +138,7 @@ class CommentList
   # Failure to match the type puts a warning on the console not an error, 
   # and only in development mode not production.
   
-  required_param :comments, type: [Hash] 
+  required_param :comments, type: Array 
   
   # This is a good place to think more about the component lifecycle.  The first time 
   # CommentList is mounted, comments will be the initial array of author, text hashes.
@@ -159,7 +159,7 @@ class CommentList
       comments.each do |comment|
         # By now we are getting used to the react paradigm:  Stuff comes in, is processed, and then
         # passed to next lower level.  In this case we pass along each author-text pair to the Comment component.
-        Comment author: comment[:author], text: comment[:text]
+        Comment author: comment[:author], text: comment[:text], hash: comment
       end
     end
   end
@@ -236,6 +236,7 @@ class Comment
   
   required_param :author
   required_param :text
+  required_param :hash, type: Hash
 
   def render
     div.comment do
