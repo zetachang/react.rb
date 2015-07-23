@@ -360,7 +360,7 @@ module React
     end
 
     module API
-      include Native
+      #include Native
 
       alias_native :dom_node, :getDOMNode
       alias_native :mounted?, :isMounted
