@@ -41,7 +41,8 @@ module React
     def method_missing(class_name, args = {}, &new_block)
       class_name = class_name.split("__").collect { |s| s.gsub("_", "-") }.join("_")
       new_props = properties.dup
-      new_props["class"] = "#{new_props['class']} #{class_name} #{args['class']} #{args['className']}".split(" ").uniq.join(" ")
+      new_props["class"] = "#{new_props['class']} #{class_name} #{args.delete("class")} #{args.delete('className')}".split(" ").uniq.join(" ")
+      new_props.merge! args
       RenderingContext.replace(
         self,
         React::RenderingContext.build { React::RenderingContext.render(type, new_props, &new_block) }

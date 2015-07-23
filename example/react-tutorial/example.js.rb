@@ -195,7 +195,7 @@ class CommentForm
         # author is what will cause us to re-render and update the input as the value of author changes.
         # React will optimize the updates so parts that are not changing will not be effected.
         
-        input(type: :text, value: author, placeholder: "Your name", style: {width: "30%"}).
+        input.author_name(type: :text, value: author, placeholder: "Your name", style: {width: "30%"}).
           # and we attach an on_change handler to the input.  As the input changes we simply update author.
           on(:change) { |e| author! e.target.value } 
           

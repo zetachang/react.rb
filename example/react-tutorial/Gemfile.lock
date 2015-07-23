@@ -1,7 +1,7 @@
 PATH
   remote: ../..
   specs:
-    opal-react (0.1.1)
+    opal-react (0.2.1)
       opal
       opal-activesupport
 
