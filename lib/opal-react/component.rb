@@ -30,27 +30,29 @@ module React
       end
       base.extend(ClassMethods)
       
-      parent = base.name.split("::").inject([Module]) { |nesting, next_const| nesting + [nesting.last.const_get(next_const)] }[-2]
-      parent.class_eval do
+      if base.name
+        parent = base.name.split("::").inject([Module]) { |nesting, next_const| nesting + [nesting.last.const_get(next_const)] }[-2] 
+        parent.class_eval do
         
-        def method_missing(n, *args, &block)
-          name = n
-          if name =~ /_as_node$/ 
-            node_only = true
-            name = name.gsub(/_as_node$/, "")
+          def method_missing(n, *args, &block)
+            name = n
+            if name =~ /_as_node$/ 
+              node_only = true
+              name = name.gsub(/_as_node$/, "")
+            end
+            unless name = const_get(name) and name.method_defined? :render
+              return super
+            end
+            if node_only
+              React::RenderingContext.build { React::RenderingContext.render(name, *args, &block) }.to_n
+            else
+              React::RenderingContext.render(name, *args, &block)
+            end
+          rescue 
+            puts "rescue in method_missing #{n}"
           end
-          unless name = const_get(name) and name.method_defined? :render
-            return super
-          end
-          if node_only
-            React::RenderingContext.build { React::RenderingContext.render(name, *args, &block) }.to_n
-          else
-            React::RenderingContext.render(name, *args, &block)
-          end
-        rescue 
-          puts "rescue in method_missing #{n}"
+        
         end
-        
       end
     end
 
