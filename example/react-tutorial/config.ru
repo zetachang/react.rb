@@ -15,7 +15,7 @@ opal = Opal::Server.new {|s|
 
 map opal.source_maps.prefix do
   run opal.source_maps
-end
+end rescue nil
 
 map '/assets' do
   run opal.sprockets
@@ -24,6 +24,12 @@ end
 get '/comments.json' do
   comments = JSON.parse(open("./_comments.json").read)
   JSON.generate(comments)
+end
+
+get '/comments.js' do
+  content_type "application/javascript"
+  comments = JSON.parse(open("./_comments.json").read)
+  "window.initial_comments = #{JSON.generate(comments)}"
 end
 
 post "/comments.json" do
@@ -42,8 +48,10 @@ get '/' do
         <link rel="stylesheet" href="base.css" />
         <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
         <script src="http://cdnjs.cloudflare.com/ajax/libs/showdown/0.3.1/showdown.min.js"></script>
-        <script src="/assets/react-with-addons.min.js"></script>
+        <script src="/assets/react-with-addons.js"></script>
         <script src="/assets/example.js"></script>
+        <script src="/comments.js"></script>
+        <script>#{Opal::Processor.load_asset_code(opal.sprockets, "example.js")}</script>
       </head>
       <body>
         <div id="content"></div>

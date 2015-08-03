@@ -1,4 +1,4 @@
-require "react/ext/string"
+require "opal-react/ext/string"
 
 module React
   class Element
@@ -6,8 +6,17 @@ module React
 
     alias_native :element_type, :type
     alias_native :props, :props
+    
+    attr_reader :type
+    attr_reader :properties
+    attr_reader :block
+    
+    attr_accessor :waiting_on_resources
 
-    def initialize(native_element)
+    def initialize(native_element, type, properties, block)
+      @type = type
+      @properties = properties
+      @block = block
       @native = native_element
     end
 
@@ -27,6 +36,21 @@ module React
         }
       end
       self
+    end
+    
+    def method_missing(class_name, args = {}, &new_block)
+      class_name = class_name.split("__").collect { |s| s.gsub("_", "-") }.join("_")
+      new_props = properties.dup
+      new_props["class"] = "#{new_props['class']} #{class_name} #{args.delete("class")} #{args.delete('className')}".split(" ").uniq.join(" ")
+      new_props.merge! args
+      RenderingContext.replace(
+        self,
+        React::RenderingContext.build { React::RenderingContext.render(type, new_props, &new_block) }
+      )
+    end
+    
+    def delete
+      RenderingContext.delete(self)
     end
 
     def children

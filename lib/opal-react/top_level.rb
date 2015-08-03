@@ -1,5 +1,6 @@
 require "native"
 require 'active_support'
+require 'opal-react/component'
 
 module React
   HTML_TAGS = %w(a abbr address area article aside audio b base bdi bdo big blockquote body br
@@ -21,12 +22,13 @@ module React
                 readOnly rel required role rows rowSpan sandbox scope scrolling seamless
                 selected shape size sizes span spellCheck src srcDoc srcSet start step style
                 tabIndex target title type useMap value width wmode dangerouslySetInnerHTML)
-
+  
   def self.create_element(type, properties = {}, &block)
     React::API.create_element(type, properties, &block)
   end
 
   def self.render(element, container)
+    container = `container.$$class ? container[0] : container`
     component = Native(`React.render(#{element.to_n}, container, function(){#{yield if block_given?}})`)
     component.class.include(React::Component::API)
     component
@@ -37,14 +39,15 @@ module React
   end
 
   def self.render_to_string(element)
-    `React.renderToString(#{element.to_n})`
+    React::RenderingContext.build { `React.renderToString(#{element.to_n})` }
   end
 
   def self.render_to_static_markup(element)
-    `React.renderToStaticMarkup(#{element.to_n})`
+    React::RenderingContext.build { `React.renderToStaticMarkup(#{element.to_n})` }
   end
 
   def self.unmount_component_at_node(node)
-    `React.unmountComponentAtNode(node)`
+    `React.unmountComponentAtNode(node.$$class ? node[0] : node)`
   end
+  
 end

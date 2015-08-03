@@ -1,12 +1,12 @@
 PATH
   remote: ../..
   specs:
-    opal-react (0.2.1)
+    opal-react (0.1.1)
       opal
       opal-activesupport
 
 GEM
-  remote: https://rubygems.org/
+  remote: http://rubygems.org/
   specs:
     hike (1.2.3)
     opal (0.8.0)
@@ -16,12 +16,8 @@ GEM
       tilt (>= 1.4)
     opal-activesupport (0.1.0)
       opal (>= 0.5.0, < 1.0.0)
-    opal-browser (0.1.0.beta1)
-      opal (>= 0.5.5)
-      paggio
     opal-jquery (0.4.0)
       opal (>= 0.7.0, < 0.9.0)
-    paggio (0.2.4)
     rack (1.6.4)
     rack-protection (1.5.3)
       rack
@@ -39,7 +35,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  opal-browser
+  opal
   opal-jquery
   opal-react!
   react-source
