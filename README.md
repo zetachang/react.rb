@@ -70,8 +70,7 @@ class Hello
     "hello world"
   end
 end
-
-# to use the component we first create an instance o
+```
 
 Include the `React::Component` mixin in a class to turn it into a react component
 
