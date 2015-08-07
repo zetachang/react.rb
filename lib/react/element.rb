@@ -1,31 +1,31 @@
-require "./ext/string"
+require "react/ext/string"
 
 module React
   class Element < `(function(){var r = React;var f = function(){};var c = r.createClass({render:function(){return null;}});f.prototype = Object.getPrototypeOf(r.createElement(c));return f;})()`
     def self.new
       raise "use React.create_element instead"
     end
-    
+
     def element_type
       `self.type`
     end
-    
+
     def key
       Native(`self.key`)
     end
-    
+
     def props
       Hash.new(`self.props`)
     end
-    
+
     def ref
       Native(`self.ref`)
     end
-    
+
     def on(event_name)
       name = event_name.to_s.event_camelize
-      
-      
+
+
       if React::Event::BUILT_IN_EVENTS.include?("on#{name}")
         prop_key = "on#{name}"
         callback =  %x{
@@ -41,15 +41,15 @@ module React
           }
         }
       end
-      
+
       `self.props[#{prop_key}] = #{callback}`
-      
+
       self
     end
 
     def children
       nodes = `self.props.children`
-      
+
       if `React.Children.count(nodes)` == 0
         `[]`
       elsif `React.Children.count(nodes)` == 1
@@ -85,11 +85,11 @@ module React
             end
           end
         end
-        
+
         nodes
       end
     end
-  
+
     def to_n
       self
     end

@@ -1,4 +1,4 @@
-require "./ext/string"
+require "react/ext/string"
 require 'active_support/core_ext/class/attribute'
 require 'react/callbacks'
 require "react/ext/hash"
