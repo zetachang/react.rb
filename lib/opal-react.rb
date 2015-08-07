@@ -9,14 +9,13 @@ if RUBY_ENGINE == 'opal'
   require "opal-react/observable"
   require "opal-react/rendering_context"
   require "opal-react/state"
-  require "opal-react/while_loading"
-  require "opal-react/prerender_data_interface"
+  require "opal-react/isomorphic_helpers"
 else
   require "opal"
   require "opal-react/version"
   require "opal-activesupport"
   require "rails-helpers/react_component"
-  require "opal-react/prerender_data_interface"
+  require "opal-react/isomorphic_helpers"
   require "opal-react/serializers"
 
   Opal.append_path File.expand_path('../', __FILE__).untaint

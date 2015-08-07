@@ -11,25 +11,18 @@ begin
 
         def react_component(module_style_name, props = {}, render_options={}, &block)
           js_name = module_style_name.gsub("::", ".")
-          @prerender_data_interface ||= React::PrerenderDataInterface.new(self)
-          @prerender_data_interface.initial_while_loading_counter = @prerender_data_interface.while_loading_counter
           if render_options[:prerender]
-            if render_options[:prerender].is_a? Hash 
-              render_options[:prerender][:context] ||= {}
-            elsif render_options[:prerender]
-              render_options[:prerender] = {render_options[:prerender] => true, context: {}} 
-            else
-              render_options[:prerender] = {context: {}}
+            render_options[:prerender] = {render_options[:prerender] => true} unless render_options[:prerender].is_a? Hash
+            existing_context_initializer = render_options[:prerender][:context_initializer]
+            render_options[:prerender][:context_initializer] = lambda do |ctx| 
+              React::IsomorphicHelpers.load_context(ctx, self)
+              existing_context_initializer.call ctx if existing_context_initializer
             end
             
-            render_options[:prerender][:context].merge!({"ServerSidePrerenderDataInterface" => @prerender_data_interface})
-            
           end
-          
           component_rendering = raw(pre_opal_react_component(js_name, props.react_serializer, render_options, &block))
-          initial_data_string = raw(@prerender_data_interface.generate_next_footer) #render_options[:prerender] ? @prerender_data_interface.generate_next_footer : "")
-          
-          component_rendering+initial_data_string
+          footers = React::IsomorphicHelpers.prerender_footers
+          component_rendering+footers
         end
       end
     end
