@@ -132,7 +132,11 @@ module React
       end
 
       def params(&block)
-        self.validator = React::Validator.build(&block)
+        if self.validator
+          self.validator.evaluate_more_rules(&block)
+        else
+          self.validator = React::Validator.build(&block)
+        end
       end
 
       def define_state(*states)

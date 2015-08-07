@@ -1,3 +1,6 @@
+## 0.3.1
+*  Invoking params multiple times will append to the existing parameters
+
 ## 0.3.0
 *  Depends on `sprockets < 3` thus source map can still work
 *  Remove sprockets-es6 from dependency
