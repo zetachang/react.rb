@@ -48,8 +48,9 @@ module React
             else
               React::RenderingContext.render(name, *args, &block)
             end
-          rescue 
-            puts "rescue in method_missing #{n}"
+          rescue Exception => e
+            message = "#{base.name}.#{n} method_missing handler exception raised: #{e}"
+            `console.error(#{message})`
           end
         
         end

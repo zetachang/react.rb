@@ -52,9 +52,9 @@ module React
     end
       
     def self.prerender_footers
-      footer = Context.prerender_footer_blocks.collect { |block| block.call.html_safe }.join("\n")
-      footer += @context.send_to_opal(:prerender_footers) if RUBY_ENGINE == 'opal' 
-      footer.html_safe
+      footer = Context.prerender_footer_blocks.collect { |block| block.call }.join("\n")
+      footer = (footer + "#{@context.send_to_opal(:prerender_footers)}").html_safe if RUBY_ENGINE != 'opal' 
+      footer
     end
     
     class Context
@@ -73,7 +73,7 @@ module React
       def initialize(unique_id, ctx = nil, controller = nil)
         if RUBY_ENGINE != 'opal' 
           @controller = controller
-          @ctx = ctx
+          @ctx = ctx 
           ctx["ServerSideIsomorphicMethods"] = self
           send_to_opal(:load_context, unique_id)
         end
@@ -82,7 +82,13 @@ module React
       
       def send_to_opal(method, *args)
         args = [1] if args.length == 0
-        @ctx and @ctx.eval("Opal.React.IsomorphicHelpers.$#{method}(#{args.join(', ')})")
+        if @ctx
+          unless @ctx.eval('Opal.React')
+            @ctx.eval(Opal::Processor.load_asset_code(::Rails.application.assets, 'components')) rescue nil
+            raise "No opal-react components found in the components.rb file" unless @ctx.eval('Opal.React')
+          end
+          @ctx.eval("Opal.React.IsomorphicHelpers.$#{method}(#{args.join(', ')})")
+        end
       end
       
       def self.register_before_first_mount_block(&block)
@@ -104,32 +110,23 @@ module React
       
       def initialize(name, block, *args)
         @name = name
-        puts "initiating iso call ruby_engine = #{RUBY_ENGINE}, name = #{name}, args = #{args}"
         block.call(self, *args)
         @result ||= send_to_server(*args) if IsomorphicHelpers.on_opal_server?
       end
       
       def when_on_client(&block)
-        puts "on client"
         @result = [block.call] if IsomorphicHelpers.on_opal_client?
-        puts "on client result"
       end
             
       def send_to_server(*args) 
-        puts "back here again"
-        puts "on send to server args = [#{@name}][#{args}] "
-        
         if IsomorphicHelpers.on_opal_server?
           args_as_json = args.to_json
           @result = [JSON.parse(`window.ServerSideIsomorphicMethods[#{@name}](#{args_as_json})`)] 
         end
-        puts "done with server"
       end
       
       def when_on_server(&block)
-        puts "when on server ruby_engine = #{RUBY_ENGINE}"
         @result = [block.call.to_json] unless IsomorphicHelpers.on_opal_client? or IsomorphicHelpers.on_opal_server?
-        puts "done on server..."
       end
       
     end
@@ -150,7 +147,6 @@ module React
       end
   
       def before_first_mount(&block)
-        puts "registering mount block"
         React::IsomorphicHelpers::Context.register_before_first_mount_block &block
       end
       
