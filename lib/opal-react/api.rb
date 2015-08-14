@@ -69,7 +69,8 @@ module React
     def self.create_native_react_class(type)
       raise "Provided class should define `render` method"  if !(type.method_defined? :render)
       render_fn = (type.method_defined? :_render_wrapper) ? :_render_wrapper : :render
-      @@component_classes[type.to_s] ||= %x{
+      # this was hashing type.to_s, not sure why but .to_s does not work as it Foo::Bar::View.to_s just returns "View"
+      @@component_classes[type] ||= %x{
         React.createClass({
           propTypes: #{type.respond_to?(:prop_types) ? type.prop_types.to_n : `{}`},
           getDefaultProps: function(){
@@ -118,7 +119,6 @@ module React
           }
         })
       }
-      @@component_classes[type.to_s]
     end
 
     def self.create_element(type, properties = {}, &block)
