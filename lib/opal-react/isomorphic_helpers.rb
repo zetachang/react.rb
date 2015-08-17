@@ -77,7 +77,11 @@ module React
           ctx["ServerSideIsomorphicMethods"] = self
           send_to_opal(:load_context, unique_id)
         end
-        self.class.before_first_mount_blocks.each { |block| block.call } 
+        self.class.before_first_mount_blocks.each { |block| block.call(self) } 
+      end
+      
+      def eval(js)
+        @ctx.eval(js) if @ctx
       end
       
       def send_to_opal(method, *args)
