@@ -18,12 +18,12 @@ module React
           if !name and (  # !name means called from outer render so we check that it has rendered correctly
               (@buffer.count > 1) or # should only render one element
               (@buffer.count == 1 and @buffer.last != result) or # it should return that element 
-              (@buffer.count == 0 and !(result.is_a? String or result.is_a? Element)) #for convience we will also convert the return value to a span if its a string
+              (@buffer.count == 0 and !(result.is_a? String or (result.respond_to? :acts_as_string? and result.acts_as_string?) or result.is_a? Element)) #for convience we will also convert the return value to a span if its a string
             )
             raise "a components render method must generate and return exactly 1 element or a string"
           end
           
-          @buffer << result.to_s if result.is_a? String # For convience we push the last return value on if its a string
+          @buffer << result.to_s if result.is_a? String or (result.respond_to? :acts_as_string? and result.acts_as_string?) # For convience we push the last return value on if its a string
           @buffer << result if result.is_a? Element and @buffer.count == 0
           if name
             buffer = @buffer.dup
