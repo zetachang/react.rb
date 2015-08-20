@@ -9,16 +9,42 @@ module React
     if RUBY_ENGINE != 'opal'
       
       def self.load_context(ctx, controller)
+        puts "************************** React Server Context Initialized *********************************************"
         @context = Context.new("#{controller.object_id}-#{Time.now.to_i}", ctx, controller) 
       end
 
     else
       
       def self.load_context(unique_id = nil)  # can be called on the client to force re-initialization for testing purposes
-        @context = Context.new(unique_id) if on_opal_client? or !@context or @context.unique_id != unique_id
+        if !unique_id or !@context or @context.unique_id != unique_id
+          if on_opal_server?
+            message = "************************ React Prerendering Context Initialized ***********************"
+          else
+            message = "************************ React Browser Context Initialized ****************************"
+          end
+          log(message)
+          @context = Context.new(unique_id) 
+        end
         @context
       end
       
+    end
+    
+    def self.log(message, message_type = :info)
+      message = [message] unless message.is_a? Array
+      if message_type == :info
+        if on_opal_server?
+          style = 'background: #00FFFF; color: red'
+        else
+          style = 'background: #222; color: #bada55'
+        end
+        message = ["%c" + message[0], style]+message[1..-1]
+        `console.log.apply(console, message)`
+      elsif message_type == :warning
+        `console.warn.apply(console, message)`
+      else
+        `console.error.apply(console, message)`
+      end
     end
     
     if RUBY_ENGINE != 'opal'
@@ -43,6 +69,10 @@ module React
       
     end
     
+    def log(*args)
+      IsomorphicHelpers.log(*args)
+    end
+    
     def on_opal_server?
       IsomorphicHelpers.on_opal_server?
     end
@@ -53,7 +83,10 @@ module React
       
     def self.prerender_footers
       footer = Context.prerender_footer_blocks.collect { |block| block.call }.join("\n")
-      footer = (footer + "#{@context.send_to_opal(:prerender_footers)}").html_safe if RUBY_ENGINE != 'opal' 
+      if RUBY_ENGINE != 'opal'
+        footer = (footer + "#{@context.send_to_opal(:prerender_footers)}") if @context
+        footer = footer.html_safe
+      end
       footer
     end
     
@@ -71,11 +104,12 @@ module React
       end
       
       def initialize(unique_id, ctx = nil, controller = nil)
+        @unique_id = unique_id
         if RUBY_ENGINE != 'opal' 
           @controller = controller
           @ctx = ctx 
           ctx["ServerSideIsomorphicMethods"] = self
-          send_to_opal(:load_context, unique_id)
+          send_to_opal(:load_context, @unique_id)
         end
         self.class.before_first_mount_blocks.each { |block| block.call(self) } 
       end
@@ -97,7 +131,6 @@ module React
       
       def self.register_before_first_mount_block(&block)
         before_first_mount_blocks << block
-        yield if IsomorphicHelpers.on_opal_client? 
       end
       
       def self.register_prerender_footer_block(&block)
@@ -144,6 +177,10 @@ module React
 
       def on_opal_client?
         IsomorphicHelpers.on_opal_client?
+      end
+      
+      def log(*args)
+        IsomorphicHelpers.log(*args)
       end
       
       def controller

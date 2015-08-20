@@ -21,7 +21,7 @@ begin
             
           end
           component_rendering = raw(pre_opal_react_component(js_name, props.react_serializer, render_options, &block))
-          footers = React::IsomorphicHelpers.prerender_footers if render_options[:prerender]
+          footers = React::IsomorphicHelpers.prerender_footers #if render_options[:prerender]
           component_rendering+footers
         end
       end

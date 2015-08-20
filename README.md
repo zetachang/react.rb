@@ -13,7 +13,22 @@ Currently this branch (0.8 in catprint labs) is being used with the following co
 It is suggested to begin with this
 set of gems which is known to work and then add / remove them as needed.  Let us know if you discover anything.
 
-Currently we are using rails 3.x
+Currently this has been tested to some extent with rails 3x and 4x
+
+```ruby
+gem 'react-rails', git: "https://github.com/catprintlabs/react-rails.git", :branch => 'isomorphic-methods-support'  # you need this branch of react-rails
+gem 'opal', git: "https://github.com/catprintlabs/opal.git"
+gem 'opal-jquery', git: "https://github.com/catprintlabs/opal-jquery.git"  # optional if you are using jquery
+gem 'opal-rails'  # not sure if you need this in all cases
+gem 'opal-browser'  # gets you things like intervals (every method)
+gem 'opal-react', git: "https://github.com/catprintlabs/react.rb.git", :branch => 'opal-0.8'
+gem 'reactive_record', git: "https://github.com/catprintlabs/reactive-record.git", :branch => 'rails4'  # if you want to interface to active_record
+gem 'react-bootstrap-rails'  # if you want to use boot strap styles
+gem 'react-router-rails', '~>0.13.3'  # if you want a single page app router
+gem 'reactor-router', git: "https://github.com/catprintlabs/reactor-router.git"  # same as above
+```
+
+In addition
 
 ```ruby
 # Gemfile

@@ -83,6 +83,7 @@ module React
     end
 
     def component_will_mount
+      IsomorphicHelpers.load_context(true) if IsomorphicHelpers.on_opal_client?
       @processed_params = {}
       React::State.initialize_states(self, initial_state)
       React::State.set_state_context_to(self) { self.run_callback(:before_mount) }
