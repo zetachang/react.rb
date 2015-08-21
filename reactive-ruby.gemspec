@@ -25,5 +25,4 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'react-source', '~> 0.12'
   s.add_development_dependency 'opal-rspec'
   s.add_development_dependency 'sinatra'
-  s.add_development_dependency 'opal-jquery'
 end
