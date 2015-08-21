@@ -1,9 +1,27 @@
 begin
   
   require 'react-rails'
-  require 'reactive-ruby' #'/prerender_data_interface'
+  require 'reactive-ruby'
+  
+  class ActionController::Base
+
+    def render_component(*args)
+      component_name = ((args[0].is_a? Hash) || args.empty?) ? "#{params[:controller].camelize.gsub("/", "::")}::#{params[:action].camelize}" : args.shift
+      @rails_react_variables = (args[0].is_a? Hash) ? args[0] : {}
+      render inline: "<%= react_component 'Components::#{component_name}', @rails_react_variables, { prerender: !params[:no_prerender] } %>", layout: 'application'
+    end
+
+  end
   
   module React
+    
+    class Railtie < Rails::Railtie
+      config.before_configuration do
+        config.assets.enabled = true
+        config.assets.paths << ::Rails.root.join('app', 'views').to_s
+      end
+    end
+    
     module Rails
       module ViewHelper
 

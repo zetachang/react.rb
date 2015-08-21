@@ -1,5 +1,7 @@
 # -*- encoding: utf-8 -*-
-require File.expand_path('../lib/reactive-ruby/version', __FILE__)
+$:.push File.expand_path('../lib/', __FILE__)
+
+require 'reactive-ruby/version'
 
 Gem::Specification.new do |s|
   s.name         = 'reactive-ruby'
@@ -18,6 +20,8 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency 'opal'#, '~> 0.7.0'
   s.add_runtime_dependency 'opal-activesupport'
+  s.add_runtime_dependency 'opal-jquery'
+  s.add_runtime_dependency 'opal-browser'
   s.add_development_dependency 'react-source', '~> 0.12'
   s.add_development_dependency 'opal-rspec'
   s.add_development_dependency 'sinatra'
