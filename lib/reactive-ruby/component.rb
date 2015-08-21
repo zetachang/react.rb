@@ -1,10 +1,10 @@
-require "opal-react/ext/string"
+require "reactive-ruby/ext/string"
 require 'active_support/core_ext/class/attribute'
-require 'opal-react/callbacks'
-require "opal-react/ext/hash"
-require "opal-react/rendering_context"
-require "opal-react/observable"
-require "opal-react/state"
+require 'reactive-ruby/callbacks'
+require "reactive-ruby/ext/hash"
+require "reactive-ruby/rendering_context"
+require "reactive-ruby/observable"
+require "reactive-ruby/state"
 
 require 'native'
 

@@ -1,8 +1,8 @@
 # -*- encoding: utf-8 -*-
-require File.expand_path('../lib/opal-react/version', __FILE__)
+require File.expand_path('../lib/reactive-ruby/version', __FILE__)
 
 Gem::Specification.new do |s|
-  s.name         = 'opal-react'
+  s.name         = 'reactive-ruby'
   s.version      = React::VERSION
   s.author       = 'David Chang'
   s.email        = 'zeta11235813@gmail.com'

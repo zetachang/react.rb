@@ -11,7 +11,7 @@ GIT
 PATH
   remote: .
   specs:
-    react.rb (0.0.2)
+    reactive-ruby (0.7.3)
       opal
       opal-activesupport
 
@@ -21,20 +21,20 @@ GEM
     hike (1.2.3)
     opal-activesupport (0.1.0)
       opal (>= 0.5.0, < 1.0.0)
-    opal-jquery (0.3.0)
-      opal (~> 0.7.0)
-    opal-rspec (0.4.2)
-      opal (~> 0.7.0)
-    rack (1.6.0)
+    opal-jquery (0.4.0)
+      opal (>= 0.7.0, < 0.9.0)
+    opal-rspec (0.4.3)
+      opal (>= 0.7.0, < 0.9)
+    rack (1.6.4)
     rack-protection (1.5.3)
       rack
-    react-source (0.13.2)
+    react-source (0.13.3)
     sinatra (1.4.6)
       rack (~> 1.4)
       rack-protection (~> 1.4)
       tilt (>= 1.3, < 3)
     sourcemap (0.1.1)
-    sprockets (3.0.3)
+    sprockets (3.3.2)
       rack (~> 1.0)
     tilt (1.4.1)
 
@@ -46,5 +46,8 @@ DEPENDENCIES
   opal-jquery
   opal-rspec
   react-source (~> 0.12)
-  react.rb!
+  reactive-ruby!
   sinatra
+
+BUNDLED WITH
+   1.10.6

@@ -1,4 +1,4 @@
-require "opal-react/ext/string"
+require "reactive-ruby/ext/string"
 
 module React
   class Element
