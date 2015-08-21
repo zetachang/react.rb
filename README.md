@@ -7,51 +7,84 @@
 
 It lets you write reactive UI components, with Ruby's elegance and compiled to run in JavaScript. :heart:
 
+This fork of the original react.rb gem is a work in progress.  Currently it is being used in a large rails app, so until a better guide can be written we will just assume you will use it a rails app too.  However it does work fine by itself.  Good luck.
+
 ## Installation
 
-Currently this branch (0.8 in catprint labs) is being used with the following configuration.  
+Currently this branch (reactive-ruby) is being used with the following configuration.  
 It is suggested to begin with this
 set of gems which is known to work and then add / remove them as needed.  Let us know if you discover anything.
 
-Currently this has been tested to some extent with rails 3x and 4x
+Currently this has been tested to some extent with rails 4x
 
 ```ruby
 gem 'react-rails', git: "https://github.com/catprintlabs/react-rails.git", :branch => 'isomorphic-methods-support'  # you need this branch of react-rails
 gem 'opal', git: "https://github.com/catprintlabs/opal.git"
-gem 'opal-jquery', git: "https://github.com/catprintlabs/opal-jquery.git"  # optional if you are using jquery
-gem 'opal-rails'  # not sure if you need this in all cases
-gem 'opal-browser'  # gets you things like intervals (every method)
-gem 'opal-react', git: "https://github.com/catprintlabs/react.rb.git", :branch => 'opal-0.8'
-gem 'reactive_record', git: "https://github.com/catprintlabs/reactive-record.git", :branch => 'rails4'  # if you want to interface to active_record
-gem 'react-bootstrap-rails'  # if you want to use boot strap styles
+gem 'opal-jquery'
+gem 'opal-rails'                      # not sure if you need this in all cases
+gem 'opal-browser'                    # gets you things like intervals (every method)
+gem 'reactive-ruby'
+gem 'reactive_record'                 # if you want to interface to active_record
+gem 'react-bootstrap-rails'           # if you want to use boot strap styles
 gem 'react-router-rails', '~>0.13.3'  # if you want a single page app router
-gem 'reactor-router', git: "https://github.com/catprintlabs/reactor-router.git"  # same as above
+gem 'reactor-router'                  # same as above
 ```
 
-In addition
+Your react components go into `assets/javascript/components/` 
+
+You need a file `assets/javascripts/components/components.rb` like this:
+
+```
+require 'opal'
+require 'react'
+require 'reactive-ruby'
+require 'reactive-record'
+require 'react_router'
+require 'reactive-router'
+require_tree './components'
+```
+
+The `react-rails` gem will load this code into the server side prerendering environment.
+
+Your `assets/javascript/application.rb` file looks like this:
+
+```
+require 'jquery-1.11.3'     # you probably want this
+require 'bootstrap'         # if you are using bootstrap
+require 'components'         
+require 'react_bootstrap'
+require 'react_ujs' 
+```
+
+Note that any files needed for server side rendering go into components, everything else goes
+into application.rb.
+
+Okay that is your setup.
+
+Now for a simple component:
 
 ```ruby
-# Gemfile
-# gem 'react-rails', git: "https://github.com/catprintlabs/react-rails.git" # include if you want integration with rails
-gem 'opal'
+# assets/javascript/components/home.rb
+class Home
 
-# gem 'opal', git: "https://github.com/catprintlabs/opal.git"  # use this if you are stuck on rails 3.x
-# gem 'opal-jquery', git: "https://github.com/catprintlabs/opal-jquery.git" # same as above
-
-# include if you want integration with rails
-# gem 'opal-rails' 
-
-# while not absolutely necessary you will probably want this at least for timers and such
-# gem 'opal-browser'
-
-gem 'opal-react', git: "https://github.com/catprintlabs/react.rb.git", :branch => 'opal-0.8'
-
-# access active record models from opal!
-# gem 'reactive_record', git: "https://github.com/catprintlabs/reactive-record.git"  
-
-# include if you want to use bootstrap
-# gem 'react-bootstrap-rails' 
+  include React::Component                    # will create a new component named Home
+  
+  def render                                    
+    "hello"                                   # render "hello" 
+  end
+end
 ```
+
+Components work just like views so in your home controller
+```ruby
+# controllers/home_controller.rb
+class HomeController < ApplicationController
+  def index
+    render_component  # by default render_component will use the controller name to find the appropriate component
+  end
+end
+```
+
 
 and in your Opal application,
 
