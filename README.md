@@ -21,6 +21,8 @@ By design Reactive-Ruby allows reactive components  to be easily added to existi
 
 ## Installation and setup
 
+In your gem file:
+
 ```ruby
 gem 'reactive-ruby'
 
@@ -38,7 +40,6 @@ In addition within your views directory you need a  `components.rb` manifest fil
 ```
 # app/views/components.rb
 require 'opal'
-require 'react'
 require 'reactive-ruby'
 require_tree './components'
 ``` 
@@ -50,32 +51,37 @@ Then your `assets/javascript/application.rb` file looks like this:
 ```
 #assets/javascript/application.rb
 # only put files that are browser side only.
-require 'react_ujs'  # this is required and is part of the prerendering system
-require 'components' # this pulls in your components from the components.rb manifest file      
+
+require 'components'  # this pulls in your components from the components.rb manifest file  
+require 'jquery'      # you need both these files to access jQuery from Opal
+require 'opal-jquery' # they must be in this order, and after the components require
+require 'browser'     # opal access to browser specific methods (such as setTimer)
+require 'react_ujs'   # this is required and is part of the prerendering system     
+# whatever else you might need here
 ```
 
 Okay that is your setup.
 
-Now for a simple component.  We are going to render this from the `show` method of the home controller. By default we want
-our component name to match (convention over configuration.)  So the component will be the "Show" class, of the "Home" module, 
+Now for a simple component.  We are going to render this from the `show` method of the home controller. We want to use  convention over configuration so by default.  So the component will be the "Show" class, of the  "Home" module, 
 of the Components module.
 
 ```ruby
-
 # app/views/components/home.rb
 
 module Components 
-  class Home
+  module Home
+    class Show
 
-    include React::Component   # will create a new component named Home
-    
-    export_component           # export the component name into the javascript space 
-  
-    def render  
-      puts "Rendering my first component!"
-      "hello"                  # render "hello" 
+      include React::Component   # will create a new component named Home
+
+      export_component           # export the component name into the javascript space 
+
+      def render  
+        puts "Rendering my first component!"
+        "hello"                  # render "hello" 
+      end
+
     end
-    
   end
 end
 ```
@@ -93,6 +99,16 @@ end
 Make sure your routes file has a route to your home#show method, and you have done a bundle install.  Fire up your development server and you should see "hello world" displayed.
 
 Open up the js console in the browser and you will see a log showing what went on during the rendering.
+
+Have a look at the sources in the console, and notice your ruby code is there, and you can set break points etc.
+
+## Typical Problems
+
+`Uncaught TypeError: Cannot read property 'toUpperCase' of undefined`  This means the thing you are trying to render is not actually a react component.  Often is because the top level component name is wrong.  For example if you are in controller Foo and the method is `bar`, but you have named the component Foo::Bars then you would see this message.
+
+## Turning off Prerendering
+
+Sometimes its handy to switch off prerendering.  Add `?no_prerender=1` ... to your url.
 
 
 ## TODOS / Work arounds / Issues
