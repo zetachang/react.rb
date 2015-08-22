@@ -4,11 +4,13 @@
 
 It lets you write reactive UI components, with Ruby's elegance using the tried and true React.js engine. :heart:
 
-This fork of the original react.rb gem is a work in progress.  Currently it is being used in a large rails app, so until a better guide can be written we will just assume you will use it a rails app too.  However the gem itself has no dependency on rails, and there are people using the gem in other environments.
+This fork of the original react.rb gem is a work in progress.  Currently it is being used in a large rails app.  However the gem itself has no dependency on rails, and there are people using the gem in other environments.
 
 ## Quick Overview
 
-A react app is built from one or more trees of components.  A react component can live side by side with other non-react html. A react component is just like a rails view or a partial.  Reactive-Ruby takes advantage of this by letting you add Reactive-Ruby components as views, and call them directly from your controller like any other view.
+A react app is built from one or more trees of components.  React components can live side by side with other non-react html and javascript. A react component is just like a rails view or a partial.  Reactive-Ruby takes advantage of these features by letting you add Reactive-Ruby components as views, and call them directly from your controller like any other view.
+
+By design Reactive-Ruby allows reactive components  to be easily added to existing Rails projects, as well in new development. 
 
 Components are first rendered to HTML on the server (called pre-rendering) this is no different from what happens when your ERB or HAML templates are translated to HTML.  
 
@@ -16,10 +18,7 @@ A copy of the react engine, and your components follows the rendered HTML to the
 
 The beauty is you now have one markup description, written in the same language as your server code, that works both as the HTML template and as an interactive component.
 
-By design Reactive-Ruby allows reactive components  to be easily added to existing Rails projects, as well in new development. 
-
-
-## Installation and setup
+## Installation and Setup with Rails
 
 In your gem file:
 
@@ -50,14 +49,19 @@ Then your `assets/javascript/application.rb` file looks like this:
 
 ```
 #assets/javascript/application.rb
+
 # only put files that are browser side only.
 
 require 'components'  # this pulls in your components from the components.rb manifest file  
-require 'jquery'      # you need both these files to access jQuery from Opal
-require 'opal-jquery' # they must be in this order, and after the components require
-require 'browser'     # opal access to browser specific methods (such as setTimer)
-require 'react_ujs'   # this is required and is part of the prerendering system     
-# whatever else you might need here
+require 'react_ujs'   # this is required on the client side only and is part of the prerendering system
+
+# require any thing else that is browser side only, typically  these 4 are all you need.  If you
+# have client only sections of code that that do not contain requires wrap them in 
+# if React::IsomorphicHelpers.on_opal_client? blocks.  
+
+require 'jquery'           # you need both these files to access jQuery from Opal
+require 'opal-jquery'      # they must be in this order, and after the components require
+require 'browser/interval' # for #every, and #after methods
 ```
 
 Okay that is your setup.

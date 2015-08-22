@@ -1,8 +1,9 @@
 require 'opal'
-require 'browser'      # gives us wrappers on javascript methods such as setTimer and setInterval
+require 'browser/interval'      # gives us wrappers on javascript methods such as setTimer and setInterval
+require 'jquery'
 require 'opal-jquery'  # gives us a nice wrapper on jQuery which we will use mainly for HTTP calls
 require "json"         # json conversions
-require 'opal-react'   # and the whole reason we are gathered here today!
+require 'reactive-ruby'   # and the whole reason we are gathered here today!
   
 Document.ready? do  # Document.ready? is a opal-jquery method.  The block will run when doc is loaded
   

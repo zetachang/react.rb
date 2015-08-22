@@ -13,11 +13,11 @@ GIT
 PATH
   remote: ../..
   specs:
-    reactive-ruby (0.7.3)
+    reactive-ruby (0.7.4)
+      jquery-rails
       opal
       opal-activesupport
       opal-browser
-      opal-jquery
 
 GEM
   remote: https://rubygems.org/
