@@ -106,6 +106,10 @@ Open up the js console in the browser and you will see a log showing what went o
 
 Have a look at the sources in the console, and notice your ruby code is there, and you can set break points etc.
 
+## Integration with Sinatra
+
+See the sinatra-tutorial folder
+
 ## Typical Problems
 
 `Uncaught TypeError: Cannot read property 'toUpperCase' of undefined`  This means the thing you are trying to render is not actually a react component.  Often is because the top level component name is wrong.  For example if you are in controller Foo and the method is `bar`, but you have named the component Foo::Bars then you would see this message.

@@ -13,7 +13,7 @@ GIT
 PATH
   remote: ../..
   specs:
-    reactive-ruby (0.7.4)
+    reactive-ruby (0.7.5)
       jquery-rails
       opal
       opal-activesupport
