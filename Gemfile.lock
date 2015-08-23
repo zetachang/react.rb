@@ -2,59 +2,60 @@ PATH
   remote: .
   specs:
     react.rb (0.2.0)
-      opal (~> 0.6.0)
-      opal-activesupport (~> 0)
+      opal (~> 0.7.0)
+      opal-activesupport
       sprockets-es6 (~> 0)
       therubyracer (~> 0)
 
 GEM
   remote: https://rubygems.org/
   specs:
-    babel-source (5.0.4)
+    babel-source (5.1.13)
     babel-transpiler (0.7.0)
       babel-source (>= 4.0, < 6)
       execjs (~> 2.0)
-    execjs (2.4.0)
-    json (1.8.2)
+    execjs (2.5.2)
+    hike (1.2.3)
     libv8 (3.16.14.7)
-    opal (0.6.3)
-      source_map
-      sprockets
+    opal (0.7.2)
+      hike (~> 1.2)
+      sourcemap (~> 0.1.0)
+      sprockets (>= 2.2.3, < 3.0.0)
+      tilt (~> 1.4)
     opal-activesupport (0.1.0)
       opal (>= 0.5.0, < 1.0.0)
-    opal-jquery (0.2.0)
-      opal (>= 0.5.0, < 1.0.0)
-    opal-rspec (0.3.0.beta3)
-      opal (>= 0.6.0, < 1.0.0)
+    opal-jquery (0.3.0)
+      opal (~> 0.7.0)
+    opal-rspec (0.4.2)
+      opal (~> 0.7.0)
     rack (1.6.0)
     rack-protection (1.5.3)
       rack
     rake (10.4.2)
-    react-source (0.13.1)
+    react-source (0.13.2)
     ref (1.0.5)
     sinatra (1.4.6)
       rack (~> 1.4)
       rack-protection (~> 1.4)
       tilt (>= 1.3, < 3)
-    source_map (3.0.1)
-      json
-    sprockets (3.0.0.rc.1)
+    sourcemap (0.1.1)
+    sprockets (3.0.0.rc.2)
       rack (~> 1.0)
     sprockets-es6 (0.6.0)
       babel-transpiler
       sprockets (~> 3.0.0.beta)
-    therubyracer (0.12.1)
+    therubyracer (0.12.2)
       libv8 (~> 3.16.14.0)
       ref
-    tilt (2.0.1)
+    tilt (1.4.1)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
-  opal-jquery (~> 0)
-  opal-rspec (~> 0.3.0.beta3)
+  opal-jquery
+  opal-rspec
   rake (~> 10)
-  react-source (~> 0.13)
+  react-source (~> 0.12)
   react.rb!
-  sinatra (~> 1)
+  sinatra
