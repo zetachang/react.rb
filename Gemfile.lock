@@ -17,7 +17,6 @@ GEM
     execjs (2.5.2)
     hike (1.2.3)
     libv8 (3.16.14.7)
-    multi_json (1.11.0)
     opal (0.7.2)
       hike (~> 1.2)
       sourcemap (~> 0.1.0)
