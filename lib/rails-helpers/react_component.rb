@@ -15,7 +15,7 @@ begin
   
   module React
     
-    class Railtie < Rails::Railtie
+    class Railtie < ::Rails::Railtie
       config.before_configuration do
         config.assets.enabled = true
         config.assets.paths << ::Rails.root.join('app', 'views').to_s
