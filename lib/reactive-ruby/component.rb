@@ -298,6 +298,11 @@ module React
         define_param_method(name, options[:type])
       end 
       
+      def other_params(name)
+        validator.accepts_others
+        define_method("#{name}") { params }
+      end
+      
       def define_state(*states, &block) 
         default_initial_value = (block and block.arity == 0) ? yield : nil
         states_hash = (states.last.is_a? Hash) ? states.pop : {}
