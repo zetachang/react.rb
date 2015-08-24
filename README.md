@@ -66,27 +66,31 @@ require 'browser/interval' # for #every, and #after methods
 
 Okay that is your setup.
 
-Now for a simple component.  We are going to render this from the `show` method of the home controller. We want to use  convention over configuration so by default.  So the component will be the "Show" class, of the  "Home" module, 
+Now for a simple component.  We are going to render this from the `show` method of the home controller. We want to use  convention over configuration by default.  So the component will be the "Show" class, of the  "Home" module, 
 of the Components module.
 
 ```ruby
-# app/views/components/home.rb
+# app/views/components/home/show.rb
 
-module Components 
+module Components
+  
   module Home
+    
     class Show
 
-      include React::Component   # will create a new component named Home
-
-      export_component           # export the component name into the javascript space 
+      include React::Component   # will create a new component named Show
+      
+      optional_param :say_hello_to
 
       def render  
         puts "Rendering my first component!"
-        "hello"                  # render "hello" 
+        "hello #{'there '+say_hello_to if say_hello_to}"  # render "hello" with optional 'there ...'
       end
 
     end
+    
   end
+  
 end
 ```
 
@@ -95,7 +99,7 @@ Components work just like views so put this in your home controller
 # controllers/home_controller.rb
 class HomeController < ApplicationController
   def show
-    render_component  # by default render_component will use the controller name to find the appropriate component
+    render_component say_hello_to: params[:say_hello_to] # by default render_component will use the controller name to find the appropriate component
   end
 end
 ```
@@ -105,6 +109,19 @@ Make sure your routes file has a route to your home#show method, and you have do
 Open up the js console in the browser and you will see a log showing what went on during the rendering.
 
 Have a look at the sources in the console, and notice your ruby code is there, and you can set break points etc.
+
+### Changing the top level component name and search path
+
+You can control the top level component name and search path. 
+
+You can specify the component name explicitly in the `render_component` method.  `render_component "Blatz` will search the for a component class named
+`Blatz` regardless of the controller method.
+
+Searching for components normally works like this:  Given a controller named "Foo" then the component should be either in the `Components::Foo` module, the
+`Components` module (no controller - useful if you have just a couple of shared components) or just the outer scope (i.e. `Module`) which is useful for small apps.
+
+Saying `render_component "::Blatz"` will only search the outer scope, while `"::Foo::Blatz"` will look only in the module `Foo` for a class named `Blatz`.
+
 
 ## Integration with Sinatra
 

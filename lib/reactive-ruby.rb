@@ -11,6 +11,7 @@ if RUBY_ENGINE == 'opal'
   require "reactive-ruby/rendering_context"
   require "reactive-ruby/state"
   require "reactive-ruby/isomorphic_helpers"
+  require "rails-helpers/top_level_rails_component"
   
 else
   require "opal"

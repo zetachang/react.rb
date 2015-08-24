@@ -6,9 +6,11 @@ begin
   class ActionController::Base
 
     def render_component(*args)
-      component_name = ((args[0].is_a? Hash) || args.empty?) ? "#{params[:controller].camelize.gsub("/", "::")}::#{params[:action].camelize}" : args.shift
-      @rails_react_variables = (args[0].is_a? Hash) ? args[0] : {}
-      render inline: "<%= react_component 'Components::#{component_name}', @rails_react_variables, { prerender: !params[:no_prerender] } %>", layout: 'application'
+      component_name = ((args[0].is_a? Hash) || args.empty?) ? params[:action].camelize : args.shift
+      controller = params[:controller].camelize
+      rails_react_variables = (args[0].is_a? Hash) ? args[0] : {}
+      @render_params = {component_name: component_name, controller: controller, render_params: rails_react_variables}
+      render inline: "<%= react_component 'React.TopLevelRailsComponent', @render_params, { prerender: !params[:no_prerender] } %>", layout: 'application'
     end
 
   end
@@ -27,8 +29,7 @@ begin
 
         alias_method :pre_opal_react_component, :react_component
 
-        def react_component(module_style_name, props = {}, render_options={}, &block)
-          js_name = module_style_name.gsub("::", ".")
+        def react_component(name, props = {}, render_options={}, &block)
           if render_options[:prerender]
             render_options[:prerender] = {render_options[:prerender] => true} unless render_options[:prerender].is_a? Hash
             existing_context_initializer = render_options[:prerender][:context_initializer]
@@ -38,7 +39,7 @@ begin
             end
             
           end
-          component_rendering = raw(pre_opal_react_component(js_name, props.react_serializer, render_options, &block))
+          component_rendering = raw(pre_opal_react_component(name, props.react_serializer, render_options, &block))
           footers = React::IsomorphicHelpers.prerender_footers #if render_options[:prerender]
           component_rendering+footers
         end
