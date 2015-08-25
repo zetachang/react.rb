@@ -8,7 +8,7 @@ module React
     
     def self.render(name, *args, &block)
       @buffer = [] unless @buffer
-      if name == "text"
+      if name == "txt"
         element = args[0]
       elsif block
         element = build do
@@ -83,9 +83,9 @@ module React
       end
     end
     
-    def text(*args)
-      return self.method_missing('text', *args) if self.is_a? React::Component
-      React::RenderingContext.render("text", self.to_s)
+    def txt(*args)
+      return self.method_missing('txt', *args) if self.is_a? React::Component
+      React::RenderingContext.render("txt", self.to_s)
     end
     
     def br
