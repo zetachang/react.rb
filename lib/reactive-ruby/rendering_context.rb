@@ -8,7 +8,9 @@ module React
     
     def self.render(name, *args, &block)
       @buffer = [] unless @buffer
-      if block
+      if name == "txt"
+        element = args[0]
+      elsif block
         element = build do
           saved_waiting_on_resources = waiting_on_resources
           self.waiting_on_resources = nil
@@ -23,7 +25,7 @@ module React
             raise "a components render method must generate and return exactly 1 element or a string"
           end
           
-          @buffer << result.to_s if result.is_a? String or (result.respond_to? :acts_as_string? and result.acts_as_string?) # For convience we push the last return value on if its a string
+          @buffer << result.to_s if !(result === @buffer.last) and (result.is_a? String or (result.respond_to? :acts_as_string? and result.acts_as_string?)) # For convience we push the last return value on if its a string
           @buffer << result if result.is_a? Element and @buffer.count == 0
           if name
             buffer = @buffer.dup
@@ -79,6 +81,11 @@ module React
         return self.method_missing(*args, &block) if self.is_a? React::Component 
         React::RenderingContext.render(*args) { self.to_s }
       end
+    end
+    
+    def txt(*args)
+      return self.method_missing('txt', *args) if self.is_a? React::Component
+      React::RenderingContext.render("txt", self.to_s)
     end
     
     def br

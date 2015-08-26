@@ -94,7 +94,7 @@ module Components
 end
 ```
 
-Components work just like views so put this in your home controller
+Components work just like views so put this in your home controller to render the component:
 ```ruby
 # controllers/home_controller.rb
 class HomeController < ApplicationController
