@@ -26,10 +26,6 @@ module React
       @rules[prop_name] = options
     end
     
-    def accepts_others
-      @accepts_others = true
-    end
-    
     def type_check(errors, error_prefix, object, klass)
       is_native = !object.respond_to?(:is_a?) rescue true
       if is_native or !object.is_a? klass
@@ -42,7 +38,7 @@ module React
     def validate(props)
       errors = []
       props.keys.each do |prop_name|
-        errors <<  "Provided prop `#{prop_name}` not specified in spec"  if @rules[prop_name] == nil and !@accepts_others
+        errors <<  "Provided prop `#{prop_name}` not specified in spec"  if @rules[prop_name] == nil
       end
 
       props = props.select {|key| @rules.keys.include?(key) }

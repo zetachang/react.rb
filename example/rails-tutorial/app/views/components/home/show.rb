@@ -1,8 +1,8 @@
 # app/views/components/home/show.rb
 
-module Components
+#module Components
   
-  module Home
+  #module Home
     
     class Show
       
@@ -21,6 +21,6 @@ module Components
 
     end
     
-  end
+  #end
   
-end
+#end
