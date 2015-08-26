@@ -34,5 +34,9 @@
     {
         "author": "foo",
         "text": "to you"
+    },
+    {
+        "author": "Mitch",
+        "text": "fred"
     }
 ]

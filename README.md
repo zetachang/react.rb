@@ -29,7 +29,11 @@ gem 'reactive-ruby'
 
 gem 'therubyracer', platforms: :ruby # you need this for prerendering to work
 gem 'react-rails', git: "https://github.com/catprintlabs/react-rails.git", :branch => 'isomorphic-methods-support'  
-gem 'opal-rails'                      
+gem 'opal-rails'   
+
+# if you are planning on using jQuery don't forget to include it
+
+gem 'jquery-rails'                   
 ```
 
 Your react components will go into the `app/views/components/` directory of your rails app.

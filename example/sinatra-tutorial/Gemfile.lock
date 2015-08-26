@@ -1,8 +1,7 @@
 PATH
   remote: ../..
   specs:
-    reactive-ruby (0.7.4)
-      jquery-rails
+    reactive-ruby (0.7.11)
       opal
       opal-activesupport
       opal-browser
@@ -10,40 +9,7 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    actionpack (4.2.3)
-      actionview (= 4.2.3)
-      activesupport (= 4.2.3)
-      rack (~> 1.6)
-      rack-test (~> 0.6.2)
-      rails-dom-testing (~> 1.0, >= 1.0.5)
-      rails-html-sanitizer (~> 1.0, >= 1.0.2)
-    actionview (4.2.3)
-      activesupport (= 4.2.3)
-      builder (~> 3.1)
-      erubis (~> 2.7.0)
-      rails-dom-testing (~> 1.0, >= 1.0.5)
-      rails-html-sanitizer (~> 1.0, >= 1.0.2)
-    activesupport (4.2.3)
-      i18n (~> 0.7)
-      json (~> 1.7, >= 1.7.7)
-      minitest (~> 5.1)
-      thread_safe (~> 0.3, >= 0.3.4)
-      tzinfo (~> 1.1)
-    builder (3.2.2)
-    erubis (2.7.0)
     hike (1.2.3)
-    i18n (0.7.0)
-    jquery-rails (4.0.4)
-      rails-dom-testing (~> 1.0)
-      railties (>= 4.2.0)
-      thor (>= 0.14, < 2.0)
-    json (1.8.3)
-    loofah (2.0.3)
-      nokogiri (>= 1.5.9)
-    mini_portile (0.6.2)
-    minitest (5.8.0)
-    nokogiri (1.6.6.2)
-      mini_portile (~> 0.6.0)
     opal (0.8.0)
       hike (~> 1.2)
       sourcemap (~> 0.1.0)
@@ -60,22 +26,6 @@ GEM
     rack (1.6.4)
     rack-protection (1.5.3)
       rack
-    rack-test (0.6.3)
-      rack (>= 1.0)
-    rails-deprecated_sanitizer (1.0.3)
-      activesupport (>= 4.2.0.alpha)
-    rails-dom-testing (1.0.7)
-      activesupport (>= 4.2.0.beta, < 5.0)
-      nokogiri (~> 1.6.0)
-      rails-deprecated_sanitizer (>= 1.0.1)
-    rails-html-sanitizer (1.0.2)
-      loofah (~> 2.0)
-    railties (4.2.3)
-      actionpack (= 4.2.3)
-      activesupport (= 4.2.3)
-      rake (>= 0.8.7)
-      thor (>= 0.18.1, < 2.0)
-    rake (10.4.2)
     sinatra (1.4.6)
       rack (~> 1.4)
       rack-protection (~> 1.4)
@@ -83,11 +33,7 @@ GEM
     sourcemap (0.1.1)
     sprockets (3.3.3)
       rack (~> 1.0)
-    thor (0.19.1)
-    thread_safe (0.3.5)
     tilt (2.0.1)
-    tzinfo (1.2.2)
-      thread_safe (~> 0.1)
 
 PLATFORMS
   ruby
