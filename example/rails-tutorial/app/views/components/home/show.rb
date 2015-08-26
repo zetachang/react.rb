@@ -15,7 +15,7 @@
       def render  
         puts "Rendering my first component!"
         div do
-          txt "hello #{'there '+say_hello_to if say_hello_to}"  # render "hello" with optional 'there ...'
+          text "hello #{'there '+say_hello_to if say_hello_to}"  # render "hello" with optional 'there ...'
         end
       end
 

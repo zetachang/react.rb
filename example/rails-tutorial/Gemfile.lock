@@ -13,7 +13,11 @@ GIT
 PATH
   remote: ../..
   specs:
+<<<<<<< HEAD
     reactive-ruby (0.7.6)
+=======
+    reactive-ruby (0.7.8)
+>>>>>>> parent of 455106c... added txt operator
       jquery-rails
       opal
       opal-activesupport
