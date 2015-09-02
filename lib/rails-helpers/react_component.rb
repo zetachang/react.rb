@@ -34,7 +34,7 @@ begin
             render_options[:prerender] = {render_options[:prerender] => true} unless render_options[:prerender].is_a? Hash
             existing_context_initializer = render_options[:prerender][:context_initializer]
             render_options[:prerender][:context_initializer] = lambda do |ctx| 
-              React::IsomorphicHelpers.load_context(ctx, self)
+              React::IsomorphicHelpers.load_context(ctx, self.controller)
               existing_context_initializer.call ctx if existing_context_initializer
             end
             
