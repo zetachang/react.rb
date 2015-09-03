@@ -22,19 +22,21 @@ module React
 
     def on(event_name)
       name = event_name.to_s.event_camelize
-      if React::Event::BUILT_IN_EVENTS.include?("on#{name}")
-        self.props["on#{name}"] = %x{
+      props = if React::Event::BUILT_IN_EVENTS.include?("on#{name}")
+        {"on#{name}" => %x{
           function(event){
             #{yield React::Event.new(`event`)}
           }
-        }
+        }}
       else
-        self.props["_on#{name}"] = %x{
+        {"_on#{name}" => %x{
           function(){
             #{yield *Array(`arguments`)}
           }
-        }
+        }}
       end
+      @native = `React.cloneElement(#{self.to_n}, #{props.to_n})`
+      @properties.merge! props
       self
     end
     
