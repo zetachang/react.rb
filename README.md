@@ -274,11 +274,11 @@ To run the test case of the project yourself.
 ## Contributions
 
 This project is still in early stage, so discussion, bug report and PR are really welcome :wink:.
+We check in often at https://gitter.im/zetachang/react.rb ask for @catmando as David is on leave right now. 
 
 ## Contact
 
-[David Chang](http://github.com/zetachang)
-[@zetachang](https://twitter.com/zetachang)
+We check in often at https://gitter.im/zetachang/react.rb.
 
 ## License
 
