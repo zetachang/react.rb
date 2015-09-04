@@ -11,7 +11,7 @@ module React
     end
 
     def initialize
-      @rules = {}
+      @rules = {children: {required: false}}
     end
 
     def requires(prop_name, options = {})

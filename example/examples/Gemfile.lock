@@ -1,9 +1,16 @@
 PATH
   remote: ../..
   specs:
-    opal-react (0.1.1)
+    reactive-ruby (0.7.13)
       opal
       opal-activesupport
+      opal-browser
+
+PATH
+  remote: ../../../reactive-router
+  specs:
+    reactive-router (0.7.2.1)
+      reactive-ruby
 
 GEM
   remote: http://rubygems.org/
@@ -16,18 +23,21 @@ GEM
       tilt (>= 1.4)
     opal-activesupport (0.1.0)
       opal (>= 0.5.0, < 1.0.0)
+    opal-browser (0.2.0)
+      opal
+      paggio
     opal-jquery (0.4.0)
       opal (>= 0.7.0, < 0.9.0)
+    paggio (0.2.4)
     rack (1.6.4)
     rack-protection (1.5.3)
       rack
-    react-source (0.13.3)
     sinatra (1.4.6)
       rack (~> 1.4)
       rack-protection (~> 1.4)
       tilt (>= 1.3, < 3)
     sourcemap (0.1.1)
-    sprockets (3.2.0)
+    sprockets (3.3.4)
       rack (~> 1.0)
     tilt (2.0.1)
 
@@ -35,11 +45,10 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  opal
   opal-jquery
-  opal-react!
-  react-source
+  reactive-router!
+  reactive-ruby!
   sinatra
 
 BUNDLED WITH
-   1.10.2
+   1.10.6

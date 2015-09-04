@@ -9,7 +9,6 @@ Document.ready? do  # Document.ready? is a opal-jquery method.  The block will r
   
   # render an instance of the CommentBox component at the '#content' element.  
   # url and poll_interval are the initial params for this comment box
-  
   React.render(                                            
     React.create_element(
       CommentBox, url: "comments.json", poll_interval: 2), 

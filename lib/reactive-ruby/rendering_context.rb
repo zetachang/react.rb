@@ -7,6 +7,7 @@ module React
     end
     
     def self.render(name, *args, &block)
+      remove_nodes_from_args(args)
       @buffer = [] unless @buffer
       if block
         element = build do
@@ -36,6 +37,9 @@ module React
             @buffer.last.to_s.span.tap { |element| element.waiting_on_resources = saved_waiting_on_resources }
           end
         end
+      elsif name.is_a? React::Element
+        element = name
+        # I BELIEVE WAITING ON RESOURCES SHOULD ALREADY BE SET 
       else
         element = React.create_element(name, *args)
         element.waiting_on_resources = waiting_on_resources
@@ -65,6 +69,12 @@ module React
     
     def self.replace(e1, e2)
       @buffer[@buffer.index(e1)] = e2 
+    end
+    
+    def self.remove_nodes_from_args(args)
+      args[0].each do |key, value|
+        value.as_node if value.is_a? Element
+      end if args[0] and args[0].is_a? Hash
     end
     
   end

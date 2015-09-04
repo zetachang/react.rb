@@ -1,7 +1,8 @@
 source 'http://rubygems.org'
 
-gem 'opal'
-gem 'opal-react', :path => '../..'
+#gem 'opal'
+gem 'reactive-ruby', :path => '../..'
 gem 'sinatra'
-#gem 'opal-jquery'
-gem 'react-source'
+gem 'opal-jquery'
+#gem 'react-source'
+gem 'reactive-router', :path => '../../../reactive-router'

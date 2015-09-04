@@ -27,6 +27,38 @@ module React
           raise "no render defined"
         end unless method_defined? :render
         
+        def children
+          nodes = `#{@native}.props.children` 
+          class << nodes
+            include Enumerable
+
+            def to_n
+              self
+            end
+
+            def each(&block)
+              if block_given?
+                %x{
+                  React.Children.forEach(#{self.to_n}, function(context){
+                    #{block.call(React::Element.new(`context`))}
+                  })
+                }
+                nil
+              else
+                Enumerator.new(`React.Children.count(#{self.to_n})`) do |y|
+                  %x{
+                    React.Children.forEach(#{self.to_n}, function(context){
+                      #{y << React::Element.new(`context`)}
+                    })
+                  }
+                end
+              end
+            end
+          end
+
+          nodes
+        end
+        
       end
       base.extend(ClassMethods)
       
@@ -60,7 +92,7 @@ module React
     def initialize(native_element)
       @native = native_element
     end
-    
+        
     def params
       Hash.new(`#{@native}.props`)
     end

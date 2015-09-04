@@ -1,7 +1,7 @@
 PATH
   remote: ../..
   specs:
-    reactive-ruby (0.7.11)
+    reactive-ruby (0.7.13)
       opal
       opal-activesupport
       opal-browser

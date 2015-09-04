@@ -15,7 +15,7 @@ module React
 
     def initialize(native_element, type, properties, block)
       @type = type
-      @properties = properties
+      @properties = (`typeof #{properties} === 'undefined'` ? nil : properties) || {}
       @block = block
       @native = native_element
     end
@@ -40,6 +40,21 @@ module React
       self
     end
     
+    def render(props = {})  # for rendering children
+      if props.empty?
+        React::RenderingContext.render(self)
+      else
+        React::RenderingContext.render(
+          Element.new(
+            `React.cloneElement(#{self.to_n}, #{API.convert_props(props)})`, 
+            type, 
+            properties.merge(props), 
+            block
+          )
+        )
+      end
+    end
+    
     def method_missing(class_name, args = {}, &new_block)
       class_name = class_name.split("__").collect { |s| s.gsub("_", "-") }.join("_")
       new_props = properties.dup
@@ -51,39 +66,13 @@ module React
       )
     end
     
+    def as_node
+      RenderingContext.as_node(self)
+    end
+    
     def delete
       RenderingContext.delete(self)
     end
 
-    def children
-      nodes = self.props.children
-      class << nodes
-        include Enumerable
-
-        def to_n
-          self
-        end
-
-        def each(&block)
-          if block_given?
-            %x{
-              React.Children.forEach(#{self.to_n}, function(context){
-                #{block.call(React::Element.new(`context`))}
-              })
-            }
-          else
-            Enumerator.new(`React.Children.count(#{self.to_n})`) do |y|
-              %x{
-                React.Children.forEach(#{self.to_n}, function(context){
-                  #{y << React::Element.new(`context`)}
-                })
-              }
-            end
-          end
-        end
-      end
-
-      nodes
-    end
   end
 end

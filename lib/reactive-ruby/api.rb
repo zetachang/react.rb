@@ -138,19 +138,7 @@ module React
       end
 
       # Passed in properties
-      props = {}
-      properties.map do |key, value|
-         if key == "class_name" && value.is_a?(Hash)
-           props[lower_camelize(key)] = `React.addons.classSet(#{value.to_n})`
-         elsif key == "class"
-           props["className"] = value
-         elsif ["style", "dangerously_set_inner_HTML"].include? key
-           props[lower_camelize(key)] = value.to_n
-         else
-           props[React::ATTRIBUTES.include?(lower_camelize(key)) ? lower_camelize(key) : key] = value
-         end
-      end
-      params << props.shallow_to_n
+      params << convert_props(properties)
 
       # Children Nodes
       if block_given?
@@ -163,6 +151,22 @@ module React
 
     def self.clear_component_class_cache
       @@component_classes = {}
+    end
+    
+    def self.convert_props(properties)
+      props = {}
+      properties.map do |key, value|
+        if key == "class_name" && value.is_a?(Hash)
+          props[lower_camelize(key)] = `React.addons.classSet(#{value.to_n})`
+        elsif key == "class"
+          props["className"] = value
+        elsif ["style", "dangerously_set_inner_HTML"].include? key
+          props[lower_camelize(key)] = value.to_n
+        else
+          props[React::ATTRIBUTES.include?(lower_camelize(key)) ? lower_camelize(key) : key] = value
+        end
+      end
+      props.shallow_to_n
     end
 
     private
