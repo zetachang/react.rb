@@ -8,17 +8,17 @@ module React
     
     if RUBY_ENGINE != 'opal'
       
-      def self.load_context(ctx, controller)
-        puts "************************** React Server Context Initialized *********************************************"
-        @context = Context.new("#{controller.object_id}-#{Time.now.to_i}", ctx, controller) 
+      def self.load_context(ctx, controller, name = nil)
+        puts "************************** React Server Context Initialized #{name} *********************************************"
+        @context = Context.new("#{controller.object_id}-#{Time.now.to_i}", ctx, controller, name) 
       end
 
     else
       
-      def self.load_context(unique_id = nil)  # can be called on the client to force re-initialization for testing purposes
+      def self.load_context(unique_id = nil, name = nil)  # can be called on the client to force re-initialization for testing purposes
         if !unique_id or !@context or @context.unique_id != unique_id
           if on_opal_server?
-            message = "************************ React Prerendering Context Initialized ***********************"
+            message = "************************ React Prerendering Context Initialized #{name} ***********************"
           else
             message = "************************ React Browser Context Initialized ****************************"
           end
@@ -103,13 +103,13 @@ module React
         @prerender_footer_blocks ||= []
       end
       
-      def initialize(unique_id, ctx = nil, controller = nil)
+      def initialize(unique_id, ctx = nil, controller = nil, name = nil)
         @unique_id = unique_id
         if RUBY_ENGINE != 'opal' 
           @controller = controller
           @ctx = ctx 
           ctx["ServerSideIsomorphicMethods"] = self
-          send_to_opal(:load_context, @unique_id)
+          send_to_opal(:load_context, @unique_id, name)
         end
         self.class.before_first_mount_blocks.each { |block| block.call(self) } 
       end
@@ -125,7 +125,7 @@ module React
             @ctx.eval(Opal::Processor.load_asset_code(::Rails.application.assets, 'components')) rescue nil
             raise "No opal-react components found in the components.rb file" unless @ctx.eval('Opal.React')
           end
-          @ctx.eval("Opal.React.IsomorphicHelpers.$#{method}(#{args.join(', ')})")
+          @ctx.eval("Opal.React.IsomorphicHelpers.$#{method}(#{args.collect { |arg| "'#{arg}'"}.join(', ')})")
         end
       end
       
