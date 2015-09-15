@@ -28,7 +28,7 @@ module React
         end unless method_defined? :render
         
         def children
-          nodes = `#{@native}.props.children` 
+          nodes = `#{@native}.props.children` || []
           class << nodes
             include Enumerable
 
@@ -63,16 +63,23 @@ module React
       base.extend(ClassMethods)
       
       if base.name
+#puts "getting parent of #{base.name}"
         parent = base.name.split("::").inject([Module]) { |nesting, next_const| nesting + [nesting.last.const_get(next_const)] }[-2] 
-        parent.class_eval do
-        
+#puts "defining method missing for module #{parent}"
+
+        class << parent #.class_eval do
+          
+          
+
           def method_missing(n, *args, &block)
+#puts "method missing for #{n} called"
             name = n
             if name =~ /_as_node$/ 
               node_only = true
               name = name.gsub(/_as_node$/, "")
             end
             unless name = const_get(name) and name.method_defined? :render
+#puts "can't find render method"
               return super
             end
             if node_only
@@ -81,6 +88,7 @@ module React
               React::RenderingContext.render(name, *args, &block)
             end
           rescue Exception => e
+            puts "pow"
             message = "#{base.name}.#{n} method_missing handler exception raised: #{e}"
             `console.error(#{message})`
           end
@@ -327,8 +335,15 @@ module React
       
       def optional_param(name, options = {})
         validator.optional(name, options)
-        define_param_method(name, options[:type])
+        define_param_method(name, options[:type]) unless name == :params
       end 
+      
+      def collect_other_params_as(name)
+        validator.all_others(name)
+        define_method(name) do
+          @_all_others ||= self.class.validator.collect_all_others(params)
+        end
+      end
       
       def define_state(*states, &block) 
         default_initial_value = (block and block.arity == 0) ? yield : nil
@@ -376,6 +391,22 @@ module React
             end
           end
         end
+      end
+      
+      def native_mixin(item)
+        native_mixins << item
+      end
+      
+      def native_mixins
+        @native_mixins ||= []
+      end
+      
+      def static_call_back(name, &block)
+        static_call_backs[name] = block
+      end
+      
+      def static_call_backs
+        @static_call_backs ||= {}
       end
       
       def export_component(opts = {})

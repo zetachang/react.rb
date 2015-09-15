@@ -76,6 +76,8 @@ module React
           getDefaultProps: function(){
             return #{type.respond_to?(:default_props) ? type.default_props.to_n : `{}`};
           },
+          mixins: #{type.respond_to?(:native_mixins) ? type.native_mixins : `[]`},
+          statics: #{type.respond_to?(:static_call_backs) ? type.static_call_backs.to_n : `{}`},
           componentWillMount: function() {
             var instance = this._getOpalInstance.apply(this);
             return #{`instance`.component_will_mount if type.method_defined? :component_will_mount};
@@ -154,6 +156,7 @@ module React
     end
     
     def self.convert_props(properties)
+      raise "Component parameters must be a hash. Instead you sent #{properties}" unless properties.is_a? Hash
       props = {}
       properties.map do |key, value|
         if key == "class_name" && value.is_a?(Hash)

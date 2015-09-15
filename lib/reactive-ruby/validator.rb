@@ -26,19 +26,35 @@ module React
       @rules[prop_name] = options
     end
     
-    def type_check(errors, error_prefix, object, klass)
+    def all_others(prop_name)
+      @all_others = {}
+    end
+    
+    def collect_all_others(params)
+      Hash[params.collect { |prop_name, value| [prop_name, value] if @rules[prop_name] == nil}.compact]
+    end
+    
+    def type_check(errors, error_prefix, object, klass, nil_allowed)
+      return if !object and nil_allowed
       is_native = !object.respond_to?(:is_a?) rescue true
       if is_native or !object.is_a? klass
-        unless klass.respond_to? :_react_param_conversion and klass._react_param_conversion object, :validate_only
-          errors << "#{error_prefix} could not be converted to #{klass}" unless klass._react_param_conversion object, :validate_only
+        unless klass.respond_to? :_react_param_conversion and klass._react_param_conversion(object, :validate_only)
+          errors << "#{error_prefix} could not be converted to #{klass}"
         end
       end
     end
   
     def validate(props)
       errors = []
-      props.keys.each do |prop_name|
-        errors <<  "Provided prop `#{prop_name}` not specified in spec"  if @rules[prop_name] == nil
+      
+      if @all_others
+        props.each do |prop_name, value|
+          @all_others[prop_name] = value if @rules[prop_name] == nil
+        end
+      else   
+        props.keys.each do |prop_name|
+          errors <<  "Provided prop `#{prop_name}` not specified in spec"  if @rules[prop_name] == nil
+        end
       end
 
       props = props.select {|key| @rules.keys.include?(key) }
@@ -54,12 +70,12 @@ module React
           if is_klass_array
             value_is_array_like = value.respond_to?(:each_with_index) rescue nil
             if value_is_array_like
-              value.each_with_index { |ele, i| type_check(errors, "Provided prop `#{prop_name}`[#{i}]", ele, klass[0]) }
+              value.each_with_index { |ele, i| type_check(errors, "Provided prop `#{prop_name}`[#{i}]", ele, klass[0], @rules[prop_name][:allow_nil]) }
             else
               errors << "Provided prop `#{prop_name}` was not an Array"
             end
           else
-            type_check(errors, "Provided prop `#{prop_name}`", value, klass)
+            type_check(errors, "Provided prop `#{prop_name}`", value, klass, @rules[prop_name][:allow_nil])
           end
         end
       end

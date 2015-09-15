@@ -14,6 +14,8 @@ module React
     required_param :controller
     required_param :render_params
     
+    backtrace :on
+    
     def render
       paths_searched = []
       if component_name.start_with? "::"
