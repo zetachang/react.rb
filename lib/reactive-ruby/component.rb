@@ -10,7 +10,7 @@ require 'native'
 
 module React
   module Component
-    
+
     def self.included(base)
       base.include(API)
       base.include(React::Callbacks)
@@ -22,11 +22,11 @@ module React
         define_callback :before_update
         define_callback :after_update
         define_callback :before_unmount
-        
+
         def render
           raise "no render defined"
         end unless method_defined? :render
-        
+
         def children
           nodes = `#{@native}.props.children` || []
           class << nodes
@@ -58,23 +58,23 @@ module React
 
           nodes
         end
-        
+
       end
       base.extend(ClassMethods)
-      
+
       if base.name
 #puts "getting parent of #{base.name}"
-        parent = base.name.split("::").inject([Module]) { |nesting, next_const| nesting + [nesting.last.const_get(next_const)] }[-2] 
+        parent = base.name.split("::").inject([Module]) { |nesting, next_const| nesting + [nesting.last.const_get(next_const)] }[-2]
 #puts "defining method missing for module #{parent}"
 
         class << parent #.class_eval do
-          
-          
+
+
 
           def method_missing(n, *args, &block)
 #puts "method missing for #{n} called"
             name = n
-            if name =~ /_as_node$/ 
+            if name =~ /_as_node$/
               node_only = true
               name = name.gsub(/_as_node$/, "")
             end
@@ -92,7 +92,7 @@ module React
             message = "#{base.name}.#{n} method_missing handler exception raised: #{e}"
             `console.error(#{message})`
           end
-        
+
         end
       end
     end
@@ -100,7 +100,7 @@ module React
     def initialize(native_element)
       @native = native_element
     end
-        
+
     def params
       Hash.new(`#{@native}.props`)
     end
@@ -113,9 +113,9 @@ module React
       raise "No native ReactComponent associated" unless @native
       Hash.new(`#{@native}.state`)
     end
-    
+
     def update_react_js_state(object, name, value)
-      set_state({"#{object.class.to_s+'.' unless object == self}name" => value}) rescue nil # in case we are in render
+      set_state({"#{object.class.to_s+'.' unless object == self}name" => value}) rescue nil
     end
 
     def emit(event_name, *args)
@@ -133,7 +133,7 @@ module React
 
     def component_did_mount
       React::State.set_state_context_to(self) do
-        self.run_callback(:after_mount) 
+        self.run_callback(:after_mount)
         React::State.update_states_to_observe
       end
     rescue Exception => e
@@ -160,7 +160,7 @@ module React
     rescue Exception => e
       self.class.process_exception(e, self)
     end
-    
+
 
     def component_did_update(prev_props, prev_state)
       React::State.set_state_context_to(self) do
@@ -172,7 +172,7 @@ module React
     end
 
     def component_will_unmount
-      React::State.set_state_context_to(self) do 
+      React::State.set_state_context_to(self) do
         self.run_callback(:before_unmount)
         React::State.remove
       end
@@ -187,12 +187,12 @@ module React
         Kernel.p(*args)
       end
     end
-    
+
     def component?(name)
       name_list = name.split("::")
       scope_list = self.class.name.split("::").inject([Module]) { |nesting, next_const| nesting + [nesting.last.const_get(next_const)] }.reverse
       scope_list.each do |scope|
-        component = name_list.inject(scope) do |scope, class_name| 
+        component = name_list.inject(scope) do |scope, class_name|
           scope.const_get(class_name)
         end rescue nil
         return component if component and component.method_defined? :render
@@ -203,7 +203,7 @@ module React
     def method_missing(n, *args, &block)
       return params[n] if params.key? n
       name = n
-      if name =~ /_as_node$/ 
+      if name =~ /_as_node$/
         node_only = true
         name = name.gsub(/_as_node$/, "")
       end
@@ -211,32 +211,32 @@ module React
         return super
       end
 
-      if name == "present" 
+      if name == "present"
         name = args.shift
       end
 
       if name == "_p_tag"
         name = "p"
       end
-      
-      if node_only 
+
+      if node_only
         React::RenderingContext.build { React::RenderingContext.render(name, *args, &block) }.to_n
       else
         React::RenderingContext.render(name, *args, &block)
       end
-      
+
     end
-    
+
     def watch(value, &on_change)
       React::Observable.new(value, on_change)
     end
-    
+
     def define_state(*args, &block)
       React::State.initialize_states(self, self.class.define_state(*args, &block))
     end
-    
+
     attr_reader :waiting_on_resources
-    
+
     def _render_wrapper
       React::State.set_state_context_to(self) do
         RenderingContext.render(nil) {render || ""}.tap { |element| @waiting_on_resources = element.waiting_on_resources if element.respond_to? :waiting_on_resources }
@@ -246,16 +246,16 @@ module React
     end
 
     module ClassMethods
-      
+
       def backtrace(*args)
         @backtrace_on = (args.count == 0 or (args[0] != :off and args[0]))
       end
-      
+
       def process_exception(e, component, reraise = nil)
         message = ["Exception raised while rendering #{component}"]
         if @backtrace_on
           message << "    #{e.backtrace[0]}"
-          message += e.backtrace[1..-1].collect { |line| line } 
+          message += e.backtrace[1..-1].collect { |line| line }
         else
           message[0] += ": #{e.message}"
         end
@@ -263,11 +263,11 @@ module React
         `console.error(message)`
         raise e if reraise
       end
-      
+
       def validator
         @validator ||= React::Validator.new
       end
-      
+
       def prop_types
         if self.validator
           {
@@ -291,7 +291,7 @@ module React
       def params(&block)
         validator.build(&block)
       end
-      
+
       def define_param_method(name, param_type)
         if param_type == React::Observable
           (@two_way_params ||= []) << name
@@ -325,27 +325,27 @@ module React
           end
         end
       end
-      
+
       def required_param(name, options = {})
         validator.requires(name, options)
         define_param_method(name, options[:type])
       end
-      
+
       alias_method :require_param, :required_param
-      
+
       def optional_param(name, options = {})
         validator.optional(name, options)
         define_param_method(name, options[:type]) unless name == :params
-      end 
-      
+      end
+
       def collect_other_params_as(name)
         validator.all_others(name)
         define_method(name) do
           @_all_others ||= self.class.validator.collect_all_others(params)
         end
       end
-      
-      def define_state(*states, &block) 
+
+      def define_state(*states, &block)
         default_initial_value = (block and block.arity == 0) ? yield : nil
         states_hash = (states.last.is_a? Hash) ? states.pop : {}
         states.each { |name| states_hash[name] = default_initial_value }
@@ -354,8 +354,8 @@ module React
           define_state_methods(self, name, &block)
         end
       end
-      
-      def export_state(*states, &block) 
+
+      def export_state(*states, &block)
         default_initial_value = (block and block.arity == 0) ? yield : nil
         states_hash = (states.last.is_a? Hash) ? states.pop : {}
         states.each { |name| states_hash[name] = default_initial_value }
@@ -365,7 +365,7 @@ module React
           define_state_methods(singleton_class, name, self, &block)
         end
       end
-      
+
       def define_state_methods(this, name, from = nil, &block)
         this.define_method("#{name}") do
           React::State.get_state(from || self, name)
@@ -385,36 +385,36 @@ module React
             current_state = React::State.get_state(from || self, name)
             yield name, React::State.get_state(from || self, name), current_state if block and block.arity > 0
             React::State.set_state(from || self, name, current_state)
-            React::Observable.new(current_state) do |new_value| 
+            React::Observable.new(current_state) do |new_value|
               yield name, React::State.get_state(from || self, name), new_value if block and block.arity > 0
               React::State.set_state(from || self, name, new_value)
             end
           end
         end
       end
-      
+
       def native_mixin(item)
         native_mixins << item
       end
-      
+
       def native_mixins
         @native_mixins ||= []
       end
-      
+
       def static_call_back(name, &block)
         static_call_backs[name] = block
       end
-      
+
       def static_call_backs
         @static_call_backs ||= {}
       end
-      
+
       def export_component(opts = {})
         export_name = (opts[:as] || name).split("::")
         first_name = export_name.first
         Native(`window`)[first_name] = add_item_to_tree(Native(`window`)[first_name], [React::API.create_native_react_class(self)] + export_name[1..-1].reverse).to_n
       end
-        
+
       def add_item_to_tree(current_tree, new_item)
         if Native(current_tree).class != Native::Object or new_item.length == 1
           new_item.inject do |memo, sub_name| {sub_name => memo} end
@@ -423,7 +423,7 @@ module React
           current_tree
         end
       end
-      
+
     end
 
     module API
@@ -469,6 +469,6 @@ module React
         }
       end
     end
-    
+
   end
 end
