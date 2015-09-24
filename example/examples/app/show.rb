@@ -39,7 +39,5 @@ end
 Document.ready? do
 
   React.render(React.create_element(Show), Element['#content'])
-  
+
 end
-
-

@@ -88,9 +88,8 @@ module React
               React::RenderingContext.render(name, *args, &block)
             end
           rescue Exception => e
-            puts "pow"
-            message = "#{base.name}.#{n} method_missing handler exception raised: #{e}"
-            `console.error(#{message})`
+            message = "#{base.name}.#{n} method_missing handler exception raised: #{e}" rescue nil
+            `console.error(#{message})` rescue nil
           end
 
         end
