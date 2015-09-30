@@ -72,11 +72,22 @@ module React
       end
 
       def set_state_context_to(observer) # wrap all execution that may set or get states in a block so we know which observer is executing
+        if `typeof window.reactive_ruby_timing !== 'undefined'`
+          @nesting_level = (@nesting_level || 0) + 1
+          start_time = Time.now.to_f
+          observer_name = (observer.class.respond_to?(:name) ? observer.class.name : observer.to_s) rescue "object:#{observer.object_id}"
+          puts "#{'  ' * @nesting_level} Timing #{observer_name} Execution"
+        end
         saved_current_observer = @current_observer
         @current_observer = observer
         return_value = yield
+        if `typeof window.reactive_ruby_timing !== 'undefined'`
+          puts "#{'  ' * @nesting_level} Timing #{observer_name} Completed in #{'%.04f' % (Time.now.to_f-start_time)} seconds"
+        end
+        return_value
       ensure
         @current_observer = saved_current_observer
+        @nesting_level = [0, @nesting_level - 1].max if `typeof window.reactive_ruby_timing !== 'undefined'`
         return_value
       end
 

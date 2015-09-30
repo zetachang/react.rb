@@ -63,23 +63,17 @@ module React
       base.extend(ClassMethods)
 
       if base.name
-#puts "getting parent of #{base.name}"
         parent = base.name.split("::").inject([Module]) { |nesting, next_const| nesting + [nesting.last.const_get(next_const)] }[-2]
-#puts "defining method missing for module #{parent}"
 
-        class << parent #.class_eval do
-
-
+        class << parent
 
           def method_missing(n, *args, &block)
-#puts "method missing for #{n} called"
             name = n
             if name =~ /_as_node$/
               node_only = true
               name = name.gsub(/_as_node$/, "")
             end
             unless name = const_get(name) and name.method_defined? :render
-#puts "can't find render method"
               return super
             end
             if node_only
@@ -114,7 +108,7 @@ module React
     end
 
     def update_react_js_state(object, name, value)
-      set_state({"#{object.class.to_s+'.' unless object == self}name" => value}) rescue nil
+      set_state({"***_state_updated_at-***" => Time.now.to_f, "#{object.class.to_s+'.' unless object == self}#{name}" => value}) rescue nil
     end
 
     def emit(event_name, *args)
@@ -148,10 +142,30 @@ module React
       self.class.process_exception(e, self)
     end
 
+    def props_changed?(next_props)
+      return true unless params.keys.sort == next_props.keys.sort
+      params.detect { |k, v| `#{next_props[k]} != #{params[k]}`}
+    end
+
     def should_component_update?(next_props, next_state)
-      React::State.set_state_context_to(self) { self.respond_to?(:needs_update?) ? self.needs_update?(Hash.new(next_props), Hash.new(next_state)) : true }
-    rescue Exception => e
-      self.class.process_exception(e, self)
+      React::State.set_state_context_to(self) do
+        next_props = Hash.new(next_props)
+        if self.respond_to?(:needs_update?)
+          !!self.needs_update?(next_props, Hash.new(next_state))
+        elsif false # switch to true to force updates per standard react
+          true
+        elsif props_changed? next_props
+          true
+        elsif `!next_state != !#{@native}.state`
+          true
+        elsif `!next_state && !#{@native}.state`
+          false
+        elsif `next_state["***_state_updated_at-***"] != #{@native}.state["***_state_updated_at-***"]`
+          true
+        else
+          false
+        end.to_n
+      end
     end
 
     def component_will_update(next_props, next_state)
@@ -247,12 +261,12 @@ module React
     module ClassMethods
 
       def backtrace(*args)
-        @backtrace_on = (args.count == 0 or (args[0] != :off and args[0]))
+        @backtrace_off = (args[0] == :off)
       end
 
       def process_exception(e, component, reraise = nil)
         message = ["Exception raised while rendering #{component}"]
-        if @backtrace_on
+        if !@backtrace_off
           message << "    #{e.backtrace[0]}"
           message += e.backtrace[1..-1].collect { |line| line }
         else

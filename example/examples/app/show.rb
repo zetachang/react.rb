@@ -9,6 +9,7 @@ require 'reactive-router'
 require 'basics'
 require 'reuse'
 require 'items'
+require 'rerendering'
 
 
 class Show
@@ -20,6 +21,7 @@ class Show
   routes(path: "/") do
     route(path: "basics", name: "basics", handler: Basics)
     route(path: "reuse", name: "reuse", handler: Reuse)
+    route(path: "rerendering", name: "rerendering", handler: Rerendering)
     redirect(from: "/", to: "basics")
   end
 
@@ -29,6 +31,7 @@ class Show
       div do
         link(to: "basics") { "Basics" }; br
         link(to: "reuse") { "Reusable Components" }; br
+        link(to: "rerendering") { "Rerendering Test" }; br
       end
     route_handler
     end
