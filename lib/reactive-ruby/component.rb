@@ -73,7 +73,12 @@ module React
               node_only = true
               name = name.gsub(/_as_node$/, "")
             end
-            unless name = const_get(name) and name.method_defined? :render
+            begin
+              name = const_get(name)
+            rescue Exception
+              name = nil
+            end
+            unless name and name.method_defined? :render
               return super
             end
             if node_only
@@ -81,9 +86,6 @@ module React
             else
               React::RenderingContext.render(name, *args, &block)
             end
-          rescue Exception => e
-            message = "#{base.name}.#{n} method_missing handler exception raised: #{e}" rescue nil
-            `console.error(#{message})` rescue nil
           end
 
         end
