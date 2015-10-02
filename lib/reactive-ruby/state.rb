@@ -25,10 +25,10 @@ module React
       def set_state(object, name, value)
         states[object][name] = value
         if name == "!CHANGED!" and @current_observer
-          puts "changing !CHANGED! to #{value} with a current observer - actual change will be delayed"
+          #puts "changing !CHANGED! to #{value} with a current observer - actual change will be delayed"
           after(0.01) do
             value = "#{value}@#{Time.now}"
-            puts "NOW setting !CHANGED! to #{value}"
+            #puts "NOW setting !CHANGED! to #{value}"
             set_state2(object, name, value)
           end
         else
