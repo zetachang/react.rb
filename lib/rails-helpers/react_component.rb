@@ -1,5 +1,6 @@
 begin
   
+  require 'action_controller'
   require 'react-rails'
   require 'reactive-ruby'
   
