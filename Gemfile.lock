@@ -5,8 +5,6 @@ PATH
       opal
       opal-activesupport
       opal-browser
-      opal-rails
-      rails (>= 3.2.13)
 
 GEM
   remote: https://rubygems.org/
@@ -159,7 +157,9 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  opal-rails
   opal-rspec
+  rails (>= 3.2.13)
   rake
   reactive-ruby!
   rspec-rails
