@@ -15,6 +15,7 @@ if RUBY_ENGINE == 'opal'
   
 else
   require "opal"
+  require "opal-rails"
   require "opal-browser"
   require "reactive-ruby/version"
   require "opal-activesupport"

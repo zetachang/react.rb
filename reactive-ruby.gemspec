@@ -18,9 +18,15 @@ Gem::Specification.new do |s|
   s.test_files     = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.require_paths  = ['lib', 'vendor']
 
-  s.add_runtime_dependency 'opal'
-  s.add_runtime_dependency 'opal-activesupport'
-  s.add_runtime_dependency 'opal-browser'
+
+  s.add_dependency 'rails', '>= 3.2.13'
+  s.add_dependency 'opal'
+  s.add_dependency 'opal-rails'
+  s.add_dependency 'opal-activesupport'
+  s.add_dependency 'opal-browser'
+  s.add_development_dependency 'rake'
+  s.add_development_dependency 'rspec-rails'
   s.add_development_dependency 'opal-rspec'
   s.add_development_dependency 'sinatra'
+  s.add_development_dependency 'sqlite3' # For Test Rails App
 end
