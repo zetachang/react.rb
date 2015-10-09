@@ -156,6 +156,11 @@ To run the above examples project yourself:
 3. `bundle exec rackup`
 4. Open `http://localhost`
 
+## Testing
+
+1. Run `bundle exec rake test_app` to generate a dummy test app.
+2. `bundle exec rspec`
+
 ## Contributions
 
 This project is still in early stage, so discussion, bug report and PR are really welcome :wink:.
