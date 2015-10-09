@@ -19,7 +19,7 @@ else
   require "opal-browser"
   require "reactive-ruby/version"
   require "opal-activesupport"
-  require "rails-helpers/react_component"
+  require "reactive-ruby/rails" if defined?(Rails)
   require "reactive-ruby/isomorphic_helpers"
   require "reactive-ruby/serializers"
 

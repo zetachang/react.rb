@@ -1,6 +1,15 @@
 require 'spec_helper'
 
-RSpec.describe React::Rails::ViewHelper, type: :helper do
+RSpec.describe ReactiveRuby::Rails::ComponentMount do
+  let(:helper) { described_class.new }
+
+  before do
+    env = double
+    allow(env).to receive(:request).and_return(
+      { 'controller' => ActionView::TestCase::TestController.new })
+    helper.setup(env)
+  end
+
   describe '#react_component' do
     it 'renders a div' do
       html = helper.react_component('Components::HelloWorld')

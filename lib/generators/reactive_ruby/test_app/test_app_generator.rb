@@ -1,7 +1,7 @@
 require 'rails/generators/rails/app/app_generator'
 
 module ReactiveRuby
-  class TestAppGenerator < Rails::Generators::Base
+  class TestAppGenerator < ::Rails::Generators::Base
     def self.source_paths
       paths = self.superclass.source_paths
       paths << File.expand_path('../templates', __FILE__)
