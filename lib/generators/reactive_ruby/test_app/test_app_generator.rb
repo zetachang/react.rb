@@ -30,6 +30,10 @@ module ReactiveRuby
         "#{test_app_path}/app/assets/javascripts/application.rb", force: true
       template 'assets/javascripts/components.rb',
         "#{test_app_path}/app/views/components.rb", force: true
+      template 'views/components/hello_world.rb',
+        "#{test_app_path}/app/views/components/hello_world.rb", force: true
+      template 'views/components/todo.rb',
+        "#{test_app_path}/app/views/components/todo.rb", force: true
     end
 
     def clean_superfluous_files
