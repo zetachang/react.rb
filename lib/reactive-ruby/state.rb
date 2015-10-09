@@ -41,21 +41,6 @@ module React
         value
       end
 
-      #     
-      #   end
-      #   if name == "!CHANGED!" and @current_observer
-      #     #puts "changing !CHANGED! to #{value} with a current observer - actual change will be delayed"
-      #     after(0.01) do
-      #       value = "#{value}@#{Time.now}"
-      #       #puts "NOW setting !CHANGED! to #{value}"
-      #       set_state2(object, name, value)
-      #     end
-      #   else
-      #     set_state2(object, name, value)
-      #   end
-      #   value
-      # end
-
       def will_be_observing?(object, name, current_observer)
         current_observer and new_observers[current_observer][object].include?(name)
       end
