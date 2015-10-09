@@ -15,6 +15,7 @@ if RUBY_ENGINE == 'opal'
   
 else
   require "opal"
+  require "opal-rails"
   require "opal-browser"
   require "reactive-ruby/version"
   require "opal-activesupport"
@@ -23,5 +24,4 @@ else
   require "reactive-ruby/serializers"
 
   Opal.append_path File.expand_path('../', __FILE__).untaint
-  Opal.append_path File.expand_path('../../vendor', __FILE__).untaint
 end
