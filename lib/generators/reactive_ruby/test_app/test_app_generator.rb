@@ -19,7 +19,7 @@ module ReactiveRuby
       opts[:skip_bundle] = true
 
       puts "Generating Test Rails Application..."
-      invoke Rails::Generators::AppGenerator,
+      invoke ::Rails::Generators::AppGenerator,
         [ File.expand_path(test_app_path, destination_root) ], opts
     end
 
