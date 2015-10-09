@@ -28,7 +28,7 @@ module React
         end unless method_defined? :render
 
         def children
-          nodes = `#{@native}.props.children` || []
+          nodes = [`#{@native}.props.children`].flatten
           class << nodes
             include Enumerable
 
