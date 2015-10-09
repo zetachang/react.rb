@@ -22,20 +22,39 @@ module React
         end
       end
 
-      def set_state(object, name, value)
+      def set_state(object, name, value, delay=nil)
         states[object][name] = value
-        if name == "!CHANGED!" and @current_observer
-          #puts "changing !CHANGED! to #{value} with a current observer - actual change will be delayed"
-          after(0.01) do
-            value = "#{value}@#{Time.now}"
-            #puts "NOW setting !CHANGED! to #{value}"
-            set_state2(object, name, value)
+        if delay
+          @delayed_updates ||= []
+          @delayed_updates << [object, name, value]
+          @delayed_updater ||= after(0.001) do
+            delayed_updates = @delayed_updates
+            @delayed_updates = []
+            @delayed_updater = nil
+            delayed_updates.each do |object, name, value|
+              set_state2(object, name, value)
+            end
           end
         else
           set_state2(object, name, value)
         end
         value
       end
+
+      #     
+      #   end
+      #   if name == "!CHANGED!" and @current_observer
+      #     #puts "changing !CHANGED! to #{value} with a current observer - actual change will be delayed"
+      #     after(0.01) do
+      #       value = "#{value}@#{Time.now}"
+      #       #puts "NOW setting !CHANGED! to #{value}"
+      #       set_state2(object, name, value)
+      #     end
+      #   else
+      #     set_state2(object, name, value)
+      #   end
+      #   value
+      # end
 
       def will_be_observing?(object, name, current_observer)
         current_observer and new_observers[current_observer][object].include?(name)
