@@ -3,6 +3,7 @@ require 'active_support/core_ext/class/attribute'
 require 'react/callbacks'
 require "react/ext/hash"
 require "react/component/api"
+require "react/element_children_handle"
 
 module React
   module Component
@@ -80,20 +81,34 @@ module React
       if name == "_p_tag"
         name = "p"
       end
-
-      @buffer = [] unless @buffer
+            
+      unless @buffer
+        puts "first render for #{name}"
+        @buffer = [] 
+        @root_element = true
+      else
+        @root_element = false
+      end
+      
       if block
         current = @buffer
+        is_root = @root_element
         @buffer = []
         result = block.call
         element = React.create_element(name, *args) { @buffer.count == 0 ? result : @buffer }
         @buffer = current
+        @root_element = is_root
       else
         element = React.create_element(name, *args)
       end
 
       @buffer << element
-      element
+      
+      if @root_element
+        element
+      else
+        React::ElementChildrenHandle.new(@buffer, @buffer.length - 1)
+      end
     end
     
     def to_n

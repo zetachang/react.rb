@@ -14,7 +14,8 @@ Document.ready? do
 
   Vienna::Router.new.tap do |router|
     router.route('/:filter') do |params|
-      component.set_props(filter: params[:filter].empty? ? "all" : params[:filter])
+      element = React.create_element(TodoAppView, filter: params[:filter].empty? ? "all" : params[:filter])
+      component = React.render(element, `document.getElementById('todoapp')`)      
     end
   end.update
 

@@ -4,6 +4,7 @@ describe React::Element do
   it "should be toll-free bridged to React.Element" do
     element = React.create_element('div')
     expect(`React.isValidElement(#{element})`).to eq(true)
+    expect(element.kind_of?(React::Element)).to eq(true)
   end
   
   describe "#new" do

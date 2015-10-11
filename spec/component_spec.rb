@@ -535,5 +535,36 @@ describe React::Component do
       expect(Kernel).to receive(:p).with("second")
       render_to_document(React.create_element(Foo))
     end
+    
+    it "should return React::Element for root element" do
+      stub_const 'Foo', Class.new
+      Foo.class_eval do
+        include React::Component
+
+        def render
+          div
+        end
+      end
+      
+      expect(Foo.new.render).to be_a(React::Element)
+    end
+    
+    it "should return React::ElementChildrenHandle for inner children" do
+      'var inner;'
+      
+      stub_const 'Foo', Class.new
+      Foo.class_eval do
+        include React::Component
+
+        def render
+          div do
+            `inner = #{div {'lorem'}}`
+          end
+        end
+      end
+      
+      expect(Foo.new.render).to be_a(React::Element)
+      expect(`inner`).to be_a(React::ElementChildrenHandle)
+    end
   end
 end

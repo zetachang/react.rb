@@ -17,6 +17,7 @@ class TodoAppView
     Todo.on(:create)  { Todo.adapter.sync_models(Todo); reload_current_filter }
     Todo.on(:update)  { Todo.adapter.sync_models(Todo); reload_current_filter }
     Todo.on(:destroy) { Todo.adapter.sync_models(Todo); reload_current_filter }
+    reload_current_filter
   end
 
   before_receive_props do |next_props|
