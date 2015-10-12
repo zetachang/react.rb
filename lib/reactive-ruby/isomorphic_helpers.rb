@@ -69,7 +69,7 @@ module React
     end
 
     def on_opal_client?
-      IsomorphicHelpers.on_opal_client?
+      self.class.on_opal_client?
     end
 
     def self.prerender_footers
