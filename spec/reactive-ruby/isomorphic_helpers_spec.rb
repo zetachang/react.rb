@@ -2,7 +2,7 @@ require 'spec_helper'
 
 RSpec.describe React::IsomorphicHelpers do
   describe 'code execution context', :ruby do
-    let(:klass) { Class.include(described_class) }
+    let(:klass) { Class.send(:include, described_class) }
     describe 'module class methods' do
       it { is_expected.to_not be_on_opal_server }
       it { is_expected.to_not be_on_opal_client }
