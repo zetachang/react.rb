@@ -159,7 +159,7 @@ To run the above examples project yourself:
 ## Testing
 
 1. Run `bundle exec rake test_app` to generate a dummy test app.
-2. `bundle exec rspec`
+2. `bundle exec rake`
 
 ## Contributions
 
