@@ -400,9 +400,10 @@ module React
             current_state = React::State.get_state(from || self, name)
             yield name, React::State.get_state(from || self, name), current_state if block and block.arity > 0
             React::State.set_state(from || self, name, current_state)
-            React::Observable.new(current_state) do |new_value|
-              yield name, React::State.get_state(from || self, name), new_value if block and block.arity > 0
-              React::State.set_state(from || self, name, new_value)
+            React::Observable.new(current_state) do |update|
+              current_state = React::State.get_state(from || self, name)
+              yield name, current_state, update if block and block.arity > 0
+              React::State.set_state(from || self, name, current_state)
             end
           end
         end
