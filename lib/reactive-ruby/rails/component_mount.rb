@@ -8,20 +8,36 @@ module ReactiveRuby
       end
 
       def react_component(name, props = {}, options = {}, &block)
-        props = {render_params: props, component_name: name, controller: self.controller.class.name}
-        name = 'React.TopLevelRailsComponent'
-        if options[:prerender]
-          options[:prerender] = {options[:prerender] => true} unless options[:prerender].is_a? Hash
-          existing_context_initializer = options[:prerender][:context_initializer]
-          options[:prerender][:context_initializer] = lambda do |ctx|
-            React::IsomorphicHelpers.load_context(ctx, self.controller, props[:component_name])
-            existing_context_initializer.call ctx if existing_context_initializer
-          end
+        options = context_initializer_options(options, name) if options[:prerender]
+        props = serialized_props(props, name, controller)
+        super(top_level_name, props, options, &block) + footers
+      end
 
+      private
+
+      def context_initializer_options(options, name)
+        options[:prerender] = {options[:prerender] => true} unless options[:prerender].is_a? Hash
+        existing_context_initializer = options[:prerender][:context_initializer]
+
+        options[:prerender][:context_initializer] = lambda do |ctx|
+          React::IsomorphicHelpers.load_context(ctx, controller, name)
+          existing_context_initializer.call ctx if existing_context_initializer
         end
-        component_rendering = (super(name, props.react_serializer, options, &block))
-        footers = React::IsomorphicHelpers.prerender_footers #if options[:prerender]
-        component_rendering+footers
+
+        options
+      end
+
+      def serialized_props(props, name, controller)
+        { render_params: props, component_name: name,
+          controller: controller.class.name }.react_serializer
+      end
+
+      def top_level_name
+        'React.TopLevelRailsComponent'
+      end
+
+      def footers
+        React::IsomorphicHelpers.prerender_footers #if options[:prerender]
       end
     end
   end
