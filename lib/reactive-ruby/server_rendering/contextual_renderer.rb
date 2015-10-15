@@ -3,7 +3,7 @@ module ReactiveRuby
     class ContextualRenderer < React::ServerRendering::SprocketsRenderer
       def initialize(options = {})
         super(options)
-        load_components
+        ComponentLoader.new(v8_context).load
       end
 
       def render(component_name, props, prerender_options)
@@ -27,14 +27,6 @@ module ReactiveRuby
 
       def v8_context
         @v8_context ||= @context.instance_variable_get("@v8_context")
-      end
-
-      def load_components
-        v8_context.eval(processed_opal_asset)
-      end
-
-      def processed_opal_asset
-        Opal::Processor.load_asset_code(::Rails.application.assets,'components')
       end
     end
   end

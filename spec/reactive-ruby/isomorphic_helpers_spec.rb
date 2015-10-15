@@ -114,7 +114,7 @@ RSpec.describe React::IsomorphicHelpers do
         context.instance_variable_set(:@ctx, test_context)
         expect {
           context.send_to_opal(:foo)
-        }.to raise_error(/No opal-react components found/)
+        }.to raise_error(/No react.rb components found/)
       end
 
       it 'executes method with args inside opal rubyracer context' do

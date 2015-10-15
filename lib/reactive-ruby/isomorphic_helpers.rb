@@ -111,7 +111,7 @@ module React
       def send_to_opal(method, *args)
         return unless @ctx
         args = [1] if args.length == 0
-        load_components
+        ::ReactiveRuby::ComponentLoader.new(@ctx).load!
         @ctx.eval("Opal.React.IsomorphicHelpers.$#{method}(#{args.collect { |arg| "'#{arg}'"}.join(', ')})")
       end
 
@@ -121,29 +121,6 @@ module React
 
       def self.register_prerender_footer_block(&block)
         prerender_footer_blocks << block
-      end
-
-      private
-
-      def load_components
-        return if react_loaded?
-        eval_asset('components')
-        unless react_loaded?
-          raise "No opal-react components found in the components.rb file"
-        end
-      end
-
-      def react_loaded?
-        !!@ctx.eval('Opal.React')
-      end
-
-      def eval_asset(name)
-        @ctx.eval(Opal::Processor.load_asset_code(assets, name))
-      rescue
-      end
-
-      def assets
-        ::Rails.application.assets
       end
     end
 
