@@ -1,5 +1,5 @@
 module React
-  
+
   class Observable
 
     def initialize(value, on_change = nil, &block)
@@ -8,7 +8,7 @@ module React
     end
 
     def method_missing(method_sym, *args, &block)
-      @value.send(method_sym, *args, &block).tap { |result| @on_change.call result }
+      @value.send(method_sym, *args, &block).tap { |result| @on_change.call @value }
     end
 
     def respond_to?(method, *args)
@@ -18,16 +18,16 @@ module React
         @value.respond_to? method, *args
       end
     end
-  
+
     def call(new_value)
       @on_change.call new_value
       @value = new_value
     end
-    
+
     def to_proc
       lambda { |arg = @value| @on_change.call arg }
     end
-  
+
   end
-  
+
 end
