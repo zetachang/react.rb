@@ -1,6 +1,7 @@
 module Components
   class Todo
     include React::Component
+    export_component
 
     params do
       requires :todo
