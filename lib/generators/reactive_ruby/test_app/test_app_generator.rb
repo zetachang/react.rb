@@ -1,7 +1,7 @@
 require 'rails/generators/rails/app/app_generator'
 
 module ReactiveRuby
-  class TestAppGenerator < Rails::Generators::Base
+  class TestAppGenerator < ::Rails::Generators::Base
     def self.source_paths
       paths = self.superclass.source_paths
       paths << File.expand_path('../templates', __FILE__)
@@ -19,7 +19,7 @@ module ReactiveRuby
       opts[:skip_bundle] = true
 
       puts "Generating Test Rails Application..."
-      invoke Rails::Generators::AppGenerator,
+      invoke ::Rails::Generators::AppGenerator,
         [ File.expand_path(test_app_path, destination_root) ], opts
     end
 
@@ -30,6 +30,10 @@ module ReactiveRuby
         "#{test_app_path}/app/assets/javascripts/application.rb", force: true
       template 'assets/javascripts/components.rb',
         "#{test_app_path}/app/views/components.rb", force: true
+      template 'views/components/hello_world.rb',
+        "#{test_app_path}/app/views/components/hello_world.rb", force: true
+      template 'views/components/todo.rb',
+        "#{test_app_path}/app/views/components/todo.rb", force: true
     end
 
     def clean_superfluous_files

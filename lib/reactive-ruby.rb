@@ -12,13 +12,12 @@ if RUBY_ENGINE == 'opal'
   require "reactive-ruby/state"
   require "reactive-ruby/isomorphic_helpers"
   require "rails-helpers/top_level_rails_component"
-
 else
   require "opal"
   require "opal-browser"
-  require "reactive-ruby/version"
   require "opal-activesupport"
-  require "rails-helpers/react_component"
+  require "reactive-ruby/version"
+  require "reactive-ruby/rails" if defined?(Rails)
   require "reactive-ruby/isomorphic_helpers"
   require "reactive-ruby/serializers"
 

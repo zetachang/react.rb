@@ -25,6 +25,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'opal-rails'
   s.add_development_dependency 'rake'
   s.add_development_dependency 'rspec-rails'
+  s.add_development_dependency 'timecop'
   s.add_development_dependency 'opal-rspec'
   s.add_development_dependency 'sinatra'
   s.add_development_dependency 'sqlite3' # For Test Rails App

@@ -1,19 +1,7 @@
-GIT
-  remote: git://github.com/catprintlabs/react-rails.git
-  revision: 98a8d903a51065c8e3ffedeb094d72a2e9883176
-  branch: isomorphic-methods-support
-  specs:
-    react-rails (1.0.0)
-      coffee-script-source (~> 1.8)
-      connection_pool
-      execjs
-      rails (>= 3.2)
-      tilt
-
 PATH
   remote: .
   specs:
-    reactive-ruby (0.7.23)
+    reactive-ruby (0.7.25)
       opal
       opal-activesupport (>= 0.2.0)
       opal-browser
@@ -57,6 +45,10 @@ GEM
       thread_safe (~> 0.3, >= 0.3.4)
       tzinfo (~> 1.1)
     arel (6.0.3)
+    babel-source (5.8.26)
+    babel-transpiler (0.7.0)
+      babel-source (>= 4.0, < 6)
+      execjs (~> 2.0)
     builder (3.2.2)
     coffee-script-source (1.9.1.1)
     connection_pool (2.2.0)
@@ -72,6 +64,7 @@ GEM
       railties (>= 4.2.0)
       thor (>= 0.14, < 2.0)
     json (1.8.3)
+    libv8 (3.16.14.11)
     loofah (2.0.3)
       nokogiri (>= 1.5.9)
     mail (2.6.3)
@@ -133,6 +126,14 @@ GEM
       rake (>= 0.8.7)
       thor (>= 0.18.1, < 2.0)
     rake (10.4.2)
+    react-rails (1.3.1)
+      babel-transpiler (>= 0.7.0)
+      coffee-script-source (~> 1.8)
+      connection_pool
+      execjs
+      rails (>= 3.2)
+      tilt
+    ref (2.0.0)
     rspec-core (3.3.2)
       rspec-support (~> 3.3.0)
     rspec-expectations (3.3.1)
@@ -162,9 +163,13 @@ GEM
       activesupport (>= 3.0)
       sprockets (>= 2.8, < 4.0)
     sqlite3 (1.3.10)
+    therubyracer (0.12.2)
+      libv8 (~> 3.16.14.0)
+      ref
     thor (0.19.1)
     thread_safe (0.3.5)
     tilt (2.0.1)
+    timecop (0.7.1)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
 
@@ -174,12 +179,12 @@ PLATFORMS
 DEPENDENCIES
   opal-rails
   opal-rspec
+  rails
   rake
-  react-rails!
+  react-rails
   reactive-ruby!
   rspec-rails
   sinatra
   sqlite3
-
-BUNDLED WITH
-   1.10.6
+  therubyracer
+  timecop
