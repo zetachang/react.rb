@@ -1,9 +1,9 @@
 PATH
   remote: ../..
   specs:
-    reactive-ruby (0.7.13)
+    reactive-ruby (0.7.25)
       opal
-      opal-activesupport
+      opal-activesupport (>= 0.2.0)
       opal-browser
 
 GEM
@@ -15,14 +15,14 @@ GEM
       sourcemap (~> 0.1.0)
       sprockets (~> 3.1)
       tilt (>= 1.4)
-    opal-activesupport (0.1.0)
+    opal-activesupport (0.2.0)
       opal (>= 0.5.0, < 1.0.0)
     opal-browser (0.2.0)
       opal
       paggio
     opal-jquery (0.4.0)
       opal (>= 0.7.0, < 0.9.0)
-    paggio (0.2.4)
+    paggio (0.2.5)
     rack (1.6.4)
     rack-protection (1.5.3)
       rack
