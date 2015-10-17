@@ -3,8 +3,8 @@ module ReactiveRuby
     class ComponentMount < React::Rails::ComponentMount
       attr_accessor :controller
 
-      def setup(env)
-        self.controller = env.request['controller']
+      def setup(controller)
+        self.controller = controller
       end
 
       def react_component(name, props = {}, options = {}, &block)
@@ -29,7 +29,7 @@ module ReactiveRuby
 
       def serialized_props(props, name, controller)
         { render_params: props, component_name: name,
-          controller: controller.class.name }.react_serializer
+          controller: controller.class.name.gsub(/Controller$/,"") }.react_serializer
       end
 
       def top_level_name

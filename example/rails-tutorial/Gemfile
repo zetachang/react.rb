@@ -1,8 +1,8 @@
 source 'https://rubygems.org'
 
 gem 'therubyracer', platforms: :ruby
-gem 'react-rails', git: "https://github.com/catprintlabs/react-rails.git", :branch => 'isomorphic-methods-support'  # you need this branch of react-rails
-gem 'opal-rails'       
+gem 'react-rails' #, git: "https://github.com/catprintlabs/react-rails.git", :branch => 'isomorphic-methods-support'  # you need this branch of react-rails
+gem 'opal-rails'
                 # integrates opal with sprockets etc
 gem 'reactive-ruby', path: "../.."
 
@@ -48,4 +48,3 @@ group :development, :test do
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
 end
-
