@@ -1,3 +1,3 @@
 module React
-  VERSION = "0.7.26"
+  VERSION = "0.7.27"
 end
