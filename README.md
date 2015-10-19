@@ -1,5 +1,7 @@
 # Reactive-Ruby
 
+[![Build Status](https://travis-ci.org/zetachang/react.rb.svg?branch=reactive-ruby)](https://travis-ci.org/zetachang/react.rb)
+
 **Reactive-Ruby is an [Opal Ruby](http://opalrb.org) wrapper of [React.js library](http://facebook.github.io/react/)**.
 
 It lets you write reactive UI components, with Ruby's elegance using the tried and true React.js engine. :heart:
