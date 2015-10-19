@@ -22,7 +22,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'opal'
   s.add_dependency 'opal-activesupport', '>= 0.2.0'
   s.add_dependency 'opal-browser'
-  s.add_development_dependency 'opal-rails'
   s.add_development_dependency 'rake'
   s.add_development_dependency 'rspec-rails'
   s.add_development_dependency 'timecop'
