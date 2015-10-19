@@ -1,5 +1,6 @@
 require 'spec_helper'
 
+if ruby?
 class TestController < ActionController::Base; end
 
 RSpec.describe TestController, type: :controller do
@@ -17,4 +18,5 @@ RSpec.describe TestController, type: :controller do
       expect(response).to render_template(layout: :application)
     end
   end
+end
 end

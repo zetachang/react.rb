@@ -1,5 +1,6 @@
 require 'spec_helper'
 
+if ruby?
 RSpec.describe ReactiveRuby::ComponentLoader do
   GLOBAL_WRAPPER = <<-JS
     var global = global || this;
@@ -55,4 +56,5 @@ RSpec.describe ReactiveRuby::ComponentLoader do
       expect(loader).to_not be_loaded
     end
   end
+end
 end
