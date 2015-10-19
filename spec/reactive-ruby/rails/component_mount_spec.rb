@@ -4,10 +4,7 @@ RSpec.describe ReactiveRuby::Rails::ComponentMount do
   let(:helper) { described_class.new }
 
   before do
-    env = double
-    allow(env).to receive(:request).and_return(
-      { 'controller' => ActionView::TestCase::TestController.new })
-    helper.setup(env)
+    helper.setup(ActionView::TestCase::TestController.new)
   end
 
   describe '#react_component' do
@@ -45,7 +42,7 @@ RSpec.describe ReactiveRuby::Rails::ComponentMount do
       html = helper.react_component('Components::HelloWorld')
       props = react_props_for(html)
 
-      expect(props['controller']).to eq('ActionView::TestCase::TestController')
+      expect(props['controller']).to eq('ActionView::TestCase::Test')
     end
 
     it 'passes additional options through as html attributes' do
