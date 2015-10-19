@@ -12,6 +12,7 @@ def ruby?
 end
 
 if RUBY_ENGINE == 'opal'
+  require 'reactive-ruby'
   RSpec.configure do |config|
     config.filter_run_excluding :ruby
   end
