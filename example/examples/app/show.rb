@@ -10,6 +10,7 @@ require 'basics'
 require 'reuse'
 require 'items'
 require 'rerendering'
+require 'nodes'
 
 
 class Show
@@ -22,6 +23,7 @@ class Show
     route(path: "basics", name: "basics", handler: Basics)
     route(path: "reuse", name: "reuse", handler: Reuse)
     route(path: "rerendering", name: "rerendering", handler: Rerendering)
+    route(path: "nodes", name: "nodes", handler: Nodes)
     redirect(from: "/", to: "basics")
   end
 
@@ -32,6 +34,7 @@ class Show
         link(to: "basics") { "Basics" }; br
         link(to: "reuse") { "Reusable Components" }; br
         link(to: "rerendering") { "Rerendering Test" }; br
+        link(to: "nodes") { "Saving and using rendered nodes" }; br
       end
     route_handler
     end

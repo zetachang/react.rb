@@ -1,7 +1,7 @@
 PATH
   remote: ../..
   specs:
-    reactive-ruby (0.7.25)
+    reactive-ruby (0.7.27)
       opal
       opal-activesupport (>= 0.2.0)
       opal-browser
@@ -65,7 +65,7 @@ GEM
     minitest (5.8.1)
     nokogiri (1.6.6.2)
       mini_portile (~> 0.6.0)
-    opal (0.8.0)
+    opal (0.8.1)
       hike (~> 1.2)
       sourcemap (~> 0.1.0)
       sprockets (~> 3.1)
@@ -117,15 +117,15 @@ GEM
       rake (>= 0.8.7)
       thor (>= 0.18.1, < 2.0)
     rake (10.4.2)
-    reactive-router (0.7.8)
+    reactive-router (0.7.10)
       reactive-ruby
     sinatra (1.4.6)
       rack (~> 1.4)
       rack-protection (~> 1.4)
       tilt (>= 1.3, < 3)
     sourcemap (0.1.1)
-    sprockets (3.3.4)
-      rack (~> 1.0)
+    sprockets (3.4.0)
+      rack (> 1, < 3)
     sprockets-rails (2.3.3)
       actionpack (>= 3.0)
       activesupport (>= 3.0)
