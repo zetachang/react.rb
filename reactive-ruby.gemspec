@@ -6,6 +6,7 @@ require 'reactive-ruby/version'
 Gem::Specification.new do |s|
   s.name         = 'reactive-ruby'
   s.version      = React::VERSION
+
   s.author       = 'David Chang'
   s.email        = 'zeta11235813@gmail.com'
   s.homepage     = 'https://github.com/zetachang/react.rb'
@@ -17,6 +18,7 @@ Gem::Specification.new do |s|
   s.executables    = `git ls-files -- bin/*`.split("\n").map { |f| File.basename(f) }
   s.test_files     = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.require_paths  = ['lib']
+
 
 
   s.add_dependency 'opal'
