@@ -311,9 +311,10 @@ module React
         if param_type == React::Observable
           (@two_way_params ||= []) << name
           define_method("#{name}") do
-            params[name].instance_variable_get("@value")
+            params[name].instance_variable_get("@value") if params[name]
           end
           define_method("#{name}!") do |*args|
+            return unless params[name]
             if args.count > 0
               current_value = params[name].instance_variable_get("@value")
               params[name].call args[0]
@@ -326,7 +327,7 @@ module React
           end
         elsif param_type == Proc
           define_method("#{name}") do |*args, &block|
-            params[name].call *args, &block
+            params[name].call(*args, &block) if params[name]
           end
         else
           define_method("#{name}") do
@@ -444,9 +445,21 @@ module React
     module API
       #include Native
 
-      alias_native :dom_node, :getDOMNode
-      alias_native :mounted?, :isMounted
-      alias_native :force_update!, :forceUpdate
+      def dom_node
+        if `typeof React.findDOMNode === 'undefined'`
+          `#{self}.native.getDOMNode`            # v0.12.0
+        else
+          `React.findDOMNode(#{self}.native)`    # v0.13.0
+        end
+      end
+
+      def mounted?
+        `#{self}.native.isMounted()`
+      end
+
+      def force_update!
+        `#{self}.native.forceUpdate()`
+      end
 
       def set_props(prop, &block)
         raise "No native ReactComponent associated" unless @native

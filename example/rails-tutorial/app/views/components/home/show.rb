@@ -1,33 +1,33 @@
 # app/views/components/home/show.rb
 
 module Components
-  
+
   module Home
-    
+
     class Show
 
       include React::Component   # will create a new component named Show
-      
+
       optional_param :say_hello_to
       backtrace :on
-      def render  
+      def render
         puts "Rendering my first component!"
         List(first_element: div { "bhwahaha" }) do
           "hello #{'there '+say_hello_to if say_hello_to}".span # render "hello" with optional 'there ...'
-          "goodby".span  
+          "goodby".span
         end
       end
 
     end
-    
+
     class List
-      
-      include React::Component 
-      
+
+      include React::Component
+
       required_param :first_element #, type: React::Element
-      
+
       backtrace :on
-      
+
       def render
         ul do
           li do
@@ -43,6 +43,5 @@ module Components
       end
     end
   end
-  
-end
 
+end
