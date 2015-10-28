@@ -1,6 +1,0 @@
-source 'https://rubygems.org'
-
-gem 'react.rb', :path => '../..'
-gem 'sinatra'
-gem 'opal-jquery'
-gem 'react-source'

@@ -1,275 +1,167 @@
-# React.rb
+# Reactive-Ruby
 
-[![Join the chat at https://gitter.im/zetachang/react.rb](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/zetachang/react.rb?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Build Status](https://travis-ci.org/zetachang/react.rb.svg?branch=reactive-ruby)](https://travis-ci.org/zetachang/react.rb)
 
-[![Build Status](http://img.shields.io/travis/zetachang/react.rb/master.svg)](http://travis-ci.org/zetachang/react.rb)
-[![Gem Version](https://badge.fury.io/rb/react.rb.svg)](http://badge.fury.io/rb/react.rb)
-[![Code Climate](https://codeclimate.com/github/zetachang/react.rb/badges/gpa.svg)](https://codeclimate.com/github/zetachang/react.rb)
+**Reactive-Ruby is an [Opal Ruby](http://opalrb.org) wrapper of [React.js library](http://facebook.github.io/react/)**.
 
-**React.rb is an [Opal Ruby](http://opalrb.org) wrapper of [React.js library](http://facebook.github.io/react/)**.
+It lets you write reactive UI components, with Ruby's elegance using the tried and true React.js engine. :heart:
 
-It lets you write reactive UI components, with Ruby's elegance and compiled to run in JavaScript. :heart:
+This fork of the original react.rb gem is a work in progress.  Currently it is being used in a large rails app.  However the gem itself has no dependency on rails, and there are people using the gem in other environments.
 
-## Latest Changes
+## Quick Overview
 
-Visit the [reactive-ruby](https://github.com/zetachang/react.rb/tree/reactive-ruby) branch for the most current in development version.  This version will eventually be merged with master once sufficient documentation and test cases are completed.  However it has a large number of fixes, and improvements that are worth investigating.
+A react app is built from one or more trees of components.  React components can live side by side with other non-react html and javascript. A react component is just like a rails view or a partial.  Reactive-Ruby takes advantage of these features by letting you add Reactive-Ruby components as views, and call them directly from your controller like any other view.
 
-## Installation
+By design Reactive-Ruby allows reactive components  to be easily added to existing Rails projects, as well in new development. 
+
+Components are first rendered to HTML on the server (called pre-rendering) this is no different from what happens when your ERB or HAML templates are translated to HTML.  
+
+A copy of the react engine, and your components follows the rendered HTML to the browser, and then when a user interacts with the page, it is updated on the client.
+
+The beauty is you now have one markup description, written in the same language as your server code, that works both as the HTML template and as an interactive component.
+
+## Installation and Setup with Rails
+
+In your gem file:
 
 ```ruby
-# Gemfile
-gem "react.rb"
+gem 'reactive-ruby'
+
+# the next three gems are for integration with rails (TODO - package these up as a reactive-rails gem)
+
+gem 'therubyracer', platforms: :ruby # you need this for prerendering to work
+gem 'react-rails', git: "https://github.com/catprintlabs/react-rails.git", :branch => 'isomorphic-methods-support'  
+gem 'opal-rails'   
+
+# if you are planning on using jQuery don't forget to include it
+
+gem 'jquery-rails'                   
 ```
 
-and in your Opal application,
+Your react components will go into the `app/views/components/` directory of your rails app.
 
-```ruby
-require "opal"
-require "react"
+In addition within your views directory you need a  `components.rb` manifest file like this:
 
-React.render(React.create_element('h1'){ "Hello World!" }, `document.body`)
 ```
-
-For integration with server (Sinatra, etc), see setup of [TodoMVC](examples/todos) or the [official docs](http://opalrb.org/docs/) of Opal.
-
-## Usage
-
-### A Simple Component
-
-A ruby class which define method `render` is a valid component.
-
-```ruby
-class HelloMessage
-  def render
-    React.create_element("div") { "Hello World!" }
-  end
-end
-
-puts React.render_to_static_markup(React.create_element(HelloMessage))
-
-# => '<div>Hello World!</div>'
-```
-
-### More complicated one
-
-To hook into native ReactComponent life cycle, the native `this` will be passed to the class's initializer. And all corresponding life cycle methods (`componentDidMount`, etc) will be invoked on the instance using the snake-case method name.
-
-```ruby
-class HelloMessage
-  def initialize(native)
-    @native = Native(native)
-  end
-
-  def component_will_mount
-    puts "will mount!"
-  end
-
-  def render
-    React.create_element("div") { "Hello #{@native[:props][:name]}!" }
-  end
-end
-
-puts React.render_to_static_markup(React.create_element(HelloMessage, name: 'John'))
-
-# => will_mount!
-# => '<div>Hello John!</div>'
-```
-
-### React::Component
-
-Hey, we are using Ruby, simply include `React::Component` to save your typing and have some handy methods defined.
-
-```ruby
-class HelloMessage
-  include React::Component
-  MSG = {great: 'Cool!', bad: 'Cheer up!'}
-
-  define_state(:foo) { "Default greeting" }
-
-  before_mount do
-    self.foo = "#{self.foo}: #{MSG[params[:mood]]}"
-  end
-
-  after_mount :log
-
-  def log
-    puts "mounted!"
-  end
-
-  def render
-    div do
-      span { self.foo + " #{params[:name]}!" }
-    end
-  end
-end
-
-class App
-  include React::Component
-
-  def render
-    present HelloMessage, name: 'John', mood: 'great'
-  end
-end
-
-puts React.render_to_static_markup(React.create_element(App))
-
-# => '<div><span>Default greeting: Cool! John!</span></div>'
-
-React.render(React.create_element(App), `document.body`)
-
-# mounted!
-```
-
-* Callback of life cycle could be created through helpers `before_mount`, `after_mount`, etc
-* `this.props` is accessed through method `self.params`
-* Use helper method `define_state` to create setter & getter of `this.state` for you
-* For the detailed mapping to the original API, see [this issue](https://github.com/zetachang/react.rb/issues/2) for reference. Complete reference will come soon.
-
-### Element Building DSL
-
-As a replacement of JSX, include `React::Component` and you can build `React.Element` hierarchy without all the `React.create_element` noises.
-
-```ruby
-def render
-  div do
-    h1 { "Title" }
-    h2 { "subtitle"}
-    div(class_name: 'fancy', id: 'foo') { span { "some text #{interpolation}"} }
-    present FancyElement, fancy_props: '10'
-  end
-end
-```
-
-### JSX Support
-
-Not a fan of using element building DSL? Use file extension `.jsx.rb` to get JSX fragment compiled.
-
-```ruby
-# app.jsx.rb
-class Fancy
-  def render
-    `<div>"this is fancy"</div>`
-  end
-end
-
-class App
-  include React::Component
-
-  def render
-    element = %x{ 
-      <div>
-        <h1>Outer</h1>
-        <Fancy>{ #{5.times.to_a.join(",")} }</Fancy>
-      </div>
-    }
-    element
-  end
-end
-
-React.expose_native_class(Fancy)
-
-React.render React.create_element(App), `document.body`
+# app/views/components.rb
+require 'opal'
+require 'reactive-ruby'
+require_tree './components'
 ``` 
 
-### Props validation
+This pulls in the files that will be used both for server side and browser rendering.
 
-How about props validation? Inspired by [Grape API](https://github.com/intridea/grape), props validation rule could be created easily through `params` class method as below,
+Then your `assets/javascript/application.rb` file looks like this:
 
-```ruby
-class App
-  include React::Component
+```
+#assets/javascript/application.rb
 
-  params do
-    requires :username, type: String
-    requires :enum, values: ['foo', 'bar', 'awesome']
-    requires :payload, type: Todo # yeah, a plain Ruby class
-    optional :filters, type: Array[String]
-    optional :flash_message, type: String, default: 'Welcome!' # no need to feed through `getDefaultProps`
-  end
-	
-  # Will append to the params above
-  params do
-    requires :password, type: String
-  end
+# only put files that are browser side only.
 
-  def render
-    div
-  end
-end
+require 'components'  # this pulls in your components from the components.rb manifest file  
+require 'react_ujs'   # this is required on the client side only and is part of the prerendering system
+
+# require any thing else that is browser side only, typically  these 4 are all you need.  If you
+# have client only sections of code that that do not contain requires wrap them in 
+# if React::IsomorphicHelpers.on_opal_client? blocks.  
+
+require 'jquery'           # you need both these files to access jQuery from Opal
+require 'opal-jquery'      # they must be in this order, and after the components require
+require 'browser/interval' # for #every, and #after methods
 ```
 
-### Mixins
+Okay that is your setup.
 
-Simply create a Ruby module to encapsulate the behavior. Example below is modified from the original [React.js Exmaple on Mixin](http://facebook.github.io/react/docs/reusable-components.html#mixins). [Opal Browser](https://github.com/opal/opal-browser) syntax are used here to make it cleaner.
+Now for a simple component.  We are going to render this from the `show` method of the home controller. We want to use  convention over configuration by default.  So the component will be the "Show" class, of the  "Home" module, 
+of the Components module.
 
 ```ruby
-module SetInterval
-  def self.included(base)
-    base.class_eval do
-      before_mount { @interval = [] }
-      before_unmount do
-        # abort associated timer of a component right before unmount
-        @interval.each { |i| i.abort }
+# app/views/components/home/show.rb
+
+module Components
+  
+  module Home
+    
+    class Show
+
+      include React::Component   # will create a new component named Show
+      
+      optional_param :say_hello_to
+
+      def render  
+        puts "Rendering my first component!"
+        "hello #{'there '+say_hello_to if say_hello_to}"  # render "hello" with optional 'there ...'
       end
+
     end
+    
   end
-
-  def set_interval(seconds, &block)
-    @interval << $window.every(seconds, &block)
-  end
+  
 end
-
-class TickTock
-  include React::Component
-  include SetInterval
-
-  define_state(:seconds) { 0 }
-
-  before_mount do
-    set_interval(1) { self.seconds = self.seconds + 1 }
-    set_interval(1) { puts "Tick!" }
-  end
-
-  def render
-    span do
-      "React has been running for: #{self.seconds}"
-    end
-  end
-end
-
-React.render(React.create_element(TickTock), $document.body.to_n)
-
-$window.after(5) do
-  React.unmount_component_at_node($document.body.to_n)
-end
-
-# => Tick!
-# => ... for 5 times then stop ticking after 5 seconds
 ```
 
-## Example
+Components work just like views so put this in your home controller
+```ruby
+# controllers/home_controller.rb
+class HomeController < ApplicationController
+  def show
+    render_component say_hello_to: params[:say_hello_to] # by default render_component will use the controller name to find the appropriate component
+  end
+end
+```
 
-* React Tutorial: see [examples/react-tutorial](examples/react-tutorial), the original CommentBox example.
-* TodoMVC: see [examples/todos](examples/todos), your beloved TodoMVC <3.
-* JSX Example: see [examples/basic-jsx](examples/basic-jsx).
+Make sure your routes file has a route to your home#show method, and you have done a bundle install.  Fire up your development server and you should see "hello world" displayed.
 
-## React Native
+Open up the js console in the browser and you will see a log showing what went on during the rendering.
 
-For [React Native](http://facebook.github.io/react-native/) support, please refer to [Opal Native](https://github.com/zetachang/opal-native).
+Have a look at the sources in the console, and notice your ruby code is there, and you can set break points etc.
 
-## TODOS
+### Changing the top level component name and search path
+
+You can control the top level component name and search path. 
+
+You can specify the component name explicitly in the `render_component` method.  `render_component "Blatz` will search the for a component class named
+`Blatz` regardless of the controller method.
+
+Searching for components normally works like this:  Given a controller named "Foo" then the component should be either in the `Components::Foo` module, the
+`Components` module (no controller - useful if you have just a couple of shared components) or just the outer scope (i.e. `Module`) which is useful for small apps.
+
+Saying `render_component "::Blatz"` will only search the outer scope, while `"::Foo::Blatz"` will look only in the module `Foo` for a class named `Blatz`.
+
+
+## Integration with Sinatra
+
+See the sinatra-tutorial folder
+
+## Typical Problems
+
+`Uncaught TypeError: Cannot read property 'toUpperCase' of undefined`  This means the thing you are trying to render is not actually a react component.  Often is because the top level component name is wrong.  For example if you are in controller Foo and the method is `bar`, but you have named the component Foo::Bars then you would see this message.
+
+## Turning off Prerendering
+
+Sometimes its handy to switch off prerendering.  Add `?no_prerender=1` ... to your url.
+
+
+## TODOS / Work arounds / Issues
 
 * Documentation
-* API wrapping coverage of the original js library (pretty close though)
+* Should load the RubyRacer, or at least report an error if the RubyRacer is not present
+* Get everything to autoload what it needs (i.e. much less config setup)
 
 ## Developing
 
-To run the test case of the project yourself.
+To run the above examples project yourself:
 
 1. `git clone` the project
+2. `cd example/tutorial`
 2. `bundle install`
 3. `bundle exec rackup`
-4. Open `http://localhost:9292` to run the spec
+4. Open `http://localhost`
+
+## Testing
+
+1. Run `bundle exec rake test_app` to generate a dummy test app.
+2. `bundle exec rake`
 
 ## Contributions
 
@@ -278,7 +170,7 @@ We check in often at https://gitter.im/zetachang/react.rb ask for @catmando as D
 
 ## Contact
 
-We check in often at https://gitter.im/zetachang/react.rb.
+We check in often at https://gitter.im/zetachang/react.rb ask for @catmando.
 
 ## License
 

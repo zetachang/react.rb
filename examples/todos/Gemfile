@@ -1,6 +1,0 @@
-source 'https://rubygems.org'
-
-gem 'react.rb',       :path => '../..'
-gem 'rake'
-gem 'vienna',         :github => 'opal/vienna', :ref => '593335cbd7fb99ce471fa720e9b9c849d99b8dda'
-gem 'opal-rspec',     '0.3.0.beta3'
