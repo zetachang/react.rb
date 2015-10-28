@@ -1,21 +1,19 @@
 module React
-  
   class TopLevelRailsComponent
-    
     include React::Component
-    
+
     def self.search_path
       @search_path ||= [Module]
     end
-    
+
     export_component
-    
+
     required_param :component_name
     required_param :controller
     required_param :render_params
-    
+
     backtrace :on
-    
+
     def render
       paths_searched = []
       if component_name.start_with? "::"
@@ -38,13 +36,10 @@ module React
       end
       raise "Could not find component class '#{component_name}' for controller '#{controller}' in any component directory. Tried [#{paths_searched.join(", ")}]"
     end
-    
   end
-  
 end
 
 class Module
-  
   def add_to_react_search_path(replace_search_path = nil)
     if replace_search_path
       React::TopLevelRailsComponent.search_path = [self]
@@ -52,10 +47,9 @@ class Module
       React::TopLevelRailsComponent.search_path << self
     end
   end
-  
 end
 
 module Components
   add_to_react_search_path
 end
-  
+

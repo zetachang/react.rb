@@ -22,7 +22,7 @@ module React
                 readOnly rel required role rows rowSpan sandbox scope scrolling seamless
                 selected shape size sizes span spellCheck src srcDoc srcSet start step style
                 tabIndex target title type useMap value width wmode dangerouslySetInnerHTML)
-  
+
   def self.create_element(type, properties = {}, &block)
     React::API.create_element(type, properties, &block)
   end
@@ -49,5 +49,4 @@ module React
   def self.unmount_component_at_node(node)
     `React.unmountComponentAtNode(node.$$class ? node[0] : node)`
   end
-  
 end

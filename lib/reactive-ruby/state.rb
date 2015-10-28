@@ -1,9 +1,6 @@
 module React
-
   class State
-
     class << self
-
       attr_reader :current_observer
 
       def initialize_states(object, initial_values) # initialize objects' name/value pairs
@@ -110,9 +107,6 @@ module React
       def observers_by_name
         @observers_by_name ||= Hash.new { |h, k| h[k] = Hash.new { |h, k| h[k] = [] } }
       end
-
     end
-
   end
-
 end

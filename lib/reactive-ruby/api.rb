@@ -1,19 +1,17 @@
 module React
-
   class NativeLibrary
-    
     def self.renames_and_exclusions
       @renames_and_exclusions ||= {}
     end
-    
+
     def self.libraries
       @libraries ||= []
     end
-    
+
     def self.const_missing(name)
       if renames_and_exclusions.has_key? name
         if native_name = renames_and_exclusions[name]
-          native_name 
+          native_name
         else
           super
         end
@@ -22,18 +20,18 @@ module React
           native_name = "#{library}.#{name}"
           native_component = `eval(#{native_name})` rescue nil
           React::API.import_native_component(name, native_component) and return name if native_component and `native_component != undefined`
-        end 
+        end
         name
       end
     end
-    
+
     def self.method_missing(n, *args, &block)
       name = n
-      if name =~ /_as_node$/ 
+      if name =~ /_as_node$/
         node_only = true
         name = name.gsub(/_as_node$/, "")
       end
-      unless name = const_get(name) 
+      unless name = const_get(name)
         return super
       end
       if node_only
@@ -41,31 +39,30 @@ module React
       else
         React::RenderingContext.render(name, *args, &block)
       end
-    rescue 
+    rescue
     end
-        
+
     def self.imports(library)
       libraries << library
     end
-    
+
     def self.rename(rename_list={})
       renames_and_exclusions.merge!(rename_list.invert)
     end
-    
+
     def self.exclude(*exclude_list)
       renames_and_exclusions.merge(Hash[exclude_list.map {|k| [k, nil]}])
     end
-    
+
   end
-  
+
   class API
-    
     @@component_classes = {}
-    
-    def self.import_native_component(opal_class, native_class)  
+
+    def self.import_native_component(opal_class, native_class)
       @@component_classes[opal_class.to_s] = native_class
-    end 
-    
+    end
+
     def self.create_native_react_class(type)
       raise "Provided class should define `render` method"  if !(type.method_defined? :render)
       render_fn = (type.method_defined? :_render_wrapper) ? :_render_wrapper : :render
@@ -154,7 +151,7 @@ module React
     def self.clear_component_class_cache
       @@component_classes = {}
     end
-    
+
     def self.convert_props(properties)
       raise "Component parameters must be a hash. Instead you sent #{properties}" unless properties.is_a? Hash
       props = {}

@@ -1,7 +1,5 @@
 module React
-
   class Observable
-
     def initialize(value, on_change = nil, &block)
       @value = value
       @on_change = on_change || block
@@ -27,7 +25,5 @@ module React
     def to_proc
       lambda { |arg = @value| @on_change.call arg }
     end
-
   end
-
 end

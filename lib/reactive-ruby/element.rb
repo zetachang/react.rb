@@ -6,11 +6,11 @@ module React
 
     alias_native :element_type, :type
     alias_native :props, :props
-    
+
     attr_reader :type
     attr_reader :properties
     attr_reader :block
-    
+
     attr_accessor :waiting_on_resources
 
     def initialize(native_element, type, properties, block)
@@ -39,22 +39,22 @@ module React
       @properties.merge! props
       self
     end
-    
+
     def render(props = {})  # for rendering children
       if props.empty?
         React::RenderingContext.render(self)
       else
         React::RenderingContext.render(
           Element.new(
-            `React.cloneElement(#{self.to_n}, #{API.convert_props(props)})`, 
-            type, 
-            properties.merge(props), 
+            `React.cloneElement(#{self.to_n}, #{API.convert_props(props)})`,
+            type,
+            properties.merge(props),
             block
           )
         )
       end
     end
-    
+
     def method_missing(class_name, args = {}, &new_block)
       class_name = class_name.split("__").collect { |s| s.gsub("_", "-") }.join("_")
       new_props = properties.dup
@@ -65,14 +65,13 @@ module React
         React::RenderingContext.build { React::RenderingContext.render(type, new_props, &new_block) }
       )
     end
-    
+
     def as_node
       RenderingContext.as_node(self)
     end
-    
+
     def delete
       RenderingContext.delete(self)
     end
-
   end
 end

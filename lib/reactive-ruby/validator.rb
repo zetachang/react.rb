@@ -1,10 +1,9 @@
 module React
   class Validator
-    
     def self.build(&block)
       self.new.build(&block)
     end
-    
+
     def build(&block)
       instance_eval(&block)
       self
@@ -25,15 +24,15 @@ module React
       options[:required] = false
       @rules[prop_name] = options
     end
-    
+
     def all_others(prop_name)
       @all_others = {}
     end
-    
+
     def collect_all_others(params)
       Hash[params.collect { |prop_name, value| [prop_name, value] if @rules[prop_name] == nil}.compact]
     end
-    
+
     def type_check(errors, error_prefix, object, klass, nil_allowed)
       return if !object and nil_allowed
       is_native = !object.respond_to?(:is_a?) rescue true
@@ -43,15 +42,15 @@ module React
         end
       end
     end
-  
+
     def validate(props)
       errors = []
-      
+
       if @all_others
         props.each do |prop_name, value|
           @all_others[prop_name] = value if @rules[prop_name] == nil
         end
-      else   
+      else
         props.keys.each do |prop_name|
           errors <<  "Provided prop `#{prop_name}` not specified in spec"  if @rules[prop_name] == nil
         end
@@ -86,7 +85,7 @@ module React
           errors << "Value `#{value}` for prop `#{prop_name}` is not an allowed value" unless values.include?(value)
         end
       end
-      
+
       errors
     end
 

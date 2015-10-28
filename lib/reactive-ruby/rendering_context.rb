@@ -1,7 +1,5 @@
 module React
-
   class RenderingContext
-
     class << self
       attr_accessor :waiting_on_resources
     end
@@ -76,11 +74,9 @@ module React
         value.as_node if value.is_a? Element rescue nil
       end if args[0] and args[0].is_a? Hash
     end
-
   end
 
   class ::Object
-
     alias_method :old_method_missing, :method_missing
 
     ["span", "para", "td", "th", "while_loading"].each do |tag|
@@ -101,7 +97,5 @@ module React
       return self.method_missing(*["br"]) if self.is_a? React::Component
       React::RenderingContext.render("span") { React::RenderingContext.render(self.to_s); React::RenderingContext.render("br") }
     end
-
   end
-
 end
