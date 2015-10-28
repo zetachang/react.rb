@@ -12,7 +12,9 @@ It lets you write reactive UI components, with Ruby's elegance and compiled to r
 
 ## Latest Changes
 
-Visit the [reactive-ruby](https://github.com/zetachang/react.rb/tree/reactive-ruby) branch for the most current in development version.  This version will eventually be merged with master once sufficient documentation and test cases are completed.  However it has a large number of fixes, and improvements that are worth investigating.
+Visit the [master](https://github.com/zetachang/react.rb) branch for the most
+current development version. This version has a large number of fixes, and
+improvements that are worth investigating.
 
 ## Installation
 
