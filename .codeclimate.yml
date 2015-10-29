@@ -1,0 +1,6 @@
+languages:
+   JavaScript: false
+exclude_paths:
+- example/**/*
+- lib/sources/**/*
+
