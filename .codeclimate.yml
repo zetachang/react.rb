@@ -1,6 +1,6 @@
 languages:
-   JavaScript: false
+  Ruby: true
+  JavaScript: false
 exclude_paths:
 - example/**/*
 - lib/sources/**/*
-
