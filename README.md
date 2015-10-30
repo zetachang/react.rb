@@ -35,6 +35,8 @@ A copy of the react engine, and your components follows the rendered HTML to the
 
 The beauty is you now have one markup description, written in the same language as your server code, that works both as the HTML template and as an interactive component.
 
+See the [wiki](https://github.com/zetachang/react.rb/wiki) for more details.
+
 ## Installation and Setup with Rails
 
 In your gem file:
