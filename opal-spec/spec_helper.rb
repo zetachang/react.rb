@@ -1,3 +1,5 @@
+# this doesn't work for some reason
+# require 'bind-polyfill'
 require 'react'
 
 module ReactTestHelpers

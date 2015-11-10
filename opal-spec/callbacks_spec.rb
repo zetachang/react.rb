@@ -1,5 +1,7 @@
+# for some reason requiring here works, but not when in spec_helper
+require 'bind-polyfill'
 require "spec_helper"
-require "react/callbacks"
+require "reactive-ruby/callbacks"
 
 describe React::Callbacks do
   it "should be able to define callback" do
