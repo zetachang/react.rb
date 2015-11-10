@@ -22,4 +22,11 @@ task :test_app do
   system("bundle exec rake db:drop db:create db:migrate > #{File::NULL}")
 end
 
+
+Opal::RSpec::RakeTask.new('opal:spec') do |server|
+  server.append_path 'opal-spec'
+  server.main = 'react_sprockets_runner'
+end
+
+
 task default: [ :test ]
