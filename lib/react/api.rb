@@ -14,6 +14,7 @@ module React
       # this was hashing type.to_s, not sure why but .to_s does not work as it Foo::Bar::View.to_s just returns "View"
       @@component_classes[type] ||= %x{
         React.createClass({
+          displayName: #{type.name},
           propTypes: #{type.respond_to?(:prop_types) ? type.prop_types.to_n : `{}`},
           getDefaultProps: function(){
             return #{type.respond_to?(:default_props) ? type.default_props.to_n : `{}`};
