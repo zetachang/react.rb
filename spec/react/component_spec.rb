@@ -183,6 +183,17 @@ describe React::Component do
       expect(element.state.foo2).to be(30)
     end
 
+    it 'can mix multiple state variables with initializers and a block' do
+      Foo.class_eval do
+        define_state(:x, :y, foo: 1, bar: 2) {3}
+      end
+      element = renderToDocument(Foo)
+      expect(element.state.x).to be(3)
+      expect(element.state.y).to be(3)
+      expect(element.state.foo).to be(1)
+      expect(element.state.bar).to be(2)
+    end
+
     it 'gets state in render method' do
       Foo.class_eval do
         define_state(:foo) { 10 }
@@ -219,7 +230,7 @@ describe React::Component do
       expect(element.state.bar).to eq('lorem')
     end
 
-    it 'supports originl `state` method' do
+    it 'supports original `state` method' do
       Foo.class_eval do
         before_mount do
           self.set_state(foo: 'bar')
