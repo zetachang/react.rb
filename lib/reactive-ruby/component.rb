@@ -110,7 +110,11 @@ module React
     end
 
     def update_react_js_state(object, name, value)
-      set_state({"***_state_updated_at-***" => Time.now.to_f, "#{object.class.to_s+'.' unless object == self}#{name}" => value}) rescue nil
+      if object
+        set_state({"***_state_updated_at-***" => Time.now.to_f, "#{object.class.to_s+'.' unless object == self}#{name}" => value})
+      else
+        set_state({name => value})
+      end rescue nil
     end
 
     def emit(event_name, *args)
@@ -120,6 +124,7 @@ module React
     def component_will_mount
       IsomorphicHelpers.load_context(true) if IsomorphicHelpers.on_opal_client?
       @processed_params = {}
+      set_state! initial_state if initial_state
       React::State.initialize_states(self, initial_state)
       React::State.set_state_context_to(self) { self.run_callback(:before_mount) }
     rescue Exception => e
@@ -443,7 +448,6 @@ module React
     end
 
     module API
-      #include Native
 
       def dom_node
         if `typeof React.findDOMNode === 'undefined'`
