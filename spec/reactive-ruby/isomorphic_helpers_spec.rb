@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 RSpec.describe React::IsomorphicHelpers do
+if ruby?
   describe 'code execution context', :ruby do
     let(:klass) { Class.send(:include, described_class) }
     describe 'module class methods' do
@@ -134,4 +135,5 @@ RSpec.describe React::IsomorphicHelpers do
       end
     end
   end
+end
 end

@@ -1,5 +1,6 @@
 require "spec_helper"
 
+if opal?
 describe React::Event do
   it "should bridge attributes of native SyntheticEvent (see http://facebook.github.io/react/docs/events.html#syntheticevent)" do
     element = React.create_element('div').on(:click) do |event|
@@ -19,4 +20,5 @@ describe React::Event do
     instance = renderElementToDocument(element)
     simulateEvent(:click, instance)
   end
+end
 end

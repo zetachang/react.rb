@@ -1,5 +1,6 @@
 require "spec_helper"
 
+if opal?
 describe React::Validator do
   describe "validate" do
     describe "Presence validation" do
@@ -29,7 +30,7 @@ describe React::Validator do
           requires :foo, type: String
         end
 
-        expect(validator.validate({foo: 10})).to eq(["Provided prop `foo` was not the specified type `String`"])
+        expect(validator.validate({foo: 10})).to eq(["Provided prop `foo` could not be converted to String"])
         expect(validator.validate({foo: "10"})).to eq([])
       end
 
@@ -39,7 +40,7 @@ describe React::Validator do
           requires :foo, type: Bar
         end
 
-        expect(validator.validate({foo: 10})).to eq(["Provided prop `foo` was not the specified type `Bar`"])
+        expect(validator.validate({foo: 10})).to eq(["Provided prop `foo` could not be converted to Bar"])
         expect(validator.validate({foo: Bar.new})).to eq([])
       end
 
@@ -48,7 +49,13 @@ describe React::Validator do
           requires :foo, type: Array[Hash]
         end
 
-        expect(validator.validate({foo: [1,'2',3]})).to eq(["Provided prop `foo` was not an Array of the specified type `Hash`"])
+        expect(validator.validate({foo: [1,'2',3]})).to eq(
+          [
+            "Provided prop `foo`[0] could not be converted to Hash",
+            "Provided prop `foo`[1] could not be converted to Hash",
+            "Provided prop `foo`[2] could not be converted to Hash"
+          ]
+        )
         expect(validator.validate({foo: [{},{},{}]})).to eq([])
       end
     end
@@ -76,4 +83,5 @@ describe React::Validator do
       expect(validator.default_props).to eq({foo: 10, lorem: 20})
     end
   end
+end
 end

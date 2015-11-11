@@ -1,17 +1,15 @@
-require "spec_helper"
-require "react/callbacks"
+require 'spec_helper'
 
+if opal?
 describe React::Callbacks do
-  it "should be able to define callback" do
+  it 'defines callback' do
     stub_const 'Foo', Class.new
     Foo.class_eval do
       include React::Callbacks
       define_callback :before_dinner
-
       before_dinner :wash_hand
 
       def wash_hand
-
       end
     end
 
@@ -19,7 +17,7 @@ describe React::Callbacks do
     Foo.new.run_callback(:before_dinner)
   end
 
-  it "should be able to define multiple callbacks" do
+  it 'defines multiple callbacks' do
     stub_const 'Foo', Class.new
     Foo.class_eval do
       include React::Callbacks
@@ -37,7 +35,7 @@ describe React::Callbacks do
     Foo.new.run_callback(:before_dinner)
   end
 
-  it "should be able to define block callback" do
+  it 'defines block callback' do
     stub_const 'Foo', Class.new
     Foo.class_eval do
       include React::Callbacks
@@ -60,7 +58,7 @@ describe React::Callbacks do
     expect(foo.b).to eq(20)
   end
 
-  it "should be able to define multiple callback group" do
+  it 'defines multiple callback group' do
     stub_const 'Foo', Class.new
     Foo.class_eval do
       include React::Callbacks
@@ -80,7 +78,7 @@ describe React::Callbacks do
     expect(foo.a).to eq(10)
   end
 
-  it "should be able to receive args as callback" do
+  it 'receives args as callback' do
     stub_const 'Foo', Class.new
     Foo.class_eval do
       include React::Callbacks
@@ -104,4 +102,5 @@ describe React::Callbacks do
     foo.run_callback(:after_dinner, 4, 5, 6)
     expect(foo.lorem).to eq('1-2')
   end
+end
 end

@@ -1,5 +1,6 @@
 require "spec_helper"
 
+if opal?
 describe React do
   after(:each) do
     React::API.clear_component_class_cache
@@ -46,6 +47,7 @@ describe React do
         expect(instance.getDOMNode.childNodes.length).to eq(3)
       end
     end
+
     describe "custom element" do
       before do
         stub_const 'Foo', Class.new
@@ -155,7 +157,6 @@ describe React do
     end
   end
 
-
   describe "render" do
     async "should render element to DOM" do
       div = `document.createElement("div")`
@@ -205,5 +206,5 @@ describe React do
       end
     end
   end
-
+end
 end
