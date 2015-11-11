@@ -7,11 +7,14 @@ require 'rspec/core/rake_task'
 require 'opal/rspec/rake_task'
 
 RSpec::Core::RakeTask.new('ruby:rspec')
-Opal::RSpec::RakeTask.new('opal:rspec')
+Opal::RSpec::RakeTask.new('opal:rspec') do |s|
+  s.append_path 'spec/vendor'
+  s.index_path = 'spec/index.html.erb'
+end
 
 task :test do
   Rake::Task['ruby:rspec'].invoke
-  # Rake::Task['opal:rspec'].invoke
+  Rake::Task['opal:rspec'].invoke
 end
 
 require 'generators/reactive_ruby/test_app/test_app_generator'
