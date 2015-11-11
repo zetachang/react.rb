@@ -1,27 +1,43 @@
 require 'spec_helper'
 
 RSpec.describe React::IsomorphicHelpers do
-if ruby?
-  describe 'code execution context', :ruby do
+  describe 'code execution context' do
     let(:klass) { Class.send(:include, described_class) }
-    describe 'module class methods' do
+
+    describe 'module class methods', :opal do
+      it { expect(described_class).to_not be_on_opal_server }
+      it { expect(described_class).to be_on_opal_client }
+    end
+
+    describe 'included class methods', :opal do
+      it { expect(klass).to_not be_on_opal_server }
+      it { expect(klass).to be_on_opal_client }
+    end
+
+    describe 'included instance methods', :opal do
+      it { expect(klass.new).to_not be_on_opal_server }
+      it { expect(klass.new).to be_on_opal_client }
+    end
+
+    describe 'module class methods', :ruby do
       it { is_expected.to_not be_on_opal_server }
       it { is_expected.to_not be_on_opal_client }
     end
 
-    describe 'included class methods' do
+    describe 'included class methods', :ruby do
       subject { klass }
       it { is_expected.to_not be_on_opal_server }
       it { is_expected.to_not be_on_opal_client }
     end
 
-    describe 'included instance methods' do
+    describe 'included instance methods', :ruby do
       subject { klass.new }
       it { is_expected.to_not be_on_opal_server }
       it { is_expected.to_not be_on_opal_client }
     end
   end
 
+if ruby?
   describe 'load_context', :ruby do
     let(:v8_context) { TestV8Context.new }
     let(:controller) { double('controller') }
