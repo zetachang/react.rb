@@ -1,5 +1,8 @@
 module React
   class Validator
+    attr_accessor :errors
+    private :errors
+
     def self.build(&block)
       self.new.build(&block)
     end
@@ -9,20 +12,14 @@ module React
       self
     end
 
-    def initialize
-      @rules = {children: {required: false}}
-    end
-
-    def requires(prop_name, options = {})
-      rule = options
+    def requires(name, options = {})
       options[:required] = true
-      @rules[prop_name] = options
+      define_rule(name, options)
     end
 
-    def optional(prop_name, options = {})
-      rule = options
+    def optional(name, options = {})
       options[:required] = false
-      @rules[prop_name] = options
+      define_rule(name, options)
     end
 
     def all_others(prop_name)
@@ -30,69 +27,104 @@ module React
     end
 
     def collect_all_others(params)
-      Hash[params.collect { |prop_name, value| [prop_name, value] if @rules[prop_name] == nil}.compact]
+      params = params.collect do |prop_name, value|
+        next unless rules[prop_name]
+        [prop_name, value]
+      end
+      Hash[params.compact]
     end
 
-    def type_check(errors, error_prefix, object, klass, nil_allowed)
-      return if !object and nil_allowed
-      is_native = !object.respond_to?(:is_a?) rescue true
-      if is_native or !object.is_a? klass
-        unless klass.respond_to? :_react_param_conversion and klass._react_param_conversion(object, :validate_only)
-          errors << "#{error_prefix} could not be converted to #{klass}"
-        end
-      end
+    def type_check(prop_name, value, klass, allow_nil)
+      return if allow_nil && value.nil?
+      return if value.is_a?(klass)
+      return if klass.respond_to?(:_react_param_conversion) &&
+        klass._react_param_conversion(value, :validate_only)
+      errors << "Provided prop #{prop_name} could not be converted to #{klass}"
     end
 
     def validate(props)
-      errors = []
-
+      self.errors = []
       if @all_others
         props.each do |prop_name, value|
-          @all_others[prop_name] = value if @rules[prop_name] == nil
+          next if rules[prop_name]
+          @all_others[prop_name] = value
         end
       else
-        props.keys.each do |prop_name|
-          errors <<  "Provided prop `#{prop_name}` not specified in spec"  if @rules[prop_name] == nil
-        end
+        validate_extra(props)
       end
-
-      props = props.select {|key| @rules.keys.include?(key) }
-
-      # requires or not
-      (@rules.keys - props.keys).each do |prop_name|
-        errors << "Required prop `#{prop_name}` was not specified" if @rules[prop_name][:required]
+      props = props.select { |key| rules.keys.include?(key) }
+      props = coerce_native_hash_values(props)
+      validate_required(props)
+      props.each do |name, value|
+        validate_types(name, value)
+        validate_allowed(name, value)
       end
-      # type checking
-      props.each do |prop_name, value|
-        if klass = @rules[prop_name][:type]
-          is_klass_array = klass.is_a?(Array) and klass.length > 0 rescue nil
-          if is_klass_array
-            value_is_array_like = value.respond_to?(:each_with_index) rescue nil
-            if value_is_array_like
-              value.each_with_index { |ele, i| type_check(errors, "Provided prop `#{prop_name}`[#{i}]", ele, klass[0], @rules[prop_name][:allow_nil]) }
-            else
-              errors << "Provided prop `#{prop_name}` was not an Array"
-            end
-          else
-            type_check(errors, "Provided prop `#{prop_name}`", value, klass, @rules[prop_name][:allow_nil])
-          end
-        end
-      end
-
-      # values
-      props.each do |prop_name, value|
-        if values = @rules[prop_name][:values]
-          errors << "Value `#{value}` for prop `#{prop_name}` is not an allowed value" unless values.include?(value)
-        end
-      end
-
       errors
     end
 
     def default_props
-      @rules
+      rules
       .select {|key, value| value.keys.include?("default") }
       .inject({}) {|memo, (k,v)| memo[k] = v[:default]; memo}
+    end
+
+    private
+
+    def rules
+      @rules ||= { children: { required: false } }
+    end
+
+    def errors
+      @errors ||= []
+    end
+
+    def define_rule(name, options = {})
+      rules[name] = coerce_native_hash_values(options)
+    end
+
+    def validate_types(prop_name, value)
+      return unless klass = rules[prop_name][:type]
+      if klass.is_a?(Array) && klass.length > 0
+        validate_value_array(prop_name, value)
+      else
+        allow_nil = !!rules[prop_name][:allow_nil]
+        type_check("`#{prop_name}`", value, klass, allow_nil)
+      end
+    end
+
+    def validate_allowed(prop_name, value)
+      return unless values = rules[prop_name][:values]
+      return if values.include?(value)
+      errors << "Value `#{value}` for prop `#{prop_name}` is not an allowed value"
+    end
+
+    def validate_required(props)
+      (rules.keys - props.keys).each do |name|
+        next unless rules[name][:required]
+        errors << "Required prop `#{name}` was not specified"
+      end
+    end
+
+    def validate_extra(props)
+      (props.keys - rules.keys).each do |prop_name|
+        errors <<  "Provided prop `#{prop_name}` not specified in spec"
+      end
+    end
+
+    def validate_value_array(name, value)
+      klass = rules[name][:type]
+      allow_nil = !!rules[name][:allow_nil]
+      value.each_with_index do |item, index|
+        type_check("`#{name}`[#{index}]", Native(item), klass[0], allow_nil)
+      end
+    rescue NoMethodError
+      errors << "Provided prop `#{name}` was not an Array"
+    end
+
+    def coerce_native_hash_values(hash)
+      hash.each do |key, value|
+        hash[key] = Native(value)
+      end
     end
   end
 end
