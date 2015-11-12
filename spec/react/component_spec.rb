@@ -610,7 +610,6 @@ describe React::Component do
   end
 
   describe '#children' do
-
     before(:each) do
       stub_const 'Foo', Class.new
       Foo.class_eval do
@@ -635,7 +634,6 @@ describe React::Component do
     end
 
     it 'returns an Enumerator when not providing a block' do
-      #pending 'FIX THIS: broken since reactive-ruby merge'
       ele = React.create_element(Foo) {
         [React.create_element('a'), React.create_element('li')]
       }
