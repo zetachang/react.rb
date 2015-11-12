@@ -1,9 +1,10 @@
 source 'https://rubygems.org'
 
 gem 'therubyracer', platforms: :ruby
-gem 'react-rails' #, git: "https://github.com/catprintlabs/react-rails.git", :branch => 'isomorphic-methods-support'  # you need this branch of react-rails
+gem 'react-rails'
 gem 'opal-rails'
-                # integrates opal with sprockets etc
+
+# integrates opal with sprockets etc
 gem 'reactive-ruby', path: "../.."
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'

@@ -2,7 +2,7 @@ require "spec_helper"
 
 if opal?
 describe React::Validator do
-  describe "validate" do
+  describe '#validate' do
     describe "Presence validation" do
       it "should check if required props provided" do
         validator = React::Validator.build do
@@ -42,6 +42,24 @@ describe React::Validator do
 
         expect(validator.validate({foo: 10})).to eq(["Provided prop `foo` could not be converted to Bar"])
         expect(validator.validate({foo: Bar.new})).to eq([])
+      end
+
+      it 'coerces native JS prop types to opal objects' do
+        validator = React::Validator.build do
+          requires :foo, type: `{ x: 1 }`
+        end
+
+        message = "Provided prop `foo` could not be converted to [object Object]"
+        expect(validator.validate({foo: `{ x: 1 }`})).to eq([message])
+      end
+
+      it 'coerces native JS values to opal objects' do
+        validator = React::Validator.build do
+          requires :foo, type: Array[Fixnum]
+        end
+
+        message = "Provided prop `foo`[0] could not be converted to Numeric"
+        expect(validator.validate({foo: `[ { x: 1 } ]`})).to eq([message])
       end
 
       it "should support Array[Class] validation" do

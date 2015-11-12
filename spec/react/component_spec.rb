@@ -89,17 +89,16 @@ describe React::Component do
     end
 
     it 'allows block for life cycle callback' do
-      pending 'FIX THIS: broken since reactive-ruby merge'
       Foo.class_eval do
-        define_state(:foo)
+        export_state(:foo)
 
         before_mount do
-          self.foo = 'bar'
+          foo! 'bar'
         end
       end
 
       element = renderToDocument(Foo)
-      expect(element.state.foo).to be('bar')
+      expect(Foo.foo).to be('bar')
     end
   end
 
@@ -115,7 +114,6 @@ describe React::Component do
     end
 
     it 'defines setter using `define_state`' do
-      pending 'FIX THIS: broken since reactive-ruby merge'
       Foo.class_eval do
         define_state :foo
         before_mount :set_up
@@ -129,7 +127,6 @@ describe React::Component do
     end
 
     it 'defines init state by passing a block to `define_state`' do
-      pending 'FIX THIS: broken since reactive-ruby merge'
       Foo.class_eval do
         define_state(:foo) { 10 }
       end
@@ -139,7 +136,6 @@ describe React::Component do
     end
 
     it 'defines getter using `define_state`' do
-      pending 'FIX THIS: broken since reactive-ruby merge'
       Foo.class_eval do
         define_state(:foo) { 10 }
         before_mount :bump
@@ -153,7 +149,6 @@ describe React::Component do
     end
 
     it 'defines multiple state accessors by passing array to `define_state`' do
-      pending 'FIX THIS: broken since reactive-ruby merge'
       Foo.class_eval do
         define_state :foo, :foo2
         before_mount :set_up
@@ -169,7 +164,6 @@ describe React::Component do
     end
 
     it 'invokes `define_state` multiple times to define states' do
-      pending 'FIX THIS: broken since reactive-ruby merge'
       Foo.class_eval do
         define_state(:foo) { 30 }
         define_state(:foo2) { 40 }
@@ -180,13 +174,24 @@ describe React::Component do
       expect(element.state.foo2).to be(40)
     end
 
-    it 'raises error if multiple states and block given at the same time' do
-      pending 'FIX THIS: broken since reactive-ruby merge'
-      expect  {
-        Foo.class_eval do
-          define_state(:foo, :foo2) { 30 }
-        end
-      }.to raise_error
+    it 'can initialize multiple state variables with a block' do
+      Foo.class_eval do
+        define_state(:foo, :foo2) { 30 }
+      end
+      element = renderToDocument(Foo)
+      expect(element.state.foo).to be(30)
+      expect(element.state.foo2).to be(30)
+    end
+
+    it 'can mix multiple state variables with initializers and a block' do
+      Foo.class_eval do
+        define_state(:x, :y, foo: 1, bar: 2) {3}
+      end
+      element = renderToDocument(Foo)
+      expect(element.state.x).to be(3)
+      expect(element.state.y).to be(3)
+      expect(element.state.foo).to be(1)
+      expect(element.state.bar).to be(2)
     end
 
     it 'gets state in render method' do
@@ -202,7 +207,6 @@ describe React::Component do
     end
 
     it 'supports original `setState` as `set_state` method' do
-      pending 'FIX THIS: broken since reactive-ruby merge'
       Foo.class_eval do
         before_mount do
           self.set_state(foo: 'bar')
@@ -226,7 +230,7 @@ describe React::Component do
       expect(element.state.bar).to eq('lorem')
     end
 
-    it 'supports originl `state` method' do
+    it 'supports original `state` method' do
       Foo.class_eval do
         before_mount do
           self.set_state(foo: 'bar')
@@ -241,12 +245,11 @@ describe React::Component do
     end
 
     it 'transforms state getter to Ruby object' do
-      pending 'FIX THIS: broken since reactive-ruby merge'
       Foo.class_eval do
         define_state :foo
 
         before_mount do
-          self.foo = [{a: 10}]
+          self.foo = [{a: "Hello"}]
         end
 
         def render
@@ -254,7 +257,7 @@ describe React::Component do
         end
       end
 
-      expect(React.render_to_static_markup(React.create_element(Foo))).to eq('<div>10</div>')
+      expect(React.render_to_static_markup(React.create_element(Foo))).to eq('<div>Hello</div>')
     end
   end
 
@@ -299,7 +302,6 @@ describe React::Component do
       end
 
       it 'supports original `setProps` as method `set_props`' do
-        pending 'FIX THIS: broken since reactive-ruby merge'
         Foo.class_eval do
           def render
             React.create_element('div') { params[:foo] }
@@ -308,11 +310,10 @@ describe React::Component do
 
         element = renderToDocument(Foo, {foo: 10})
         element.set_props(foo: 20)
-        expect(element.dom_node.innerHTML).to eq('20')
+        expect(`#{element.dom_node}.innerHTML`).to eq('20')
       end
 
       it 'supports original `replaceProps` as method `set_props!`' do
-        pending 'FIX THIS: broken since reactive-ruby merge'
         Foo.class_eval do
           def render
             React.create_element('div') { params[:foo] ? 'exist' : 'null' }
@@ -321,7 +322,7 @@ describe React::Component do
 
         element = renderToDocument(Foo, {foo: 10})
         element.set_props!(bar: 20)
-        expect(element.dom_node.innerHTML).to eq('null')
+        expect(element.getDOMNode.innerHTML).to eq('null')
       end
     end
 
@@ -419,7 +420,6 @@ describe React::Component do
     end
 
     it 'works in render method' do
-      pending 'FIX THIS: broken since reactive-ruby merge'
       Foo.class_eval do
         define_state(:clicked) { false }
 
@@ -606,6 +606,43 @@ describe React::Component do
 
       component = renderToDocument(Foo)
       expect(component.mounted?).to eq(true)
+    end
+  end
+
+  describe '#children' do
+
+    before(:each) do
+      stub_const 'Foo', Class.new
+      Foo.class_eval do
+        include React::Component
+        export_state :the_children
+        before_mount do
+          the_children! children
+        end
+        def render
+          React.create_element('div') { 'lorem' }
+        end
+      end
+    end
+
+    it 'returns an Enumerable' do
+      ele = React.create_element(Foo) {
+        [React.create_element('a'), React.create_element('li')]
+      }
+      renderElementToDocument(ele)
+      nodes = Foo.the_children.map { |ele| ele.element_type }
+      expect(nodes).to eq(['a', 'li'])
+    end
+
+    it 'returns an Enumerator when not providing a block' do
+      #pending 'FIX THIS: broken since reactive-ruby merge'
+      ele = React.create_element(Foo) {
+        [React.create_element('a'), React.create_element('li')]
+      }
+      renderElementToDocument(ele)
+      nodes = Foo.the_children.each
+      expect(nodes).to be_a(Enumerator)
+      expect(nodes.size).to eq(2)
     end
   end
 end

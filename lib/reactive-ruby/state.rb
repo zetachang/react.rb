@@ -14,9 +14,12 @@ module React
       end
 
       def set_state2(object, name, value)  # set object's name state to value, tell all observers it has changed.  Observers must implement update_react_js_state
+        object_needs_notification = object.respond_to? :update_react_js_state
         observers_by_name[object][name].dup.each do |observer|
           observer.update_react_js_state(object, name, value)
+          object_needs_notification = false if object == observer
         end
+        object.update_react_js_state(nil, name, value) if object_needs_notification
       end
 
       def set_state(object, name, value, delay=nil)

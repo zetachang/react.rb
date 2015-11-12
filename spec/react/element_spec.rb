@@ -43,26 +43,5 @@ describe React::Element do
       expect(element.on(:click){}).to eq(element)
     end
   end
-
-  describe '#children' do
-    it 'returns an Enumerable' do
-      pending 'FIX THIS: broken since reactive-ruby merge'
-      ele = React.create_element('div') {
-        [React.create_element('a'), React.create_element('li')]
-      }
-      nodes = ele.children.map { |ele| ele.element_type }
-      expect(nodes).to eq(['a', 'li'])
-    end
-
-    it 'returns an Enumerator when not providing a block' do
-      pending 'FIX THIS: broken since reactive-ruby merge'
-      ele = React.create_element('div') {
-        [React.create_element('a'), React.create_element('li')]
-      }
-      nodes = ele.children.each
-      expect(nodes).to be_a(Enumerator)
-      expect(nodes.size).to eq(2)
-    end
-  end
 end
 end

@@ -13,33 +13,58 @@ end
 
 if RUBY_ENGINE == 'opal'
   require 'reactive-ruby'
+  require File.expand_path('../support/react/spec_helpers', __FILE__)
 
-  module ReactTestHelpers
-    `var ReactTestUtils = React.addons.TestUtils`
+  module Opal
+    module RSpec
+      module AsyncHelpers
+        module ClassMethods
+          def rendering(title, &block)
+            klass = Class.new do
+              include React::Component
 
-    def renderToDocument(type, options = {})
-      element = React.create_element(type, options)
-      return renderElementToDocument(element)
-    end
+              def self.block
+                @block
+              end
 
-    def renderElementToDocument(element)
-      instance = Native(`ReactTestUtils.renderIntoDocument(#{element.to_n})`)
-      instance.class.include(React::Component::API)
-      return instance
-    end
+              def self.name
+                "dummy class"
+              end
 
-    def simulateEvent(event, element, params = {})
-      simulator = Native(`ReactTestUtils.Simulate`)
-      simulator[event.to_s].call(`#{element.to_n}.getDOMNode()`, params)
-    end
+              def render
+                instance_eval &self.class.block
+              end
 
-    def isElementOfType(element, type)
-      `React.addons.TestUtils.isElementOfType(#{element.to_n}, #{type.cached_component_class})`
+              def self.should_generate(opts={}, &block)
+                sself = self
+                @self.async(@title, opts) do
+                  expect_component_to_eventually(sself, &block)
+                end
+              end
+
+              def self.should_immediately_generate(opts={}, &block)
+                sself = self
+                @self.it(@title, opts) do
+                  element = build_element sself, {}
+                  context = block.arity > 0 ? self : element
+                  expect((element and context.instance_exec(element, &block))).to be(true)
+                end
+              end
+
+            end
+            klass.instance_variable_set("@block", block)
+            klass.instance_variable_set("@self", self)
+            klass.instance_variable_set("@title", "it can render #{title}")
+            klass
+          end
+        end
+      end
     end
   end
 
+
   RSpec.configure do |config|
-    config.include ReactTestHelpers
+    config.include React::SpecHelpers
     config.filter_run_excluding :ruby
   end
 end
