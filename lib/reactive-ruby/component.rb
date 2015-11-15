@@ -360,9 +360,9 @@ module React
       end
 
       def collect_other_params_as(name)
-        validator.all_others(name)
+        validator.allow_undefined_props = true
         define_method(name) do
-          @_all_others ||= self.class.validator.collect_all_others(params)
+          @_all_others ||= self.class.validator.undefined_props(props)
         end
       end
 
