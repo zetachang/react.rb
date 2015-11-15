@@ -1,4 +1,4 @@
-require "reactive-ruby/ext/string"
+require 'react/ext/string'
 
 module React
   class Element

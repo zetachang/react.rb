@@ -1,12 +1,12 @@
-require "reactive-ruby/ext/string"
+require 'react/ext/string'
+require 'react/ext/hash'
 require 'active_support/core_ext/class/attribute'
-require 'reactive-ruby/callbacks'
-require "reactive-ruby/ext/hash"
-require "reactive-ruby/rendering_context"
-require "reactive-ruby/observable"
-require "reactive-ruby/state"
-require "reactive-ruby/component/api"
-require "reactive-ruby/component/class_methods"
+require 'react/callbacks'
+require 'react/rendering_context'
+require 'react/observable'
+require 'react/state'
+require 'react/component/api'
+require 'react/component/class_methods'
 require 'native'
 
 module React

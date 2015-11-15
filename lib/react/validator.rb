@@ -45,8 +45,8 @@ module React
 
     def default_props
       rules
-      .select {|key, value| value.keys.include?("default") }
-      .inject({}) {|memo, (k,v)| memo[k] = v[:default]; memo}
+        .select {|key, value| value.keys.include?("default") }
+        .inject({}) {|memo, (k,v)| memo[k] = v[:default]; memo}
     end
 
     private
