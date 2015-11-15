@@ -466,36 +466,25 @@ module React
       end
 
       def set_props(prop, &block)
-        raise "No native ReactComponent associated" unless @native
-        %x{
-          #{@native}.setProps(#{prop.shallow_to_n}, function(){
-            #{block.call if block}
-          });
-        }
+        set_or_replace_state_or_prop(prop, 'setProps', &block)
       end
 
       def set_props!(prop, &block)
-        raise "No native ReactComponent associated" unless @native
-        %x{
-          #{@native}.replaceProps(#{prop.shallow_to_n}, function(){
-            #{block.call if block}
-          });
-        }
+        set_or_replace_state_or_prop(prop, 'replaceProps', &block)
       end
 
       def set_state(state, &block)
-        raise "No native ReactComponent associated" unless @native
-        %x{
-          #{@native}.setState(#{state.shallow_to_n}, function(){
-            #{block.call if block}
-          });
-        }
+        set_or_replace_state_or_prop(state, 'setState', &block)
       end
 
       def set_state!(state, &block)
+        set_or_replace_state_or_prop(state, 'replaceState', &block)
+      end
+
+      def set_or_replace_state_or_prop(state_or_prop, method, &block)
         raise "No native ReactComponent associated" unless @native
         %x{
-          #{@native}.replaceState(#{state.shallow_to_n}, function(){
+          #{@native}[#{method}](#{state_or_prop.shallow_to_n}, function(){
             #{block.call if block}
           });
         }
