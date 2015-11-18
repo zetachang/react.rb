@@ -17,20 +17,20 @@ module React
     def render
       paths_searched = []
       if component_name.start_with? "::"
-        paths_searched << component_name.gsub("::","")
-        component = component_name.gsub("::","").split("::").inject(Module) { |scope, next_const| scope.const_get(next_const) } rescue nil
+        paths_searched << component_name.gsub(/^\:\:/,"")
+        component = component_name.gsub(/^\:\:/,"").split("::").inject(Module) { |scope, next_const| scope.const_get(next_const, false) } rescue nil
         return present component, render_params if component and component.method_defined? :render
       else
         self.class.search_path.each do |path|
           # try each path + controller + component_name
           paths_searched << "#{path.name + '::' unless path == Module}#{controller}::#{component_name}"
-          component = "#{controller}::#{component_name}".split("::").inject(path) { |scope, next_const| scope.const_get(next_const) } rescue nil
+          component = "#{controller}::#{component_name}".split("::").inject(path) { |scope, next_const| scope.const_get(next_const, false) } rescue nil
           return present component, render_params if component and component.method_defined? :render
         end
         self.class.search_path.each do |path|
           # then try each path + component_name
           paths_searched << "#{path.name + '::' unless path == Module}#{component_name}"
-          component = "#{component_name}".split("::").inject(path) { |scope, next_const| scope.const_get(next_const) } rescue nil
+          component = "#{component_name}".split("::").inject(path) { |scope, next_const| scope.const_get(next_const, false) } rescue nil
           return present component, render_params if component and component.method_defined? :render
         end
       end
@@ -52,4 +52,3 @@ end
 module Components
   add_to_react_search_path
 end
-
