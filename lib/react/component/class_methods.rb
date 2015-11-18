@@ -7,7 +7,7 @@ module React
 
       def process_exception(e, component, reraise = nil)
         message = ["Exception raised while rendering #{component}"]
-        if !@backtrace_off
+        if e.backtrace and e.backtrace.length > 1 and !@backtrace_off  # seems like e.backtrace is empty in safari???
           message << "    #{e.backtrace[0]}"
           message += e.backtrace[1..-1].collect { |line| line }
         else
