@@ -2,7 +2,7 @@ require "spec_helper"
 
 if opal?
 describe React::Validator do
-  describe "validate" do
+  describe '#validate' do
     describe "Presence validation" do
       it "should check if required props provided" do
         validator = React::Validator.build do
@@ -44,6 +44,24 @@ describe React::Validator do
         expect(validator.validate({foo: Bar.new})).to eq([])
       end
 
+      it 'coerces native JS prop types to opal objects' do
+        validator = React::Validator.build do
+          requires :foo, type: `{ x: 1 }`
+        end
+
+        message = "Provided prop `foo` could not be converted to [object Object]"
+        expect(validator.validate({foo: `{ x: 1 }`})).to eq([message])
+      end
+
+      it 'coerces native JS values to opal objects' do
+        validator = React::Validator.build do
+          requires :foo, type: Array[Fixnum]
+        end
+
+        message = "Provided prop `foo`[0] could not be converted to Numeric"
+        expect(validator.validate({foo: `[ { x: 1 } ]`})).to eq([message])
+      end
+
       it "should support Array[Class] validation" do
         validator = React::Validator.build do
           requires :foo, type: Array[Hash]
@@ -69,6 +87,26 @@ describe React::Validator do
         expect(validator.validate({foo: 3})).to eq(["Value `3` for prop `foo` is not an allowed value"])
         expect(validator.validate({foo: 4})).to eq([])
       end
+    end
+  end
+
+  describe '#undefined_props' do
+    let(:props) { { foo: 'foo', bar: 'bar', biz: 'biz', baz: 'baz' } }
+    let(:validator) do
+      React::Validator.build do
+        requires :foo
+        optional :bar
+      end
+    end
+
+    it 'slurps up any extra params into a hash' do
+      others = validator.undefined_props(props)
+      expect(others).to eq({ biz: 'biz', baz: 'baz' })
+    end
+
+    it 'prevents validate non-specified params' do
+      validator.undefined_props(props)
+      expect(validator.validate(props)).to eq([])
     end
   end
 

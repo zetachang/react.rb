@@ -1,61 +1,6 @@
+require 'react/native_library'
+
 module React
-  class NativeLibrary
-    def self.renames_and_exclusions
-      @renames_and_exclusions ||= {}
-    end
-
-    def self.libraries
-      @libraries ||= []
-    end
-
-    def self.const_missing(name)
-      if renames_and_exclusions.has_key? name
-        if native_name = renames_and_exclusions[name]
-          native_name
-        else
-          super
-        end
-      else
-        libraries.each do |library|
-          native_name = "#{library}.#{name}"
-          native_component = `eval(#{native_name})` rescue nil
-          React::API.import_native_component(name, native_component) and return name if native_component and `native_component != undefined`
-        end
-        name
-      end
-    end
-
-    def self.method_missing(n, *args, &block)
-      name = n
-      if name =~ /_as_node$/
-        node_only = true
-        name = name.gsub(/_as_node$/, "")
-      end
-      unless name = const_get(name)
-        return super
-      end
-      if node_only
-        React::RenderingContext.build { React::RenderingContext.render(name, *args, &block) }.to_n
-      else
-        React::RenderingContext.render(name, *args, &block)
-      end
-    rescue
-    end
-
-    def self.imports(library)
-      libraries << library
-    end
-
-    def self.rename(rename_list={})
-      renames_and_exclusions.merge!(rename_list.invert)
-    end
-
-    def self.exclude(*exclude_list)
-      renames_and_exclusions.merge(Hash[exclude_list.map {|k| [k, nil]}])
-    end
-
-  end
-
   class API
     @@component_classes = {}
 
@@ -69,6 +14,7 @@ module React
       # this was hashing type.to_s, not sure why but .to_s does not work as it Foo::Bar::View.to_s just returns "View"
       @@component_classes[type] ||= %x{
         React.createClass({
+          displayName: #{type.name},
           propTypes: #{type.respond_to?(:prop_types) ? type.prop_types.to_n : `{}`},
           getDefaultProps: function(){
             return #{type.respond_to?(:default_props) ? type.default_props.to_n : `{}`};
