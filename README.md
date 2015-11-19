@@ -102,8 +102,9 @@ require 'opal-jquery' # They must be in this order.
 ### Rendering Components
 
 Components may be rendered directly from a controller action by simply following
-a naming convention. To render a component from the `home#show` action, create
-component class `Components::Home::Show`:
+a naming convention. To render a component from the `home#show` action, create a
+component class named `Show`.  For details on how to override this behavior, and how the the module tree is searched for
+the class see the next section.
 
 ```ruby
 # app/views/components/home/show.rb
@@ -151,18 +152,23 @@ and you can set break points etc.
 
 You can control the top level component name and search path.
 
-You can specify the component name explicitly in the `render_component` method.
+By default the component class name is inferred from the controller method rendering the component.
+You can also specify the component name explicitly in the `render_component` method.
 `render_component "Blatz` will search the for a component class named `Blatz`
-regardless of the controller method.
+regardless of the name of the controller method.
 
-Searching for components normally works like this:  Given a controller named
-"Foo" then the component should be either in the `Components::Foo` module, the
-`Components` module (no controller - useful if you have just a couple of shared
-components) or just the outer scope (i.e. `Module`) which is useful for small
-apps.
+Searching for components works like this:  Given a controller named
+"Foo" then react.rb will search for a module named `Foo` containing the component.
+If this fails all modules will be searched (i.e. the name of the controller will be 
+ignored.)  In either case the search begins at the outer most scope until a match is made.
+
+Thus for example given a controller named `Foo`, components could be found in the `Foo` module,
+the `Components::Foo` module, in the outer most scope, or in any nested module. 
+The way the search works allows for small projects that do not need a lot
+of name spacing, and also allows components to be shared across several controllers.
 
 Saying `render_component "::Blatz"` will only search the outer scope, while
-`"::Foo::Blatz"` will look only in the module `Foo` for a class named `Blatz`.
+`"::Bar::Blatz"` will look only in the module `Bar` for a class named `Blatz`.
 
 
 ## Integration with Sinatra
