@@ -25,7 +25,7 @@ module React
 
         def render
           raise "no render defined"
-        end unless method_defined? :render
+        end unless method_defined?(:render)
 
         def children
           nodes = [`#{@native}.props.children`].flatten
@@ -78,7 +78,7 @@ module React
             rescue Exception
               name = nil
             end
-            unless name and name.method_defined? :render
+            unless name && name.method_defined?(:render)
               return super
             end
             if node_only
@@ -214,7 +214,7 @@ module React
         component = name_list.inject(scope) do |scope, class_name|
           scope.const_get(class_name)
         end rescue nil
-        return component if component and component.method_defined? :render
+        return component if component && component.method_defined?(:render)
       end
       nil
     end

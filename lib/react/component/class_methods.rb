@@ -7,7 +7,7 @@ module React
 
       def process_exception(e, component, reraise = nil)
         message = ["Exception raised while rendering #{component}"]
-        if e.backtrace and e.backtrace.length > 1 and !@backtrace_off  # seems like e.backtrace is empty in safari???
+        if e.backtrace && e.backtrace.length > 1 && !@backtrace_off  # seems like e.backtrace is empty in safari???
           message << "    #{e.backtrace[0]}"
           message += e.backtrace[1..-1].collect { |line| line }
         else
@@ -72,7 +72,7 @@ module React
           define_method("#{name}") do
             @processed_params[name] ||= if param_type.respond_to? :_react_param_conversion
                                           param_type._react_param_conversion params[name]
-                                        elsif param_type.is_a? Array and param_type[0].respond_to? :_react_param_conversion
+                                        elsif param_type.is_a?(Array) && param_type[0].respond_to?(:_react_param_conversion)
                                           params[name].collect { |param| param_type[0]._react_param_conversion param }
                                         else
                                           params[name]
@@ -101,8 +101,8 @@ module React
       end
 
       def define_state(*states, &block)
-        default_initial_value = (block and block.arity == 0) ? yield : nil
-        states_hash = (states.last.is_a? Hash) ? states.pop : {}
+        default_initial_value = (block && block.arity == 0) ? yield : nil
+        states_hash = (states.last.is_a?(Hash)) ? states.pop : {}
         states.each { |name| states_hash[name] = default_initial_value }
         (self.initial_state ||= {}).merge! states_hash
         states_hash.each do |name, initial_value|
@@ -111,8 +111,8 @@ module React
       end
 
       def export_state(*states, &block)
-        default_initial_value = (block and block.arity == 0) ? yield : nil
-        states_hash = (states.last.is_a? Hash) ? states.pop : {}
+        default_initial_value = (block && block.arity == 0) ? yield : nil
+        states_hash = (states.last.is_a?(Hash)) ? states.pop : {}
         states.each { |name| states_hash[name] = default_initial_value }
         React::State.initialize_states(self, states_hash)
         states_hash.each do |name, initial_value|
@@ -126,22 +126,22 @@ module React
           React::State.get_state(from || self, name)
         end
         this.define_method("#{name}=") do |new_state|
-          yield name, React::State.get_state(from || self, name), new_state if block and block.arity > 0
+          yield name, React::State.get_state(from || self, name), new_state if block && block.arity > 0
           React::State.set_state(from || self, name, new_state)
         end
         this.define_method("#{name}!") do |*args|
           #return unless @native
           if args.count > 0
-            yield name, React::State.get_state(from || self, name), args[0] if block and block.arity > 0
+            yield name, React::State.get_state(from || self, name), args[0] if block && block.arity > 0
             current_value = React::State.get_state(from || self, name)
             React::State.set_state(from || self, name, args[0])
             current_value
           else
             current_state = React::State.get_state(from || self, name)
-            yield name, React::State.get_state(from || self, name), current_state if block and block.arity > 0
+            yield name, React::State.get_state(from || self, name), current_state if block && block.arity > 0
             React::State.set_state(from || self, name, current_state)
             React::Observable.new(current_state) do |update|
-              yield name, React::State.get_state(from || self, name), update if block and block.arity > 0
+              yield name, React::State.get_state(from || self, name), update if block && block.arity > 0
               React::State.set_state(from || self, name, update)
             end
           end
@@ -171,8 +171,8 @@ module React
       end
 
       def add_item_to_tree(current_tree, new_item)
-        if Native(current_tree).class != Native::Object or new_item.length == 1
-          new_item.inject do |memo, sub_name| {sub_name => memo} end
+        if Native(current_tree).class != Native::Object || new_item.length == 1
+          new_item.inject { |memo, sub_name| { sub_name => memo } }
         else
           Native(current_tree)[new_item.last] = add_item_to_tree(Native(current_tree)[new_item.last], new_item[0..-2])
           current_tree
