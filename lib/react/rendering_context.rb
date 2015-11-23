@@ -14,20 +14,20 @@ module React
           result = block.call
           # Todo figure out how children rendering should happen, probably should have special method that pushes children into the buffer
           # i.e. render_child/render_children that takes Element/Array[Element] and does the push into the buffer
-          if !name and (  # !name means called from outer render so we check that it has rendered correctly
-              (@buffer.count > 1) or # should only render one element
-              (@buffer.count == 1 and @buffer.last != result) or # it should return that element
-              (@buffer.count == 0 and !(result.is_a? String or (result.respond_to? :acts_as_string? and result.acts_as_string?) or result.is_a? Element)) #for convience we will also convert the return value to a span if its a string
+          if !name && (  # !name means called from outer render so we check that it has rendered correctly
+              (@buffer.count > 1) || # should only render one element
+              (@buffer.count == 1 && @buffer.last != result) || # it should return that element
+              (@buffer.count == 0 && !(result.is_a?(String) || (result.respond_to?(:acts_as_string?) && result.acts_as_string?) || result.is_a?(Element))) #for convience we will also convert the return value to a span if its a string
             )
             raise "a components render method must generate and return exactly 1 element or a string"
           end
 
-          @buffer << result.to_s if result.is_a? String or (result.respond_to? :acts_as_string? and result.acts_as_string?) # For convience we push the last return value on if its a string
-          @buffer << result if result.is_a? Element and @buffer.count == 0
+          @buffer << result.to_s if result.is_a? String || (result.respond_to?(:acts_as_string?) && result.acts_as_string?) # For convience we push the last return value on if its a string
+          @buffer << result if result.is_a?(Element) && @buffer.count == 0
           if name
             buffer = @buffer.dup
             React.create_element(name, *args) { buffer }.tap do |element|
-              element.waiting_on_resources = saved_waiting_on_resources || !!buffer.detect { |e| e.waiting_on_resources if e.respond_to? :waiting_on_resources }
+              element.waiting_on_resources = saved_waiting_on_resources || !!buffer.detect { |e| e.waiting_on_resources if e.respond_to?(:waiting_on_resources) }
             end
           elsif @buffer.last.is_a? React::Element
             @buffer.last.tap { |element| element.waiting_on_resources ||= saved_waiting_on_resources }
@@ -71,8 +71,8 @@ module React
 
     def self.remove_nodes_from_args(args)
       args[0].each do |key, value|
-        value.as_node if value.is_a? Element rescue nil
-      end if args[0] and args[0].is_a? Hash
+        value.as_node if value.is_a?(Element) rescue nil
+      end if args[0] && args[0].is_a?(Hash)
     end
   end
 

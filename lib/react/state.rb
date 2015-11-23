@@ -9,7 +9,7 @@ module React
 
       def get_state(object, name, current_observer = @current_observer)
         # get current value of name for object, remember that the current object depends on this state, current observer can be overriden with last param
-        new_observers[current_observer][object] << name if current_observer and !new_observers[current_observer][object].include? name
+        new_observers[current_observer][object] << name if current_observer && !new_observers[current_observer][object].include?(name)
         states[object][name]
       end
 
@@ -42,11 +42,11 @@ module React
       end
 
       def will_be_observing?(object, name, current_observer)
-        current_observer and new_observers[current_observer][object].include?(name)
+        current_observer && new_observers[current_observer][object].include?(name)
       end
 
       def is_observing?(object, name, current_observer)
-        current_observer and observers_by_name[object][name].include?(current_observer)
+        current_observer && observers_by_name[object][name].include?(current_observer)
       end
 
       def update_states_to_observe(current_observer = @current_observer)  # should be called after the last after_render callback, currently called after components render method
