@@ -12,6 +12,14 @@ RSpec.describe ReactiveRuby::ComponentLoader do
   let(:context) { ExecJS.compile(GLOBAL_WRAPPER + js) }
   let(:v8_context) { context.instance_variable_get(:@v8_context) }
 
+  describe '.new' do
+    it 'raises a meaningful exception when initialized without a context' do
+      expect {
+        described_class.new(nil)
+      }.to raise_error(/Could not obtain ExecJS runtime context/)
+    end
+  end
+
   describe '#load' do
     it 'loads given asset file into context' do
       loader = described_class.new(v8_context)

@@ -12,7 +12,7 @@ module React
     else
       def self.load_context(unique_id = nil, name = nil)
         # can be called on the client to force re-initialization for testing purposes
-        if !unique_id or !@context or @context.unique_id != unique_id
+        if !unique_id || !@context || @context.unique_id != unique_id
           if on_opal_server?
             message = "************************ React Prerendering Context Initialized #{name} ***********************"
           else
@@ -147,7 +147,7 @@ module React
       end
 
       def when_on_server(&block)
-        @result = [block.call.to_json] unless IsomorphicHelpers.on_opal_client? or IsomorphicHelpers.on_opal_server?
+        @result = [block.call.to_json] unless IsomorphicHelpers.on_opal_client? || IsomorphicHelpers.on_opal_server?
       end
     end
 

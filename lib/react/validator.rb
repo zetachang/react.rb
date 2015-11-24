@@ -22,38 +22,19 @@ module React
       define_rule(name, options)
     end
 
-    def all_others(prop_name)
-      @all_others = {}
+    def allow_undefined_props=(allow)
+      @allow_undefined_props = allow
     end
 
-    def collect_all_others(params)
-      params = params.collect do |prop_name, value|
-        next unless rules[prop_name]
-        [prop_name, value]
-      end
-      Hash[params.compact]
-    end
-
-    def type_check(prop_name, value, klass, allow_nil)
-      return if allow_nil && value.nil?
-      return if value.is_a?(klass)
-      return if klass.respond_to?(:_react_param_conversion) &&
-        klass._react_param_conversion(value, :validate_only)
-      errors << "Provided prop #{prop_name} could not be converted to #{klass}"
+    def undefined_props(props)
+      self.allow_undefined_props = true
+      props.reject { |name, value| rules[name] }
     end
 
     def validate(props)
       self.errors = []
-      if @all_others
-        props.each do |prop_name, value|
-          next if rules[prop_name]
-          @all_others[prop_name] = value
-        end
-      else
-        validate_extra(props)
-      end
-      props = props.select { |key| rules.keys.include?(key) }
-      props = coerce_native_hash_values(props)
+      validate_undefined(props) unless allow_undefined_props?
+      props = coerce_native_hash_values(defined_props(props))
       validate_required(props)
       props.each do |name, value|
         validate_types(name, value)
@@ -64,22 +45,30 @@ module React
 
     def default_props
       rules
-      .select {|key, value| value.keys.include?("default") }
-      .inject({}) {|memo, (k,v)| memo[k] = v[:default]; memo}
+        .select {|key, value| value.keys.include?("default") }
+        .inject({}) {|memo, (k,v)| memo[k] = v[:default]; memo}
     end
 
     private
+
+    def defined_props(props)
+      props.select { |name| rules.keys.include?(name) }
+    end
+
+    def allow_undefined_props?
+      !!@allow_undefined_props
+    end
 
     def rules
       @rules ||= { children: { required: false } }
     end
 
-    def errors
-      @errors ||= []
-    end
-
     def define_rule(name, options = {})
       rules[name] = coerce_native_hash_values(options)
+    end
+
+    def errors
+      @errors ||= []
     end
 
     def validate_types(prop_name, value)
@@ -90,6 +79,14 @@ module React
         allow_nil = !!rules[prop_name][:allow_nil]
         type_check("`#{prop_name}`", value, klass, allow_nil)
       end
+    end
+
+    def type_check(prop_name, value, klass, allow_nil)
+      return if allow_nil && value.nil?
+      return if value.is_a?(klass)
+      return if klass.respond_to?(:_react_param_conversion) &&
+        klass._react_param_conversion(value, :validate_only)
+      errors << "Provided prop #{prop_name} could not be converted to #{klass}"
     end
 
     def validate_allowed(prop_name, value)
@@ -105,7 +102,7 @@ module React
       end
     end
 
-    def validate_extra(props)
+    def validate_undefined(props)
       (props.keys - rules.keys).each do |prop_name|
         errors <<  "Provided prop `#{prop_name}` not specified in spec"
       end

@@ -1,6 +1,6 @@
 require "native"
 require 'active_support'
-require 'reactive-ruby/component'
+require 'react/component'
 
 module React
   HTML_TAGS = %w(a abbr address area article aside audio b base bdi bdo big blockquote body br

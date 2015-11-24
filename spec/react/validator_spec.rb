@@ -90,6 +90,26 @@ describe React::Validator do
     end
   end
 
+  describe '#undefined_props' do
+    let(:props) { { foo: 'foo', bar: 'bar', biz: 'biz', baz: 'baz' } }
+    let(:validator) do
+      React::Validator.build do
+        requires :foo
+        optional :bar
+      end
+    end
+
+    it 'slurps up any extra params into a hash' do
+      others = validator.undefined_props(props)
+      expect(others).to eq({ biz: 'biz', baz: 'baz' })
+    end
+
+    it 'prevents validate non-specified params' do
+      validator.undefined_props(props)
+      expect(validator.validate(props)).to eq([])
+    end
+  end
+
   describe "default_props" do
     it "should return specified default values" do
       validator = React::Validator.build do

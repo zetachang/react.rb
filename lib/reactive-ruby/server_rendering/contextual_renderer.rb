@@ -8,7 +8,7 @@ module ReactiveRuby
 
       def render(component_name, props, prerender_options)
         if prerender_options.is_a? Hash
-          if v8_runtime? and prerender_options[:context_initializer]
+          if v8_runtime? && prerender_options[:context_initializer]
             raise React::ServerRendering::PrerenderError.new(component_name, props, "you must use 'therubyracer' with the prerender[:context] option") unless v8_runtime?
           else
             prerender_options[:context_initializer].call v8_context

@@ -4,6 +4,9 @@ module ReactiveRuby
     private :v8_context
 
     def initialize(v8_context)
+      unless v8_context
+        raise ArgumentError.new('Could not obtain ExecJS runtime context')
+      end
       @v8_context = v8_context
     end
 
