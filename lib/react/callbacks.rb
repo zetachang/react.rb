@@ -7,9 +7,7 @@ module React
     end
 
     def run_callback(name, *args)
-      attribute_name = "_#{name}_callbacks"
-      callbacks = self.class.send(attribute_name)
-      callbacks.each do |callback|
+      self.class.callbacks_for(name).each do |callback|
         if callback.is_a?(Proc)
           instance_exec(*args, &callback)
         else
@@ -29,6 +27,15 @@ module React
           callbacks.push(block) if block_given?
           self.send("#{attribute_name}=", callbacks)
         end
+      end
+
+      def callbacks_for(callback_name)
+        attribute_name = "_#{callback_name}_callbacks"
+        if superclass.respond_to? :callbacks_for
+          superclass.callbacks_for(callback_name)
+        else
+          []
+        end + self.send(attribute_name)
       end
     end
   end

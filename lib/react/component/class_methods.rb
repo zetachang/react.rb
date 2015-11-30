@@ -19,7 +19,7 @@ module React
       end
 
       def validator
-        @validator ||= React::Validator.new
+        @validator ||= React::Validator.new(self)
       end
 
       def prop_types
@@ -47,50 +47,71 @@ module React
       end
 
       def define_param_method(name, param_type)
+        wrapper = const_get("PropsWrapper")
         if param_type == React::Observable
-          (@two_way_params ||= []) << name
-          define_method("#{name}") do
-            params[name].instance_variable_get("@value") if params[name]
+          #(@two_way_params ||= []) << name
+          wrapper.define_method("#{name}") do
+            @props_hash[name].instance_variable_get("@value") if @props_hash[name]
           end
-          define_method("#{name}!") do |*args|
-            return unless params[name]
+          wrapper.define_method("#{name}!") do |*args|
+            return unless @props_hash[name]
             if args.count > 0
-              current_value = params[name].instance_variable_get("@value")
-              params[name].call args[0]
+              current_value = @props_hash[name].instance_variable_get("@value")
+              @props_hash[name].call args[0]
               current_value
             else
-              current_value = params[name].instance_variable_get("@value")
-              params[name].call current_value unless @dont_update_state rescue nil # rescue in case we in middle of render
-              params[name]
+              current_value = @props_hash[name].instance_variable_get("@value")
+              @props_hash[name].call current_value unless @dont_update_state rescue nil # rescue in case we in middle of render
+              @props_hash[name]
             end
           end
+          define_method("#{name}") { deprecated_params_method("#{name}") }
+          define_method("#{name}!") { |*args| deprecated_params_method("#{name}!", *args) }
         elsif param_type == Proc
-          define_method("#{name}") do |*args, &block|
-            params[name].call(*args, &block) if params[name]
+          wrapper.define_method("#{name}") do |*args, &block|
+            @props_hash[name].call(*args, &block) if @props_hash[name]
           end
+          define_method("#{name}") { deprecated_params_method("#{name}", *args, &block) }
         else
-          define_method("#{name}") do
+          wrapper.define_method("#{name}") do
             @processed_params[name] ||= if param_type.respond_to? :_react_param_conversion
-                                          param_type._react_param_conversion params[name]
+                                          param_type._react_param_conversion @props_hash[name]
                                         elsif param_type.is_a?(Array) && param_type[0].respond_to?(:_react_param_conversion)
-                                          params[name].collect { |param| param_type[0]._react_param_conversion param }
+                                          @props_hash[name].collect { |param| param_type[0]._react_param_conversion param }
                                         else
-                                          params[name]
+                                          @props_hash[name]
                                         end
           end
+          define_method("#{name}") { deprecated_params_method("#{name}") }
+        end
+      end
+
+      def param(*args)
+        if args[0].is_a? Hash
+          options = args[0]
+          name = options.first[0]
+          default = options.first[1]
+          options.delete(name)
+          options.merge!({default: default})
+        else
+          name = args[0]
+          options = args[1] || {}
+        end
+        if options[:default]
+          validator.optional(name, options)
+        else
+          validator.requires(name, options)
         end
       end
 
       def required_param(name, options = {})
         validator.requires(name, options)
-        define_param_method(name, options[:type])
       end
 
       alias_method :require_param, :required_param
 
       def optional_param(name, options = {})
         validator.optional(name, options)
-        define_param_method(name, options[:type]) unless name == :params
       end
 
       def collect_other_params_as(name)
@@ -130,7 +151,6 @@ module React
           React::State.set_state(from || self, name, new_state)
         end
         this.define_method("#{name}!") do |*args|
-          #return unless @native
           if args.count > 0
             yield name, React::State.get_state(from || self, name), args[0] if block && block.arity > 0
             current_value = React::State.get_state(from || self, name)

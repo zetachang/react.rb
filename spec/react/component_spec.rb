@@ -102,6 +102,58 @@ describe React::Component do
     end
   end
 
+  describe 'New style setter & getter' do
+    before(:each) do
+      stub_const 'Foo', Class.new
+      Foo.class_eval do
+        include React::Component
+        def render
+          div { state.foo }
+        end
+      end
+    end
+
+    it 'implicitly will create a state variable when first written' do
+      Foo.class_eval do
+        before_mount do
+          state.foo! 'bar'
+        end
+      end
+
+      expect(React.render_to_static_markup(React.create_element(Foo))).to eq('<div>bar</div>')
+    end
+
+    it 'returns an observer with the bang method and no arguments' do
+      Foo.class_eval do
+        before_mount do
+          state.foo!(state.baz!.class.name)
+        end
+      end
+
+      expect(React.render_to_static_markup(React.create_element(Foo))).to eq('<div>React::Observable</div>')
+    end
+
+    it 'returns the current value of a state when written' do
+      Foo.class_eval do
+        before_mount do
+          state.baz! 'bar'
+          state.foo!(state.baz!('pow'))
+        end
+      end
+
+      expect(React.render_to_static_markup(React.create_element(Foo))).to eq('<div>bar</div>')
+    end
+
+    it 'can access an explicitly defined state`' do
+      Foo.class_eval do
+        define_state foo: :bar
+      end
+
+      expect(React.render_to_static_markup(React.create_element(Foo))).to eq('<div>bar</div>')
+    end
+
+  end
+
   describe 'State setter & getter' do
     before(:each) do
       stub_const 'Foo', Class.new
@@ -359,11 +411,11 @@ describe React::Component do
 
         %x{
           var log = [];
-          var org_console = window.console;
-          window.console = {warn: function(str){log.push(str)}}
+          var org_warn_console = window.console.warn;
+          window.console.warn = function(str){log.push(str)}
         }
         renderToDocument(Foo, bar: 10, lorem: Lorem.new)
-        `window.console = org_console;`
+        `window.console.warn = org_warn_console;`
         expect(`log`).to eq(["Warning: Failed propType: In component `Foo`\nRequired prop `foo` was not specified\nProvided prop `bar` could not be converted to String"])
       end
 
@@ -381,11 +433,11 @@ describe React::Component do
 
         %x{
           var log = [];
-          var org_console = window.console;
-          window.console = {warn: function(str){log.push(str)}}
+          var org_warn_console = window.console.warn;
+          window.console.warn = function(str){log.push(str)}
         }
         renderToDocument(Foo, foo: 10, bar: '10', lorem: Lorem.new)
-        `window.console = org_console;`
+        `window.console.warn = org_warn_console;`
         expect(`log`).to eq([])
       end
     end

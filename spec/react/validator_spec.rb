@@ -2,10 +2,13 @@ require "spec_helper"
 
 if opal?
 describe React::Validator do
+  before do
+    stub_const 'Foo', Class.new(React::Component::Base)
+  end
   describe '#validate' do
     describe "Presence validation" do
       it "should check if required props provided" do
-        validator = React::Validator.build do
+        validator = React::Validator.new(Foo).build do
           requires :foo
           requires :bar
         end
@@ -15,7 +18,7 @@ describe React::Validator do
       end
 
       it "should check if passed non specified prop" do
-        validator = React::Validator.build do
+        validator = React::Validator.new(Foo).build do
           optional :foo
         end
 
@@ -26,7 +29,7 @@ describe React::Validator do
 
     describe "Type validation" do
       it "should check if passed value with wrong type" do
-        validator = React::Validator.build do
+        validator = React::Validator.new(Foo).build do
           requires :foo, type: String
         end
 
@@ -36,7 +39,7 @@ describe React::Validator do
 
       it "should check if passed value with wrong custom type" do
         stub_const 'Bar', Class.new
-        validator = React::Validator.build do
+        validator = React::Validator.new(Foo).build do
           requires :foo, type: Bar
         end
 
@@ -45,7 +48,7 @@ describe React::Validator do
       end
 
       it 'coerces native JS prop types to opal objects' do
-        validator = React::Validator.build do
+        validator = React::Validator.new(Foo).build do
           requires :foo, type: `{ x: 1 }`
         end
 
@@ -54,7 +57,7 @@ describe React::Validator do
       end
 
       it 'coerces native JS values to opal objects' do
-        validator = React::Validator.build do
+        validator = React::Validator.new(Foo).build do
           requires :foo, type: Array[Fixnum]
         end
 
@@ -63,7 +66,7 @@ describe React::Validator do
       end
 
       it "should support Array[Class] validation" do
-        validator = React::Validator.build do
+        validator = React::Validator.new(Foo).build do
           requires :foo, type: Array[Hash]
         end
 
@@ -80,7 +83,7 @@ describe React::Validator do
 
     describe "Limited values" do
       it "should check if passed value is not one of the specified values" do
-        validator = React::Validator.build do
+        validator = React::Validator.new(Foo).build do
           requires :foo, values: [4,5,6]
         end
 
@@ -93,7 +96,7 @@ describe React::Validator do
   describe '#undefined_props' do
     let(:props) { { foo: 'foo', bar: 'bar', biz: 'biz', baz: 'baz' } }
     let(:validator) do
-      React::Validator.build do
+      React::Validator.new(Foo).build do
         requires :foo
         optional :bar
       end
@@ -112,7 +115,7 @@ describe React::Validator do
 
   describe "default_props" do
     it "should return specified default values" do
-      validator = React::Validator.build do
+      validator = React::Validator.new(Foo).build do
         requires :foo, default: 10
         requires :bar
         optional :lorem, default: 20

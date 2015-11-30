@@ -14,6 +14,21 @@ module React
     def self.included(base)
       base.include(API)
       base.include(React::Callbacks)
+      base.instance_eval do
+        class PropsWrapper
+
+          def initialize(props_hash)
+            @props_hash = props_hash
+            @processed_params = {}
+          end
+
+          def [](prop)
+            return unless @props_hash
+            @props_hash[prop]
+          end
+
+        end
+      end
       base.class_eval do
         class_attribute :initial_state
         define_callback :before_mount
@@ -22,6 +37,12 @@ module React
         define_callback :before_update
         define_callback :after_update
         define_callback :before_unmount
+
+        def deprecated_params_method(name, *args, &block)
+          puts "deprecated_params_method for #{self.class.name}.#{name}"
+          # TODO display deprecation message, but only once per access to a method
+          params.send(name, *args, &block)
+        end
 
         def render
           raise "no render defined"
@@ -97,6 +118,11 @@ module React
     end
 
     def params
+      @props_wrapper
+      #Hash.new(`#{@native}.props`)
+    end
+
+    def props
       Hash.new(`#{@native}.props`)
     end
 
@@ -105,8 +131,8 @@ module React
     end
 
     def state
-      raise "No native ReactComponent associated" unless @native
-      Hash.new(`#{@native}.state`)
+      #raise "No native ReactComponent associated" unless @native
+      @state_wrapper ||= StateWrapper.new(@native, self)
     end
 
     def update_react_js_state(object, name, value)
@@ -123,7 +149,7 @@ module React
 
     def component_will_mount
       IsomorphicHelpers.load_context(true) if IsomorphicHelpers.on_opal_client?
-      @processed_params = {}
+      @props_wrapper = self.class.const_get("PropsWrapper").new(Hash.new(`#{@native}.props`))
       set_state! initial_state if initial_state
       React::State.initialize_states(self, initial_state)
       React::State.set_state_context_to(self) { self.run_callback(:before_mount) }
@@ -144,14 +170,13 @@ module React
       # need to rethink how this works in opal-react, or if its actually that useful within the react.rb environment
       # for now we are just using it to clear processed_params
       React::State.set_state_context_to(self) { self.run_callback(:before_receive_props, Hash.new(next_props)) }
-      @processed_params = {}
     rescue Exception => e
       self.class.process_exception(e, self)
     end
 
     def props_changed?(next_props)
-      return true unless params.keys.sort == next_props.keys.sort
-      params.detect { |k, v| `#{next_props[k]} != #{params[k]}`}
+      return true unless props.keys.sort == next_props.keys.sort
+      props.detect { |k, v| `#{next_props[k]} != #{params[k]}`}
     end
 
     def should_component_update?(next_props, next_state)
@@ -177,6 +202,7 @@ module React
 
     def component_will_update(next_props, next_state)
       React::State.set_state_context_to(self) { self.run_callback(:before_update, Hash.new(next_props), Hash.new(next_state)) }
+      @props_wrapper = self.class.const_get("PropsWrapper").new(Hash.new(next_props))
     rescue Exception => e
       self.class.process_exception(e, self)
     end
@@ -220,7 +246,7 @@ module React
     end
 
     def method_missing(n, *args, &block)
-      return params[n] if params.key? n
+      return props[n] if props.key? n # TODO deprecate and remove - done so that params shadow tags, no longer needed
       name = n
       if name =~ /_as_node$/
         node_only = true
