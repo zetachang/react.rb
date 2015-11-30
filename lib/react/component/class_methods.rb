@@ -18,6 +18,15 @@ module React
         raise e if reraise
       end
 
+      def deprecation_warning(message)
+        @deprecation_messages ||= []
+        message = "Warning: Deprecated feature used in #{self.name}. #{message}"
+        unless @deprecation_messages.include? message
+          @deprecation_messages << message
+          IsomorphicHelpers.log message, :warning
+        end
+      end
+
       def validator
         @validator ||= React::Validator.new(self)
       end
@@ -105,12 +114,14 @@ module React
       end
 
       def required_param(name, options = {})
+        deprecation_warning "`required_param` is deprecated, use `param` instead."
         validator.requires(name, options)
       end
 
       alias_method :require_param, :required_param
 
       def optional_param(name, options = {})
+        deprecation_warning "`optional_param` is deprecated, use `param param_name: default_value` instead."
         validator.optional(name, options)
       end
 
@@ -144,13 +155,16 @@ module React
 
       def define_state_methods(this, name, from = nil, &block)
         this.define_method("#{name}") do
+          self.class.deprecation_warning "Direct access to state `#{name}`.  Use `state.#{name}` instead." if from.nil? || from == this
           React::State.get_state(from || self, name)
         end
         this.define_method("#{name}=") do |new_state|
+          self.class.deprecation_warning "Direct assignment to state `#{name}`.  Use `#{(from && from != this) ? from : 'state'}.#{name}!` instead."
           yield name, React::State.get_state(from || self, name), new_state if block && block.arity > 0
           React::State.set_state(from || self, name, new_state)
         end
         this.define_method("#{name}!") do |*args|
+          self.class.deprecation_warning "Direct access to state `#{name}`.  Use `state.#{name}` instead."  if from.nil? or from == this
           if args.count > 0
             yield name, React::State.get_state(from || self, name), args[0] if block && block.arity > 0
             current_value = React::State.get_state(from || self, name)

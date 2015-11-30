@@ -15,6 +15,7 @@ module React
       base.include(API)
       base.include(React::Callbacks)
       base.instance_eval do
+
         class PropsWrapper
 
           def initialize(props_hash)
@@ -39,8 +40,7 @@ module React
         define_callback :before_unmount
 
         def deprecated_params_method(name, *args, &block)
-          puts "deprecated_params_method for #{self.class.name}.#{name}"
-          # TODO display deprecation message, but only once per access to a method
+          self.class.deprecation_warning "Direct access to param `#{name}`.  Use `params.#{name}` instead."
           params.send(name, *args, &block)
         end
 

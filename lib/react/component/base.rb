@@ -1,3 +1,5 @@
+require 'react/component'
+
 module React
   module Component
     class Base

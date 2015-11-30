@@ -1,6 +1,6 @@
 require "native"
 require 'active_support'
-require 'react/component'
+require 'react/component/base'
 
 module React
   HTML_TAGS = %w(a abbr address area article aside audio b base bdi bdo big blockquote body br
@@ -49,4 +49,13 @@ module React
   def self.unmount_component_at_node(node)
     `React.unmountComponentAtNode(node.$$class ? node[0] : node)`
   end
+
 end
+
+Element.instance_eval do
+  class ::Element::DummyContext < React::Component::Base
+  end
+  def render(&block)
+    React.render(React::RenderingContext.render(nil) {::Element::DummyContext.new.instance_eval &block}, self)
+  end
+end if Object.const_defined?("Element")
