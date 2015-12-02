@@ -28,7 +28,7 @@ module React
       end
 
       def validator
-        @validator ||= React::Validator.new(self)
+        @validator ||= Validator.new(self)
       end
 
       def prop_types
