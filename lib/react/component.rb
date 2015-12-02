@@ -14,22 +14,6 @@ module React
     def self.included(base)
       base.include(API)
       base.include(React::Callbacks)
-      base.instance_eval do
-
-        class PropsWrapper
-
-          def initialize(props_hash)
-            @props_hash = props_hash
-            @processed_params = {}
-          end
-
-          def [](prop)
-            return unless @props_hash
-            @props_hash[prop]
-          end
-
-        end
-      end
       base.class_eval do
         class_attribute :initial_state
         define_callback :before_mount
@@ -149,7 +133,7 @@ module React
 
     def component_will_mount
       IsomorphicHelpers.load_context(true) if IsomorphicHelpers.on_opal_client?
-      @props_wrapper = self.class.const_get("PropsWrapper").new(Hash.new(`#{@native}.props`))
+      @props_wrapper = self.class.props_wrapper.new(Hash.new(`#{@native}.props`))
       set_state! initial_state if initial_state
       React::State.initialize_states(self, initial_state)
       React::State.set_state_context_to(self) { self.run_callback(:before_mount) }
@@ -202,7 +186,7 @@ module React
 
     def component_will_update(next_props, next_state)
       React::State.set_state_context_to(self) { self.run_callback(:before_update, Hash.new(next_props), Hash.new(next_state)) }
-      @props_wrapper = self.class.const_get("PropsWrapper").new(Hash.new(next_props))
+      @props_wrapper = self.class.props_wrapper.new(Hash.new(next_props))
     rescue Exception => e
       self.class.process_exception(e, self)
     end

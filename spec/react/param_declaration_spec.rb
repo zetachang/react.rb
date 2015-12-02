@@ -1,9 +1,7 @@
 require 'spec_helper'
 
 if opal?
-
 describe 'the param macro' do
-
   it "can create and access a required param" do
     stub_const 'Foo', Class.new(React::Component::Base)
     Foo.class_eval do
@@ -180,8 +178,6 @@ describe 'the param macro' do
       expect(React.render_to_static_markup(React.create_element(Foo, foo: observer))).to eq('<span>ha!</span>')
       expect(current_state).to eq("ha!")
     end
-
   end
-
 end
 end

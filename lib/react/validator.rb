@@ -20,13 +20,11 @@ module React
     def requires(name, options = {})
       options[:required] = true
       define_rule(name, options)
-      @component_class.define_param_method(name, options[:type])
     end
 
     def optional(name, options = {})
       options[:required] = false
       define_rule(name, options)
-      @component_class.define_param_method(name, options[:type]) unless name == :params
     end
 
     def allow_undefined_props=(allow)
@@ -72,6 +70,7 @@ module React
 
     def define_rule(name, options = {})
       rules[name] = coerce_native_hash_values(options)
+      @component_class.define_param(name, options[:type]) unless name == :params
     end
 
     def errors
