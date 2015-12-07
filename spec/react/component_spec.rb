@@ -123,6 +123,17 @@ describe React::Component do
       expect(React.render_to_static_markup(React.create_element(Foo))).to eq('<div>bar</div>')
     end
 
+    it 'allows kernal method names like "format" to be used as state variable names' do
+      Foo.class_eval do
+        before_mount do
+          state.format! 'yes'
+          state.foo! state.format
+        end
+      end
+
+      expect(React.render_to_static_markup(React.create_element(Foo))).to eq('<div>yes</div>')
+    end
+
     it 'returns an observer with the bang method and no arguments' do
       Foo.class_eval do
         before_mount do

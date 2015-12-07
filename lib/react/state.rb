@@ -1,5 +1,6 @@
 module React
-  class StateWrapper
+
+  class StateWrapper < BasicObject
 
     def initialize(native, from)
       @state_hash = Hash.new(`#{native}.state`)
@@ -130,17 +131,13 @@ module React
         @states ||= Hash.new { |h, k| h[k] = {} }
       end
 
-      def new_observers
-        @new_observers ||= Hash.new { |h, k| h[k] = Hash.new { |h, k| h[k] = [] } }
+      [:new_observers, :current_observers, :observers_by_name].each do |method_name|
+        define_method(method_name) do
+          instance_variable_get("@#{method_name}") or
+          instance_variable_set("@#{method_name}", Hash.new { |h, k| h[k] = Hash.new { |h, k| h[k] = [] } })
+        end
       end
 
-      def current_observers
-        @current_observers ||= Hash.new { |h, k| h[k] = Hash.new { |h, k| h[k] = [] } }
-      end
-
-      def observers_by_name
-        @observers_by_name ||= Hash.new { |h, k| h[k] = Hash.new { |h, k| h[k] = [] } }
-      end
     end
   end
 end

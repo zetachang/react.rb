@@ -16,7 +16,7 @@ module React
       base.include(React::Callbacks)
       base.instance_eval do
 
-        class PropsWrapper
+        class PropsWrapper < BasicObject
 
           def initialize(props_hash)
             @props_hash = props_hash
@@ -102,11 +102,7 @@ module React
             unless name && name.method_defined?(:render)
               return super
             end
-            if node_only
-              React::RenderingContext.build { React::RenderingContext.render(name, *args, &block) }.to_n
-            else
-              React::RenderingContext.render(name, *args, &block)
-            end
+            React::RenderingContext.build_or_render(node_only, name, *args, &block)
           end
 
         end
@@ -264,11 +260,7 @@ module React
         name = "p"
       end
 
-      if node_only
-        React::RenderingContext.build { React::RenderingContext.render(name, *args, &block) }.to_n
-      else
-        React::RenderingContext.render(name, *args, &block)
-      end
+      React::RenderingContext.build_or_render(node_only, name, *args, &block)
     end
 
     def watch(value, &on_change)
