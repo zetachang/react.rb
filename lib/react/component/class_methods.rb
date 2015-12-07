@@ -28,7 +28,7 @@ module React
       end
 
       def validator
-        @validator ||= React::Validator.new(self)
+        @validator ||= Validator.new(self)
       end
 
       def prop_types
@@ -55,44 +55,12 @@ module React
         validator.build(&block)
       end
 
-      def define_param_method(name, param_type)
-        wrapper = const_get("PropsWrapper")
-        if param_type == React::Observable
-          #(@two_way_params ||= []) << name
-          wrapper.define_method("#{name}") do
-            @props_hash[name].instance_variable_get("@value") if @props_hash[name]
-          end
-          wrapper.define_method("#{name}!") do |*args|
-            return unless @props_hash[name]
-            if args.count > 0
-              current_value = @props_hash[name].instance_variable_get("@value")
-              @props_hash[name].call args[0]
-              current_value
-            else
-              current_value = @props_hash[name].instance_variable_get("@value")
-              @props_hash[name].call current_value unless @dont_update_state rescue nil # rescue in case we in middle of render
-              @props_hash[name]
-            end
-          end
-          define_method("#{name}") { deprecated_params_method("#{name}") }
-          define_method("#{name}!") { |*args| deprecated_params_method("#{name}!", *args) }
-        elsif param_type == Proc
-          wrapper.define_method("#{name}") do |*args, &block|
-            @props_hash[name].call(*args, &block) if @props_hash[name]
-          end
-          define_method("#{name}") { deprecated_params_method("#{name}", *args, &block) }
-        else
-          wrapper.define_method("#{name}") do
-            @processed_params[name] ||= if param_type.respond_to? :_react_param_conversion
-                                          param_type._react_param_conversion @props_hash[name]
-                                        elsif param_type.is_a?(Array) && param_type[0].respond_to?(:_react_param_conversion)
-                                          @props_hash[name].collect { |param| param_type[0]._react_param_conversion param }
-                                        else
-                                          @props_hash[name]
-                                        end
-          end
-          define_method("#{name}") { deprecated_params_method("#{name}") }
-        end
+      def props_wrapper
+        @props_wrapper ||= Class.new(PropsWrapper)
+      end
+
+      def define_param(name, param_type)
+        props_wrapper.define_param(name, param_type, self)
       end
 
       def param(*args)
