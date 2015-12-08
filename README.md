@@ -58,7 +58,7 @@ In your Gemfile:
 
 ```ruby
 gem 'reactive-ruby'
-gem 'react-rails'
+gem 'react-rails', '~> 1.3.2'
 gem 'opal-rails'
 gem 'therubyracer', platforms: :ruby # Required for prerendering
 ```
