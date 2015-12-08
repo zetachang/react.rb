@@ -7,6 +7,7 @@ require 'react/observable'
 require 'react/state'
 require 'react/component/api'
 require 'react/component/class_methods'
+require 'react/component/props_wrapper'
 require 'native'
 
 module React
