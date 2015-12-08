@@ -100,7 +100,6 @@ module React
 
     def params
       @props_wrapper
-      #Hash.new(`#{@native}.props`)
     end
 
     def props
