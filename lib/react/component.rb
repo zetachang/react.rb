@@ -23,48 +23,6 @@ module React
         define_callback :before_update
         define_callback :after_update
         define_callback :before_unmount
-
-        def deprecated_params_method(name, *args, &block)
-          self.class.deprecation_warning "Direct access to param `#{name}`.  Use `params.#{name}` instead."
-          params.send(name, *args, &block)
-        end
-
-        def render
-          raise "no render defined"
-        end unless method_defined?(:render)
-
-        def children
-          nodes = [`#{@native}.props.children`].flatten
-          class << nodes
-            include Enumerable
-
-            def to_n
-              self
-            end
-
-            def each(&block)
-              if block_given?
-                %x{
-                  React.Children.forEach(#{self.to_n}, function(context){
-                    #{block.call(React::Element.new(`context`))}
-                  })
-                }
-                nil
-              else
-                Enumerator.new(`React.Children.count(#{self.to_n})`) do |y|
-                  %x{
-                    React.Children.forEach(#{self.to_n}, function(context){
-                      #{y << React::Element.new(`context`)}
-                    })
-                  }
-                end
-              end
-            end
-          end
-
-          nodes
-        end
-
       end
       base.extend(ClassMethods)
 
@@ -72,7 +30,6 @@ module React
         parent = base.name.split("::").inject([Module]) { |nesting, next_const| nesting + [nesting.last.const_get(next_const)] }[-2]
 
         class << parent
-
           def method_missing(n, *args, &block)
             name = n
             if name =~ /_as_node$/
@@ -89,13 +46,53 @@ module React
             end
             RenderingContext.build_or_render(node_only, name, *args, &block)
           end
-
         end
       end
     end
 
     def initialize(native_element)
       @native = native_element
+    end
+
+    def render
+      raise "no render defined"
+    end unless method_defined?(:render)
+
+    def deprecated_params_method(name, *args, &block)
+      self.class.deprecation_warning "Direct access to param `#{name}`.  Use `params.#{name}` instead."
+      params.send(name, *args, &block)
+    end
+
+    def children
+      nodes = [`#{@native}.props.children`].flatten
+      class << nodes
+        include Enumerable
+
+        def to_n
+          self
+        end
+
+        def each(&block)
+          if block_given?
+            %x{
+                  React.Children.forEach(#{self.to_n}, function(context){
+            #{block.call(React::Element.new(`context`))}
+                  })
+            }
+            nil
+          else
+            Enumerator.new(`React.Children.count(#{self.to_n})`) do |y|
+              %x{
+                    React.Children.forEach(#{self.to_n}, function(context){
+              #{y << React::Element.new(`context`)}
+                    })
+              }
+            end
+          end
+        end
+      end
+
+      nodes
     end
 
     def params
