@@ -48,7 +48,7 @@ module React
       end
 
       def initialize(props)
-        @props= props|| {}
+        @props = props || {}
       end
 
       def [](prop)
