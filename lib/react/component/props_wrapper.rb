@@ -1,6 +1,6 @@
 module React
   module Component
-    class PropsWrapper < BasicObject
+    class PropsWrapper
       attr_reader :props
 
       def self.define_param(name, param_type, owner)
