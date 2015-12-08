@@ -7,7 +7,7 @@ module React
         owner.define_method("#{name}") do
           deprecated_params_method("#{name}", *args, &block)
         end
-        if param_type == React::Observable
+        if param_type == Observable
           owner.define_method("#{name}!") do |*args|
             deprecated_params_method("#{name}!", *args)
           end

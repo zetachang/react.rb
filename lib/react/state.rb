@@ -1,7 +1,5 @@
 module React
-
   class StateWrapper < BasicObject
-
     def initialize(native, from)
       @state_hash = Hash.new(`#{native}.state`)
       @from = from
@@ -18,22 +16,21 @@ module React
     def method_missing(method, *args)
       if match = method.match(/^(.+)\!$/)
         if args.count > 0
-          current_value = React::State.get_state(@from, match[1])
-          React::State.set_state(@from, $1, args[0])
+          current_value = State.get_state(@from, match[1])
+          State.set_state(@from, $1, args[0])
           current_value
         else
-          current_state = React::State.get_state(@from, match[1])
-          React::State.set_state(@from, $1, current_state)
-          React::Observable.new(current_state) do |update|
-            React::State.set_state(@from, $1, update)
+          current_state = State.get_state(@from, match[1])
+          State.set_state(@from, $1, current_state)
+          Observable.new(current_state) do |update|
+            State.set_state(@from, $1, update)
           end
         end
       else
-        React::State.get_state(@from, method)
+        State.get_state(@from, method)
       end
     end
   end
-
 
   class State
     class << self

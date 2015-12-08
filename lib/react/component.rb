@@ -13,7 +13,7 @@ module React
   module Component
     def self.included(base)
       base.include(API)
-      base.include(React::Callbacks)
+      base.include(Callbacks)
       base.class_eval do
         class_attribute :initial_state
         define_callback :before_mount
@@ -86,7 +86,7 @@ module React
             unless name && name.method_defined?(:render)
               return super
             end
-            React::RenderingContext.build_or_render(node_only, name, *args, &block)
+            RenderingContext.build_or_render(node_only, name, *args, &block)
           end
 
         end
@@ -131,16 +131,16 @@ module React
       IsomorphicHelpers.load_context(true) if IsomorphicHelpers.on_opal_client?
       @props_wrapper = self.class.props_wrapper.new(Hash.new(`#{@native}.props`))
       set_state! initial_state if initial_state
-      React::State.initialize_states(self, initial_state)
-      React::State.set_state_context_to(self) { self.run_callback(:before_mount) }
+      State.initialize_states(self, initial_state)
+      State.set_state_context_to(self) { self.run_callback(:before_mount) }
     rescue Exception => e
       self.class.process_exception(e, self)
     end
 
     def component_did_mount
-      React::State.set_state_context_to(self) do
+      State.set_state_context_to(self) do
         self.run_callback(:after_mount)
-        React::State.update_states_to_observe
+        State.update_states_to_observe
       end
     rescue Exception => e
       self.class.process_exception(e, self)
@@ -149,7 +149,7 @@ module React
     def component_will_receive_props(next_props)
       # need to rethink how this works in opal-react, or if its actually that useful within the react.rb environment
       # for now we are just using it to clear processed_params
-      React::State.set_state_context_to(self) { self.run_callback(:before_receive_props, Hash.new(next_props)) }
+      State.set_state_context_to(self) { self.run_callback(:before_receive_props, Hash.new(next_props)) }
     rescue Exception => e
       self.class.process_exception(e, self)
     end
@@ -160,7 +160,7 @@ module React
     end
 
     def should_component_update?(next_props, next_state)
-      React::State.set_state_context_to(self) do
+      State.set_state_context_to(self) do
         next_props = Hash.new(next_props)
         if self.respond_to?(:needs_update?)
           !!self.needs_update?(next_props, Hash.new(next_state))
@@ -181,25 +181,25 @@ module React
     end
 
     def component_will_update(next_props, next_state)
-      React::State.set_state_context_to(self) { self.run_callback(:before_update, Hash.new(next_props), Hash.new(next_state)) }
+      State.set_state_context_to(self) { self.run_callback(:before_update, Hash.new(next_props), Hash.new(next_state)) }
       @props_wrapper = self.class.props_wrapper.new(Hash.new(next_props))
     rescue Exception => e
       self.class.process_exception(e, self)
     end
 
     def component_did_update(prev_props, prev_state)
-      React::State.set_state_context_to(self) do
+      State.set_state_context_to(self) do
         self.run_callback(:after_update, Hash.new(prev_props), Hash.new(prev_state))
-        React::State.update_states_to_observe
+        State.update_states_to_observe
       end
     rescue Exception => e
       self.class.process_exception(e, self)
     end
 
     def component_will_unmount
-      React::State.set_state_context_to(self) do
+      State.set_state_context_to(self) do
         self.run_callback(:before_unmount)
-        React::State.remove
+        State.remove
       end
     rescue Exception => e
       self.class.process_exception(e, self)
@@ -232,7 +232,7 @@ module React
         node_only = true
         name = name.gsub(/_as_node$/, "")
       end
-      unless (React::HTML_TAGS.include?(name) || name == 'present'  || name == '_p_tag' || (name = component?(name, self)))
+      unless (HTML_TAGS.include?(name) || name == 'present'  || name == '_p_tag' || (name = component?(name, self)))
         return super
       end
 
@@ -244,21 +244,21 @@ module React
         name = "p"
       end
 
-      React::RenderingContext.build_or_render(node_only, name, *args, &block)
+      RenderingContext.build_or_render(node_only, name, *args, &block)
     end
 
     def watch(value, &on_change)
-      React::Observable.new(value, on_change)
+      Observable.new(value, on_change)
     end
 
     def define_state(*args, &block)
-      React::State.initialize_states(self, self.class.define_state(*args, &block))
+      State.initialize_states(self, self.class.define_state(*args, &block))
     end
 
     attr_reader :waiting_on_resources
 
     def _render_wrapper
-      React::State.set_state_context_to(self) do
+      State.set_state_context_to(self) do
         RenderingContext.render(nil) {render || ""}.tap { |element| @waiting_on_resources = element.waiting_on_resources if element.respond_to? :waiting_on_resources }
       end
     rescue Exception => e

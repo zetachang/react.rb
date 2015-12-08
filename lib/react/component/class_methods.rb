@@ -114,7 +114,7 @@ module React
         default_initial_value = (block && block.arity == 0) ? yield : nil
         states_hash = (states.last.is_a?(Hash)) ? states.pop : {}
         states.each { |name| states_hash[name] = default_initial_value }
-        React::State.initialize_states(self, states_hash)
+        State.initialize_states(self, states_hash)
         states_hash.each do |name, initial_value|
           define_state_methods(self, name, self, &block)
           define_state_methods(singleton_class, name, self, &block)
@@ -124,27 +124,27 @@ module React
       def define_state_methods(this, name, from = nil, &block)
         this.define_method("#{name}") do
           self.class.deprecation_warning "Direct access to state `#{name}`.  Use `state.#{name}` instead." if from.nil? || from == this
-          React::State.get_state(from || self, name)
+          State.get_state(from || self, name)
         end
         this.define_method("#{name}=") do |new_state|
           self.class.deprecation_warning "Direct assignment to state `#{name}`.  Use `#{(from && from != this) ? from : 'state'}.#{name}!` instead."
-          yield name, React::State.get_state(from || self, name), new_state if block && block.arity > 0
-          React::State.set_state(from || self, name, new_state)
+          yield name, State.get_state(from || self, name), new_state if block && block.arity > 0
+          State.set_state(from || self, name, new_state)
         end
         this.define_method("#{name}!") do |*args|
           self.class.deprecation_warning "Direct access to state `#{name}`.  Use `state.#{name}` instead."  if from.nil? or from == this
           if args.count > 0
-            yield name, React::State.get_state(from || self, name), args[0] if block && block.arity > 0
-            current_value = React::State.get_state(from || self, name)
-            React::State.set_state(from || self, name, args[0])
+            yield name, State.get_state(from || self, name), args[0] if block && block.arity > 0
+            current_value = State.get_state(from || self, name)
+            State.set_state(from || self, name, args[0])
             current_value
           else
-            current_state = React::State.get_state(from || self, name)
-            yield name, React::State.get_state(from || self, name), current_state if block && block.arity > 0
-            React::State.set_state(from || self, name, current_state)
-            React::Observable.new(current_state) do |update|
-              yield name, React::State.get_state(from || self, name), update if block && block.arity > 0
-              React::State.set_state(from || self, name, update)
+            current_state = State.get_state(from || self, name)
+            yield name, State.get_state(from || self, name), current_state if block && block.arity > 0
+            State.set_state(from || self, name, current_state)
+            Observable.new(current_state) do |update|
+              yield name, State.get_state(from || self, name), update if block && block.arity > 0
+              State.set_state(from || self, name, update)
             end
           end
         end
