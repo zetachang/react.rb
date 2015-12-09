@@ -3,14 +3,8 @@ module React
     class PropsWrapper
       attr_reader :props
 
-      def self.define_param(name, param_type, owner)
-        owner.define_method("#{name}") do
-          deprecated_params_method("#{name}", *args, &block)
-        end
+      def self.define_param(name, param_type)
         if param_type == Observable
-          owner.define_method("#{name}!") do |*args|
-            deprecated_params_method("#{name}!", *args)
-          end
           define_method("#{name}") do
             value_for(name)
           end

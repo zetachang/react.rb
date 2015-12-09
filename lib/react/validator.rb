@@ -1,11 +1,11 @@
 module React
-
   class Validator
     attr_accessor :errors
-    private :errors
+    attr_reader :props_wrapper
+    private :errors, :props_wrapper
 
-    def initialize(component_class)
-      @component_class = component_class
+    def initialize(props_wrapper = Class.new(Component::PropsWrapper))
+      @props_wrapper = props_wrapper
     end
 
     def self.build(&block)
@@ -70,7 +70,7 @@ module React
 
     def define_rule(name, options = {})
       rules[name] = coerce_native_hash_values(options)
-      @component_class.define_param(name, options[:type]) unless name == :params
+      props_wrapper.define_param(name, options[:type])
     end
 
     def errors
