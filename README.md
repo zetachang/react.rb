@@ -61,6 +61,9 @@ gem 'reactive-ruby'
 gem 'react-rails', '~> 1.3.2'
 gem 'opal-rails'
 gem 'therubyracer', platforms: :ruby # Required for prerendering
+# for JRuby you need the below line instead
+# gem 'therubyrhino, platforms: :jruby
+
 ```
 
 Run `bundle install` and restart your rails server.
@@ -136,7 +139,7 @@ props), to render the component:
 class HomeController < ApplicationController
   def show
     # render_component uses the controller name to find the 'show' component.
-    render_component say_hello_to: params[:say_hello_to] 
+    render_component say_hello_to: params[:say_hello_to]
   end
 end
 ```
@@ -161,11 +164,11 @@ regardless of the name of the controller method.
 
 Searching for components works like this:  Given a controller named
 "Foo" then react.rb will search for a module named `Foo` containing the component.
-If this fails all modules will be searched (i.e. the name of the controller will be 
+If this fails all modules will be searched (i.e. the name of the controller will be
 ignored.)  In either case the search begins at the outer most scope until a match is made.
 
 Thus for example given a controller named `Foo`, components could be found in the `Foo` module,
-the `Components::Foo` module, in the outer most scope, or in any nested module. 
+the `Components::Foo` module, in the outer most scope, or in any nested module.
 The way the search works allows for small projects that do not need a lot
 of name spacing, and also allows components to be shared across several controllers.
 
