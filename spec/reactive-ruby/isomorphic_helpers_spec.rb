@@ -73,7 +73,7 @@ if ruby?
       end
       js = "#{React::ServerRendering::ExecJSRenderer::GLOBAL_WRAPPER}#{js}"
       ctx = ExecJS.compile(js)
-      ctx = ctx.instance_variable_get("@v8_context")
+      ctx = ctx.instance_variable_get(ReactiveRuby::ServerRendering.context_instance_var_name)
     end
 
     def react_context

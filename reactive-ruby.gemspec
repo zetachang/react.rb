@@ -28,5 +28,12 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'timecop'
   s.add_development_dependency 'opal-rspec'
   s.add_development_dependency 'sinatra'
-  s.add_development_dependency 'sqlite3' # For Test Rails App
+
+  if RUBY_PLATFORM == 'java'
+    s.add_development_dependency 'jdbc-sqlite3'  # For Test Rails App
+    s.add_development_dependency 'activerecord-jdbcsqlite3-adapter' if RUBY_PLATFORM == 'java' # For Test Rails App
+    s.add_development_dependency 'therubyrhino'
+  else
+    s.add_development_dependency 'sqlite3' # For Test Rails App
+  end
 end
