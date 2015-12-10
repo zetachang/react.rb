@@ -22,11 +22,12 @@ module ReactiveRuby
       private
 
       def v8_runtime?
-        ExecJS.runtime.name == "(V8)"
+        ExecJS.runtime.name == "(V8)" || ExecJS.runtime.name == "therubyrhino (Rhino)"
       end
 
       def v8_context
         @v8_context ||= @context.instance_variable_get("@v8_context")
+        @v8_context ||= @context.instance_variable_get("@rhino_context")
       end
     end
   end
