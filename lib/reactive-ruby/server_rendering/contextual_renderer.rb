@@ -1,5 +1,13 @@
 module ReactiveRuby
   module ServerRendering
+    def self.context_instance_var_name
+      if RUBY_PLATFORM == 'java'
+        '@rhino_context'
+      else
+        '@v8_context'
+      end
+    end
+
     class ContextualRenderer < React::ServerRendering::SprocketsRenderer
       def initialize(options = {})
         super(options)
@@ -24,10 +32,8 @@ module ReactiveRuby
       def v8_runtime?
         ExecJS.runtime.name == "(V8)" || ExecJS.runtime.name == "therubyrhino (Rhino)"
       end
-
       def v8_context
-        @v8_context ||= @context.instance_variable_get("@v8_context")
-        @v8_context ||= @context.instance_variable_get("@rhino_context")
+        @v8_context ||= @context.instance_variable_get(ReactiveRuby::ServerRendering.context_instance_var_name)
       end
     end
   end

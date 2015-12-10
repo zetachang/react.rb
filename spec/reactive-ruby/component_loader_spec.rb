@@ -10,7 +10,7 @@ RSpec.describe ReactiveRuby::ComponentLoader do
 
   let(:js) { ::Rails.application.assets['components'].to_s }
   let(:context) { ExecJS.compile(GLOBAL_WRAPPER + js) }
-  let(:v8_context) { context.instance_variable_get(:@v8_context) }
+  let(:v8_context) { context.instance_variable_get(ReactiveRuby::ServerRendering.context_instance_var_name) }
 
   describe '.new' do
     it 'raises a meaningful exception when initialized without a context' do
