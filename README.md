@@ -10,6 +10,8 @@
 It lets you write reactive UI components, with Ruby's elegance using the tried
 and true React.js engine. :heart:
 
+[**Visit Our Documentation Site For The Full Story**](https://reactive-ruby.github.io)
+
 ### What's this Reactive Ruby?
 
 Reactive Ruby started as a fork of the original react.rb gem, and has since been
@@ -56,7 +58,7 @@ In your Gemfile:
 
 ```ruby
 gem 'reactive-ruby'
-gem 'react-rails'
+gem 'react-rails', '~> 1.3.2'
 gem 'opal-rails'
 gem 'therubyracer', platforms: :ruby # Required for prerendering
 # for JRuby you need the below line instead

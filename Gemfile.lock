@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    reactive-ruby (0.7.31)
+    reactive-ruby (0.8.0)
       opal
       opal-activesupport (>= 0.2.0)
       opal-browser
@@ -188,6 +188,3 @@ DEPENDENCIES
   sqlite3
   therubyracer
   timecop
-
-BUNDLED WITH
-   1.10.6

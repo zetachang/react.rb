@@ -1,7 +1,12 @@
 module React
   class Validator
     attr_accessor :errors
-    private :errors
+    attr_reader :props_wrapper
+    private :errors, :props_wrapper
+
+    def initialize(props_wrapper = Class.new(Component::PropsWrapper))
+      @props_wrapper = props_wrapper
+    end
 
     def self.build(&block)
       self.new.build(&block)
@@ -65,6 +70,7 @@ module React
 
     def define_rule(name, options = {})
       rules[name] = coerce_native_hash_values(options)
+      props_wrapper.define_param(name, options[:type])
     end
 
     def errors
@@ -73,11 +79,14 @@ module React
 
     def validate_types(prop_name, value)
       return unless klass = rules[prop_name][:type]
-      if klass.is_a?(Array) && klass.length > 0
+      if !klass.is_a?(Array)
+        allow_nil = !!rules[prop_name][:allow_nil]
+        type_check("`#{prop_name}`", value, klass, allow_nil)
+      elsif klass.length > 0
         validate_value_array(prop_name, value)
       else
         allow_nil = !!rules[prop_name][:allow_nil]
-        type_check("`#{prop_name}`", value, klass, allow_nil)
+        type_check("`#{prop_name}`", value, Array, allow_nil)
       end
     end
 

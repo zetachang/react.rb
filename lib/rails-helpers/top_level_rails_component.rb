@@ -8,33 +8,33 @@ module React
 
     export_component
 
-    required_param :component_name
-    required_param :controller
-    required_param :render_params
+    param :component_name
+    param :controller
+    param :render_params
 
     backtrace :on
 
     def render
       paths_searched = []
-      if component_name.start_with? "::"
-        paths_searched << component_name.gsub(/^\:\:/,"")
-        component = component_name.gsub(/^\:\:/,"").split("::").inject(Module) { |scope, next_const| scope.const_get(next_const, false) } rescue nil
-        return present component, render_params if component && component.method_defined?(:render)
+      if params.component_name.start_with? "::"
+        paths_searched << params.component_name.gsub(/^\:\:/,"")
+        component = params.component_name.gsub(/^\:\:/,"").split("::").inject(Module) { |scope, next_const| scope.const_get(next_const, false) } rescue nil
+        return present component, params.render_params if component && component.method_defined?(:render)
       else
         self.class.search_path.each do |path|
-          # try each path + controller + component_name
-          paths_searched << "#{path.name + '::' unless path == Module}#{controller}::#{component_name}"
-          component = "#{controller}::#{component_name}".split("::").inject(path) { |scope, next_const| scope.const_get(next_const, false) } rescue nil
-          return present component, render_params if component && component.method_defined?(:render)
+          # try each path + params.controller + params.component_name
+          paths_searched << "#{path.name + '::' unless path == Module}#{params.controller}::#{params.component_name}"
+          component = "#{params.controller}::#{params.component_name}".split("::").inject(path) { |scope, next_const| scope.const_get(next_const, false) } rescue nil
+          return present component, params.render_params if component && component.method_defined?(:render)
         end
         self.class.search_path.each do |path|
-          # then try each path + component_name
-          paths_searched << "#{path.name + '::' unless path == Module}#{component_name}"
-          component = "#{component_name}".split("::").inject(path) { |scope, next_const| scope.const_get(next_const, false) } rescue nil
-          return present component, render_params if component && component.method_defined?(:render)
+          # then try each path + params.component_name
+          paths_searched << "#{path.name + '::' unless path == Module}#{params.component_name}"
+          component = "#{params.component_name}".split("::").inject(path) { |scope, next_const| scope.const_get(next_const, false) } rescue nil
+          return present component, params.render_params if component && component.method_defined?(:render)
         end
       end
-      raise "Could not find component class '#{component_name}' for controller '#{controller}' in any component directory. Tried [#{paths_searched.join(", ")}]"
+      raise "Could not find component class '#{params.component_name}' for params.controller '#{params.controller}' in any component directory. Tried [#{paths_searched.join(", ")}]"
     end
   end
 end

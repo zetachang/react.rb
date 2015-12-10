@@ -18,8 +18,17 @@ module React
         raise e if reraise
       end
 
+      def deprecation_warning(message)
+        @deprecation_messages ||= []
+        message = "Warning: Deprecated feature used in #{self.name}. #{message}"
+        unless @deprecation_messages.include? message
+          @deprecation_messages << message
+          IsomorphicHelpers.log message, :warning
+        end
+      end
+
       def validator
-        @validator ||= React::Validator.new
+        @validator ||= Validator.new(props_wrapper)
       end
 
       def prop_types
@@ -46,51 +55,26 @@ module React
         validator.build(&block)
       end
 
-      def define_param_method(name, param_type)
-        if param_type == React::Observable
-          (@two_way_params ||= []) << name
-          define_method("#{name}") do
-            params[name].instance_variable_get("@value") if params[name]
-          end
-          define_method("#{name}!") do |*args|
-            return unless params[name]
-            if args.count > 0
-              current_value = params[name].instance_variable_get("@value")
-              params[name].call args[0]
-              current_value
-            else
-              current_value = params[name].instance_variable_get("@value")
-              params[name].call current_value unless @dont_update_state rescue nil # rescue in case we in middle of render
-              params[name]
-            end
-          end
-        elsif param_type == Proc
-          define_method("#{name}") do |*args, &block|
-            params[name].call(*args, &block) if params[name]
-          end
+      def props_wrapper
+        @props_wrapper ||= Class.new(PropsWrapper)
+      end
+
+      def param(*args)
+        if args[0].is_a? Hash
+          options = args[0]
+          name = options.first[0]
+          default = options.first[1]
+          options.delete(name)
+          options.merge!({default: default})
         else
-          define_method("#{name}") do
-            @processed_params[name] ||= if param_type.respond_to? :_react_param_conversion
-                                          param_type._react_param_conversion params[name]
-                                        elsif param_type.is_a?(Array) && param_type[0].respond_to?(:_react_param_conversion)
-                                          params[name].collect { |param| param_type[0]._react_param_conversion param }
-                                        else
-                                          params[name]
-                                        end
-          end
+          name = args[0]
+          options = args[1] || {}
         end
-      end
-
-      def required_param(name, options = {})
-        validator.requires(name, options)
-        define_param_method(name, options[:type])
-      end
-
-      alias_method :require_param, :required_param
-
-      def optional_param(name, options = {})
-        validator.optional(name, options)
-        define_param_method(name, options[:type]) unless name == :params
+        if options[:default]
+          validator.optional(name, options)
+        else
+          validator.requires(name, options)
+        end
       end
 
       def collect_other_params_as(name)
@@ -114,7 +98,7 @@ module React
         default_initial_value = (block && block.arity == 0) ? yield : nil
         states_hash = (states.last.is_a?(Hash)) ? states.pop : {}
         states.each { |name| states_hash[name] = default_initial_value }
-        React::State.initialize_states(self, states_hash)
+        State.initialize_states(self, states_hash)
         states_hash.each do |name, initial_value|
           define_state_methods(self, name, self, &block)
           define_state_methods(singleton_class, name, self, &block)
@@ -123,26 +107,28 @@ module React
 
       def define_state_methods(this, name, from = nil, &block)
         this.define_method("#{name}") do
-          React::State.get_state(from || self, name)
+          self.class.deprecation_warning "Direct access to state `#{name}`.  Use `state.#{name}` instead." if from.nil? || from == this
+          State.get_state(from || self, name)
         end
         this.define_method("#{name}=") do |new_state|
-          yield name, React::State.get_state(from || self, name), new_state if block && block.arity > 0
-          React::State.set_state(from || self, name, new_state)
+          self.class.deprecation_warning "Direct assignment to state `#{name}`.  Use `#{(from && from != this) ? from : 'state'}.#{name}!` instead."
+          yield name, State.get_state(from || self, name), new_state if block && block.arity > 0
+          State.set_state(from || self, name, new_state)
         end
         this.define_method("#{name}!") do |*args|
-          #return unless @native
+          self.class.deprecation_warning "Direct access to state `#{name}`.  Use `state.#{name}` instead."  if from.nil? or from == this
           if args.count > 0
-            yield name, React::State.get_state(from || self, name), args[0] if block && block.arity > 0
-            current_value = React::State.get_state(from || self, name)
-            React::State.set_state(from || self, name, args[0])
+            yield name, State.get_state(from || self, name), args[0] if block && block.arity > 0
+            current_value = State.get_state(from || self, name)
+            State.set_state(from || self, name, args[0])
             current_value
           else
-            current_state = React::State.get_state(from || self, name)
-            yield name, React::State.get_state(from || self, name), current_state if block && block.arity > 0
-            React::State.set_state(from || self, name, current_state)
-            React::Observable.new(current_state) do |update|
-              yield name, React::State.get_state(from || self, name), update if block && block.arity > 0
-              React::State.set_state(from || self, name, update)
+            current_state = State.get_state(from || self, name)
+            yield name, State.get_state(from || self, name), current_state if block && block.arity > 0
+            State.set_state(from || self, name, current_state)
+            Observable.new(current_state) do |update|
+              yield name, State.get_state(from || self, name), update if block && block.arity > 0
+              State.set_state(from || self, name, update)
             end
           end
         end

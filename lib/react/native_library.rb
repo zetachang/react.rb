@@ -34,11 +34,7 @@ module React
       unless name = const_get(name)
         return super
       end
-      if node_only
-        React::RenderingContext.build { React::RenderingContext.render(name, *args, &block) }.to_n
-      else
-        React::RenderingContext.render(name, *args, &block)
-      end
+      React::RenderingContext.build_or_render(node_only, name, *args, &block)
     rescue
     end
 

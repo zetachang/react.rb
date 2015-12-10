@@ -4,6 +4,14 @@ module React
       attr_accessor :waiting_on_resources
     end
 
+    def self.build_or_render(node_only, name, *args, &block)
+      if node_only
+        React::RenderingContext.build { React::RenderingContext.render(name, *args, &block) }.to_n
+      else
+        React::RenderingContext.render(name, *args, &block)
+      end
+    end
+
     def self.render(name, *args, &block)
       remove_nodes_from_args(args)
       @buffer = [] unless @buffer

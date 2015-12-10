@@ -1,4 +1,37 @@
 module React
+  class StateWrapper < BasicObject
+    def initialize(native, from)
+      @state_hash = Hash.new(`#{native}.state`)
+      @from = from
+    end
+
+    def [](state)
+      @state_hash[state]
+    end
+
+    def []=(state, new_value)
+      @state_hash[state] = new_value
+    end
+
+    def method_missing(method, *args)
+      if match = method.match(/^(.+)\!$/)
+        if args.count > 0
+          current_value = State.get_state(@from, match[1])
+          State.set_state(@from, $1, args[0])
+          current_value
+        else
+          current_state = State.get_state(@from, match[1])
+          State.set_state(@from, $1, current_state)
+          Observable.new(current_state) do |update|
+            State.set_state(@from, $1, update)
+          end
+        end
+      else
+        State.get_state(@from, method)
+      end
+    end
+  end
+
   class State
     class << self
       attr_reader :current_observer
@@ -80,14 +113,10 @@ module React
           @nesting_level = (@nesting_level || 0) + 1
           start_time = Time.now.to_f
           observer_name = (observer.class.respond_to?(:name) ? observer.class.name : observer.to_s) rescue "object:#{observer.object_id}"
-          puts "#{'  ' * @nesting_level} Timing #{observer_name} Execution"
         end
         saved_current_observer = @current_observer
         @current_observer = observer
         return_value = yield
-        if `typeof window.reactive_ruby_timing !== 'undefined'`
-          puts "#{'  ' * @nesting_level} Timing #{observer_name} Completed in #{'%.04f' % (Time.now.to_f-start_time)} seconds"
-        end
         return_value
       ensure
         @current_observer = saved_current_observer
@@ -99,17 +128,13 @@ module React
         @states ||= Hash.new { |h, k| h[k] = {} }
       end
 
-      def new_observers
-        @new_observers ||= Hash.new { |h, k| h[k] = Hash.new { |h, k| h[k] = [] } }
+      [:new_observers, :current_observers, :observers_by_name].each do |method_name|
+        define_method(method_name) do
+          instance_variable_get("@#{method_name}") or
+          instance_variable_set("@#{method_name}", Hash.new { |h, k| h[k] = Hash.new { |h, k| h[k] = [] } })
+        end
       end
 
-      def current_observers
-        @current_observers ||= Hash.new { |h, k| h[k] = Hash.new { |h, k| h[k] = [] } }
-      end
-
-      def observers_by_name
-        @observers_by_name ||= Hash.new { |h, k| h[k] = Hash.new { |h, k| h[k] = [] } }
-      end
     end
   end
 end
