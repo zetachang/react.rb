@@ -187,6 +187,7 @@ DEPENDENCIES
   sinatra
   sqlite3
   therubyracer
+  therubyrhino
   timecop
 
 BUNDLED WITH
