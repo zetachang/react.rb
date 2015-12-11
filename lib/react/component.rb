@@ -27,7 +27,9 @@ module React
       base.extend(ClassMethods)
 
       if base.name
-        parent = base.name.split("::").inject([Module]) { |nesting, next_const| nesting + [nesting.last.const_get(next_const)] }[-2]
+        parent = base.name.split("::").inject([Module]) { |nesting, next_const|
+          nesting + [nesting.last.const_get(next_const)]
+        }[-2]
 
         class << parent
           def method_missing(n, *args, &block)
@@ -59,7 +61,8 @@ module React
     end unless method_defined?(:render)
 
     def deprecated_params_method(name, *args, &block)
-      self.class.deprecation_warning "Direct access to param `#{name}`.  Use `params.#{name}` instead."
+      notice = "Direct access to param `#{name}`. Use `params.#{name}` instead."
+      self.class.deprecation_warning(notice)
       params.send(name, *args, &block)
     end
 
@@ -108,13 +111,13 @@ module React
     end
 
     def state
-      #raise "No native ReactComponent associated" unless @native
       @state_wrapper ||= StateWrapper.new(@native, self)
     end
 
     def update_react_js_state(object, name, value)
       if object
-        set_state({"***_state_updated_at-***" => Time.now.to_f, "#{object.class.to_s+'.' unless object == self}#{name}" => value})
+        set_state({"***_state_updated_at-***" => Time.now.to_f,
+                   "#{object.class.to_s+'.' unless object == self}#{name}" => value})
       else
         set_state({name => value})
       end rescue nil
@@ -128,7 +131,9 @@ module React
       IsomorphicHelpers.load_context(true) if IsomorphicHelpers.on_opal_client?
       set_state! initial_state if initial_state
       State.initialize_states(self, initial_state)
-      State.set_state_context_to(self) { self.run_callback(:before_mount) }
+      State.set_state_context_to(self) do
+        self.run_callback(:before_mount)
+      end
     rescue Exception => e
       self.class.process_exception(e, self)
     end
@@ -143,9 +148,12 @@ module React
     end
 
     def component_will_receive_props(next_props)
-      # need to rethink how this works in opal-react, or if its actually that useful within the react.rb environment
-      # for now we are just using it to clear processed_params
-      State.set_state_context_to(self) { self.run_callback(:before_receive_props, Hash.new(next_props)) }
+      # need to rethink how this works in opal-react, or if its actually that
+      # useful within the react.rb environment for now we are just using it to
+      # clear processed_params
+      State.set_state_context_to(self) do
+        self.run_callback(:before_receive_props, Hash.new(next_props))
+      end
     rescue Exception => e
       self.class.process_exception(e, self)
     end
@@ -177,7 +185,9 @@ module React
     end
 
     def component_will_update(next_props, next_state)
-      State.set_state_context_to(self) { self.run_callback(:before_update, Hash.new(next_props), Hash.new(next_state)) }
+      State.set_state_context_to(self) do
+        self.run_callback(:before_update, next_props, Hash.new(next_state))
+      end
     rescue Exception => e
       self.class.process_exception(e, self)
     end
@@ -210,7 +220,9 @@ module React
 
     def component?(name)
       name_list = name.split("::")
-      scope_list = self.class.name.split("::").inject([Module]) { |nesting, next_const| nesting + [nesting.last.const_get(next_const)] }.reverse
+      scope_list = self.class.name.split("::").inject([Module]) do |nesting, next_const|
+        nesting + [nesting.last.const_get(next_const)]
+      end.reverse
       scope_list.each do |scope|
         component = name_list.inject(scope) do |scope, class_name|
           scope.const_get(class_name)
@@ -221,7 +233,9 @@ module React
     end
 
     def method_missing(n, *args, &block)
-      return props[n] if props.key? n # TODO deprecate and remove - done so that params shadow tags, no longer needed
+      # TODO deprecate and remove - done so that params shadow tags, no longer
+      # needed
+      return props[n] if props.key?(n)
       name = n
       if name =~ /_as_node$/
         node_only = true
@@ -254,7 +268,11 @@ module React
 
     def _render_wrapper
       State.set_state_context_to(self) do
-        RenderingContext.render(nil) {render || ""}.tap { |element| @waiting_on_resources = element.waiting_on_resources if element.respond_to? :waiting_on_resources }
+        RenderingContext.render(nil) {render || ""}.tap do |element|
+          if element.respond_to?(:waiting_on_resources)
+            @waiting_on_resources = element.waiting_on_resources
+          end
+        end
       end
     rescue Exception => e
       self.class.process_exception(e, self)
