@@ -30,3 +30,4 @@ node_modules
 .bundle
 
 spec/test_app
+Gemfile.lock

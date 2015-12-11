@@ -1,15 +1,13 @@
-<% if defined? application_definition %>
+<% if defined? application_definition -%>
+require File.expand_path('../boot', __FILE__) 
+require 'rails/all'
 
-  require File.expand_path('../boot', __FILE__)
+# Require the gems listed in Gemfile, including any gems
+# you've limited to :test, :development, or :production.
+Bundler.require(*Rails.groups(assets: %w(development test)))
 
-  require 'rails/all'
+require 'opal-rails'
+require 'reactive-ruby'
 
-  # Require the gems listed in Gemfile, including any gems
-  # you've limited to :test, :development, or :production.
-  Bundler.require(*Rails.groups(assets: %w(development test)))
-
-  require 'reactive-ruby'
-
-  <%= application_definition %>
-
-<% end %>
+<%= application_definition %>
+<% end -%>
