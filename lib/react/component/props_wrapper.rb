@@ -1,7 +1,7 @@
 module React
   module Component
     class PropsWrapper
-      attr_reader :props
+      attr_reader :owner
 
       def self.define_param(name, param_type)
         if param_type == Observable
@@ -41,8 +41,8 @@ module React
         end
       end
 
-      def initialize(props)
-        @props = props || {}
+      def initialize(owner)
+        @owner = owner
       end
 
       def [](prop)
@@ -50,6 +50,10 @@ module React
       end
 
       private
+
+      def props
+        owner.props
+      end
 
       def value_for(name)
         self[name].instance_variable_get("@value") if self[name]
