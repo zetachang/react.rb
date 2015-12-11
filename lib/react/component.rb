@@ -60,12 +60,6 @@ module React
       raise "no render defined"
     end unless method_defined?(:render)
 
-    def deprecated_params_method(name, *args, &block)
-      notice = "Direct access to param `#{name}`. Use `params.#{name}` instead."
-      self.class.deprecation_warning(notice)
-      params.send(name, *args, &block)
-    end
-
     def children
       nodes = [`#{@native}.props.children`].flatten
       class << nodes
