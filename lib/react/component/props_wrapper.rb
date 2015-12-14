@@ -4,7 +4,7 @@ module React
       attr_reader :props
 
       def self.define_param(name, param_type, owner)
-        owner.define_method("#{name}") do
+        owner.define_method("#{name}") do |*args, &block|
           deprecated_params_method("#{name}", *args, &block)
         end
         if param_type == Observable

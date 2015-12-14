@@ -2,6 +2,20 @@ require 'spec_helper'
 
 if opal?
 describe 'the param macro' do
+  it 'still defines deprecated param accessor method' do
+    stub_const 'Foo', Class.new(React::Component::Base)
+    Foo.class_eval do
+      param :foo
+
+      def render
+        div { foo }
+      end
+    end
+
+    html = React.render_to_static_markup(React.create_element(Foo, {foo: :bar}))
+    expect(html).to eq('<div>bar</div>')
+  end
+
   it "can create and access a required param" do
     stub_const 'Foo', Class.new(React::Component::Base)
     Foo.class_eval do
