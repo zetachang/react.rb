@@ -79,10 +79,6 @@ module React
 
       def collect_other_params_as(name)
         validator.allow_undefined_props = true
-        define_method(name) do
-          @_all_others ||= self.class.validator.undefined_props(props)
-        end
-
         validator_in_lexial_scope = validator
         props_wrapper.define_method(name) do
           @_all_others ||= validator_in_lexial_scope.undefined_props(props)
