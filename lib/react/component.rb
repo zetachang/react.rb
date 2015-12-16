@@ -153,7 +153,7 @@ module React
 
     def component_will_update(next_props, next_state)
       State.set_state_context_to(self) do
-        self.run_callback(:before_update, next_props, Hash.new(next_state))
+        self.run_callback(:before_update, Hash.new(next_props), Hash.new(next_state))
       end
     rescue Exception => e
       self.class.process_exception(e, self)
