@@ -47,7 +47,7 @@ module React
             unless name && name.method_defined?(:render)
               return super
             end
-            RenderingContext.build_or_render(node_only, name, *args, &block)
+            React::RenderingContext.build_or_render(node_only, name, *args, &block)
           end
         end
       end
@@ -220,7 +220,7 @@ module React
         name = "p"
       end
 
-      RenderingContext.build_or_render(node_only, name, *args, &block)
+      React::RenderingContext.build_or_render(node_only, name, *args, &block)
     end
 
     def watch(value, &on_change)
@@ -235,7 +235,7 @@ module React
 
     def _render_wrapper
       State.set_state_context_to(self) do
-        RenderingContext.render(nil) {render || ""}.tap do |element|
+        React::RenderingContext.render(nil) {render || ""}.tap do |element|
           if element.respond_to?(:waiting_on_resources)
             @waiting_on_resources = element.waiting_on_resources
           end
