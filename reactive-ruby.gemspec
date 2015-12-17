@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.author       = 'David Chang'
   s.email        = 'zeta11235813@gmail.com'
-  s.homepage     = 'https://reactive-ruby.github.io'
+  s.homepage     = 'https://reactrb.org'
   s.summary      = 'Opal Ruby wrapper of React.js library.'
   s.license      = 'MIT'
   s.description  = "Write React UI components in pure Ruby."

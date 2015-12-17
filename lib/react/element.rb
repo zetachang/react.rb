@@ -60,18 +60,18 @@ module React
       new_props = properties.dup
       new_props["class"] = "#{new_props['class']} #{class_name} #{args.delete("class")} #{args.delete('className')}".split(" ").uniq.join(" ")
       new_props.merge! args
-      RenderingContext.replace(
+      React::RenderingContext.replace(
         self,
         React::RenderingContext.build { React::RenderingContext.render(type, new_props, &new_block) }
       )
     end
 
     def as_node
-      RenderingContext.as_node(self)
+      React::RenderingContext.as_node(self)
     end
 
     def delete
-      RenderingContext.delete(self)
+      React::RenderingContext.delete(self)
     end
   end
 end
