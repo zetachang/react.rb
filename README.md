@@ -13,15 +13,15 @@ and true React.js engine. :heart:
 
 [**Visit reactrb.org For The Full Story**](https://reactrb.org)
 
-### Important current react.rb gem users please [read this!](#Road-Map)
+### Important: current react.rb gem users please [read this!](#road-map)
 
 ## Installation 
 
 Install the gem, or load the js library
 
-+ add gem 'reactive-ruby' to your gem file or
-+ gem install reactive-ruby or
-+ install or load via cdn [inline-reactive-ruby](https://github.com/reactive-ruby/inline-reactive-ruby)
++ add `gem 'reactive-ruby'` to your gem file or
++ `gem install reactive-ruby` or
++ install (or load via cdn) [inline-reactive-ruby.js](https://github.com/reactive-ruby/inline-reactive-ruby)
 
 For gem installation its highly recommended to read [the getting started section at reactrb.org](http://reactrb.org/docs/getting-started.html)
 
@@ -29,11 +29,11 @@ For gem installation its highly recommended to read [the getting started section
 
 React.rb components are ruby classes that inherit from `React::Component::Base` or include `React::Component`.
 
-`React::Component` provides a complete DSL to generate html, and event handlers, and has full set of class macros to define states, parameters, and lifecycle callbacks.
+`React::Component` provides a complete DSL to generate html and event handlers, and has full set of class macros to define states, parameters, and lifecycle callbacks.
 
 Each react component class has a render method that generates the markup for that component.
 
-Each react component class defines a new **tag** in the DSL that works just like built-in html tags, so react components can render other react components.
+Each react component class defines a new tag-method in the DSL that works just like built-in html tags, so react components can render other react components.
 
 As events occur, components update their state, which causes them to rerender, and perhaps pass new parameters to lower level components, thus causing them to rerender.  
 
@@ -50,14 +50,14 @@ React.rb integrates well with Rails, Sinatra, and simple static sites, and can b
 + *Ruby Goodness:* Use all the features of Ruby to create reusable, maintainable UI code
 + *React Simplicity:* Nothing is taken away from the React.js model
 + *Enhanced Features:* Enhanced parameter and state management and other new features
-+ *Plays well with Others:* Works with other frameworks, Rails, Sinatra or in static web pages
++ *Plays well with Others:* Works with other frameworks, existing React.js components, Rails, Sinatra or in static web pages
 
 # Problems, Questions, Issues
 
 + [Stack Overflow](http://stackoverflow.com/questions/tagged/react.rb) tag `react.rb` for specific problems.
 + [Gitter.im](https://gitter.im/zetachang/react.rb) for general questions, discussion, and interactive help.
 + [Github Issues](https://github.com/zetachang/react.rb/issues) for bugs, feature enhancements, etc.
-+ 
+
 
 # Road Map
 
