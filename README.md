@@ -60,7 +60,7 @@ In your Gemfile:
 ```ruby
 gem 'reactive-ruby'
 gem 'react-rails', '~> 1.3.2'
-gem 'opal-rails'
+gem 'opal-rails', '~> 0.8.1'
 gem 'therubyracer', platforms: :ruby # Required for prerendering
 # for JRuby you need the below line instead
 # gem 'therubyrhino, platforms: :jruby
