@@ -75,30 +75,30 @@ Please let us know either at [Gitter.im](https://gitter.im/zetachang/react.rb) o
 
 ## Developing
 
-1. fork and `git clone` the project
+`git clone` the project.
 
 To play with some live examples cd to the project directory then 
 
 2. `cd example/examples`
 2. `bundle install`
 3. `bundle exec rackup`
-4. Open `http://localhos:9292t`
+4. Open `http://localhos:9292`
 
 or 
 
-1. 'cd example/rails-tutorial`
+1. `cd example/rails-tutorial`
 2. `bundle install`
 3. `bundle exec rails s`
 4. Open `http://localhost:3000`
 
 or
 
-1. 'cd example/sinatra-tutorial`
+1. `cd example/sinatra-tutorial`
 2. `bundle install`
 3. `bundle exec rackup`
 4. Open `http://localhost:9292`
 
-Note that these are very simple examples, for the purpose of showing how to configure the gem in various server environments.  For more complete examples and information see [reactrb.org.](http://reactrb.org)
+Note that these are very simple examples, for the purpose of showing how to configure the gem in various server environments.  For more  examples and information see [reactrb.org.](http://reactrb.org)
 
 ## Testing
 
@@ -107,9 +107,8 @@ Note that these are very simple examples, for the purpose of showing how to conf
 
 ## Contributions
 
-This project is still in early stage, so discussion, bug report and PR are
-really welcome :wink:.  We check in often at
-https://gitter.im/zetachang/react.rb 
+This project is still in early stage, so discussion, bug reports and PRs are
+really welcome :wink:.   
 
 
 ## License
