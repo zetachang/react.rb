@@ -23,7 +23,7 @@ Install the gem, or load the js library
 + `gem install reactive-ruby` or
 + install (or load via cdn) [inline-reactive-ruby.js](https://github.com/reactive-ruby/inline-reactive-ruby)
 
-For gem installation its highly recommended to read [the getting started section at reactrb.org](http://reactrb.org/docs/getting-started.html)
+For gem installation it is highly recommended to read [the getting started section at reactrb.org](http://reactrb.org/docs/getting-started.html)
 
 ## Quick Overview
 
@@ -50,7 +50,7 @@ React.rb integrates well with Rails, Sinatra, and simple static sites, and can b
 + *Ruby Goodness:* Use all the features of Ruby to create reusable, maintainable UI code
 + *React Simplicity:* Nothing is taken away from the React.js model
 + *Enhanced Features:* Enhanced parameter and state management and other new features
-+ *Plays well with Others:* Works with other frameworks, existing React.js components, Rails, Sinatra or in static web pages
++ *Plays well with Others:* Works with other frameworks, React.js components, Rails, Sinatra and static web pages
 
 # Problems, Questions, Issues
 
@@ -63,13 +63,13 @@ React.rb integrates well with Rails, Sinatra, and simple static sites, and can b
 
 The original react.rb gem is still available as the [0-3-stable branch.](https://github.com/zetachang/react.rb/tree/0-3-stable)
 
-Many new features, bug fixes, and improvements are incoporated in the reactive-ruby.gem built currently on the [0-7-stable branch.](https://github.com/zetachang/react.rb/tree/0-7-stable)
+Many new features, bug fixes, and improvements are incoporated in the reactive-ruby.gem currently built on the [0-7-stable branch.](https://github.com/zetachang/react.rb/tree/0-7-stable)  In addtion more extensive documentation for the current stable branch  is available at [reactrb.org](http://reactrb.org), and the [Opal Ruby Playground](http://fkchang.github.io/opal-playground/?code:&html_code=%3Cdiv%20id%3D%22container%22%3E%3C%2Fdiv%3E%0A&css_code=body%20%7B%0A%20%20background%3A%20%23eeeeee%3B%0A%7D%0A) incorporates the current stable branch.
 
-Our plan is to do one more upgrade on the reactive-ruby gem which will be designated version 0.8.0.
+Our plan is to do one more upgrade on the reactive-ruby gem which will be designated version 0.8.0 (click for detailed feature list)[https://github.com/zetachang/react.rb/milestones/0.8.x]
 
-From 0.9.0 and beyond we will return to using the react.rb gem for releases, and reactive-ruby will be a meta gem that depends only on react.rb >= 0.9.x.
+From 0.9.0 and beyond we will return to using the `react.rb` gem for releases, and `reactive-ruby` will be a meta gem that depends only on react.rb >= 0.9.x.
 
-Version 0.9.0 of react.rb will **not** be 100% backward compatible with 0.3.0 so its very important to begin your upgrade process now by upgrading to 0.7.0.
+Versions >= 0.7.0 of `react.rb` **are not** 100% backward compatible with 0.3.0 so its very important to begin your upgrade process now by switching to 0.7.0.
 
 Please let us know either at [Gitter.im](https://gitter.im/zetachang/react.rb) or [via an issue](https://github.com/zetachang/react.rb/issues) if you have specific concerns with the upgrade from 0.3.0 to 0.9.0.
 
