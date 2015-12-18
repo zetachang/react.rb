@@ -687,23 +687,17 @@ describe React::Component do
       end
     end
 
-    it 'returns an Enumerable' do
+    it 'returns React::Children collection with child elements' do
       ele = React.create_element(Foo) {
         [React.create_element('a'), React.create_element('li')]
       }
       renderElementToDocument(ele)
-      nodes = Foo.the_children.map { |ele| ele.element_type }
-      expect(nodes).to eq(['a', 'li'])
-    end
 
-    it 'returns an Enumerator when not providing a block' do
-      ele = React.create_element(Foo) {
-        [React.create_element('a'), React.create_element('li')]
-      }
-      renderElementToDocument(ele)
-      nodes = Foo.the_children.each
-      expect(nodes).to be_a(Enumerator)
-      expect(nodes.size).to eq(2)
+      children = Foo.the_children
+
+      expect(children).to be_a(React::Children)
+      expect(children.size).to eq(2)
+      expect(children.map(&:element_type)).to eq(['a', 'li'])
     end
   end
 end

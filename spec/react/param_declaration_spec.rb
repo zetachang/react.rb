@@ -2,18 +2,19 @@ require 'spec_helper'
 
 if opal?
 describe 'the param macro' do
-  it 'still defines deprecated param accessor method' do
+
+  it 'defines collect_other_params_as method on params proxy' do
     stub_const 'Foo', Class.new(React::Component::Base)
     Foo.class_eval do
-      param :foo
+      collect_other_params_as :foo
 
       def render
-        div { foo }
+        div { params.foo[:bar] }
       end
     end
 
-    html = React.render_to_static_markup(React.create_element(Foo, {foo: :bar}))
-    expect(html).to eq('<div>bar</div>')
+    html = React.render_to_static_markup(React.create_element(Foo,  { bar: 'biz' }))
+    expect(html).to eq('<div>biz</div>')
   end
 
   it "can create and access a required param" do

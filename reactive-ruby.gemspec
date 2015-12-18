@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.author       = 'David Chang'
   s.email        = 'zeta11235813@gmail.com'
-  s.homepage     = 'https://reactive-ruby.github.io'
+  s.homepage     = 'https://reactrb.org'
   s.summary      = 'Opal Ruby wrapper of React.js library.'
   s.license      = 'MIT'
   s.description  = "Write React UI components in pure Ruby."
@@ -32,7 +32,7 @@ Gem::Specification.new do |s|
   # For Test Rails App
   s.add_development_dependency 'rails', '4.2.4'
   s.add_development_dependency 'react-rails', '1.3.1'
-  s.add_development_dependency 'opal-rails', '0.8.0'
+  s.add_development_dependency 'opal-rails', '0.8.1'
   if RUBY_PLATFORM == 'java'
     s.add_development_dependency 'jdbc-sqlite3'
     s.add_development_dependency 'activerecord-jdbcsqlite3-adapter'

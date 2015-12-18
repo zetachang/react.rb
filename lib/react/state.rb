@@ -36,17 +36,23 @@ module React
     class << self
       attr_reader :current_observer
 
-      def initialize_states(object, initial_values) # initialize objects' name/value pairs
+      def initialize_states(object, initial_values)
+        # initialize objects' name/value pairs
         states[object].merge!(initial_values || {})
       end
 
       def get_state(object, name, current_observer = @current_observer)
-        # get current value of name for object, remember that the current object depends on this state, current observer can be overriden with last param
-        new_observers[current_observer][object] << name if current_observer && !new_observers[current_observer][object].include?(name)
+        # get current value of name for object, remember that the current object
+        # depends on this state, current observer can be overriden with last
+        # param
+        new_observers[current_observer][object] << name if current_observer &&
+          !new_observers[current_observer][object].include?(name)
         states[object][name]
       end
 
-      def set_state2(object, name, value)  # set object's name state to value, tell all observers it has changed.  Observers must implement update_react_js_state
+      def set_state2(object, name, value)
+        # set object's name state to value, tell all observers it has changed.
+        # Observers must implement update_react_js_state
         object_needs_notification = object.respond_to? :update_react_js_state
         observers_by_name[object][name].dup.each do |observer|
           observer.update_react_js_state(object, name, value)
@@ -82,7 +88,9 @@ module React
         current_observer && observers_by_name[object][name].include?(current_observer)
       end
 
-      def update_states_to_observe(current_observer = @current_observer)  # should be called after the last after_render callback, currently called after components render method
+      # should be called after the last after_render callback, currently called
+      # after components render method
+      def update_states_to_observe(current_observer = @current_observer)
         raise "update_states_to_observer called outside of watch block" unless current_observer
         current_observers[current_observer].each do |object, names|
           names.each do |name|
@@ -108,7 +116,9 @@ module React
         current_observers.delete(@current_observer)
       end
 
-      def set_state_context_to(observer) # wrap all execution that may set or get states in a block so we know which observer is executing
+      # wrap all execution that may set or get states in a block so we know
+      # which observer is executing
+      def set_state_context_to(observer)
         if `typeof window.reactive_ruby_timing !== 'undefined'`
           @nesting_level = (@nesting_level || 0) + 1
           start_time = Time.now.to_f
@@ -120,7 +130,9 @@ module React
         return_value
       ensure
         @current_observer = saved_current_observer
-        @nesting_level = [0, @nesting_level - 1].max if `typeof window.reactive_ruby_timing !== 'undefined'`
+        if `typeof window.reactive_ruby_timing !== 'undefined'`
+          @nesting_level = [0, @nesting_level - 1].max
+        end
         return_value
       end
 
@@ -134,7 +146,6 @@ module React
           instance_variable_set("@#{method_name}", Hash.new { |h, k| h[k] = Hash.new { |h, k| h[k] = [] } })
         end
       end
-
     end
   end
 end

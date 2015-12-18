@@ -28,7 +28,7 @@ module React
       end
 
       def validator
-        @validator ||= Validator.new(self)
+        @validator ||= Validator.new(props_wrapper)
       end
 
       def prop_types
@@ -59,10 +59,6 @@ module React
         @props_wrapper ||= Class.new(PropsWrapper)
       end
 
-      def define_param(name, param_type)
-        props_wrapper.define_param(name, param_type, self)
-      end
-
       def param(*args)
         if args[0].is_a? Hash
           options = args[0]
@@ -81,22 +77,11 @@ module React
         end
       end
 
-      def required_param(name, options = {})
-        deprecation_warning "`required_param` is deprecated, use `param` instead."
-        validator.requires(name, options)
-      end
-
-      alias_method :require_param, :required_param
-
-      def optional_param(name, options = {})
-        deprecation_warning "`optional_param` is deprecated, use `param param_name: default_value` instead."
-        validator.optional(name, options)
-      end
-
       def collect_other_params_as(name)
         validator.allow_undefined_props = true
-        define_method(name) do
-          @_all_others ||= self.class.validator.undefined_props(props)
+        validator_in_lexical_scope = validator
+        props_wrapper.define_method(name) do
+          @_all_others ||= validator_in_lexical_scope.undefined_props(props)
         end
       end
 

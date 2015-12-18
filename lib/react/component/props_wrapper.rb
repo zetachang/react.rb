@@ -1,16 +1,10 @@
 module React
   module Component
     class PropsWrapper
-      attr_reader :props
+      attr_reader :component
 
-      def self.define_param(name, param_type, owner)
-        owner.define_method("#{name}") do |*args, &block|
-          deprecated_params_method("#{name}", *args, &block)
-        end
+      def self.define_param(name, param_type)
         if param_type == Observable
-          owner.define_method("#{name}!") do |*args|
-            deprecated_params_method("#{name}!", *args)
-          end
           define_method("#{name}") do
             value_for(name)
           end
@@ -47,8 +41,8 @@ module React
         end
       end
 
-      def initialize(props)
-        @props = props || {}
+      def initialize(component)
+        @component = component
       end
 
       def [](prop)
@@ -56,6 +50,10 @@ module React
       end
 
       private
+
+      def props
+        component.props
+      end
 
       def value_for(name)
         self[name].instance_variable_get("@value") if self[name]
