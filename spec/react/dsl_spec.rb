@@ -134,5 +134,28 @@ describe 'the React DSL' do
 
     expect(React.render_to_static_markup(React.create_element(Foo))).to eq('<div>Hello&nbsp;&nbsp;Goodby</div>')
   end
+
+  it "will remove all elements passed as params from the rendering buffer" do
+    stub_const 'X2', Class.new
+    X2.class_eval do
+      include React::Component
+      param :ele
+      def render
+        div do
+          ele.render
+          ele.render
+        end
+      end
+    end
+    stub_const 'Test', Class.new
+    Test.class_eval do
+      include React::Component
+      def render
+        X2(ele: b { "hello" })
+      end
+    end
+
+    expect(React.render_to_static_markup(React.create_element(Test))).to eq('<div><b>hello</b><b>hello</b></div>')
+  end
 end
 end
