@@ -16,6 +16,8 @@ Visit the [master](https://github.com/zetachang/react.rb) branch for the most
 current development version. This version has a large number of fixes, and
 improvements that are worth investigating.
 
+Note that in the near future we will be releasing react.rb v0.9.0 which will not be backwards compatible with this version.  [Details Here](https://github.com/zetachang/react.rb#road-map)
+
 ## Installation
 
 ```ruby
