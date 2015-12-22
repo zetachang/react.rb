@@ -11,7 +11,7 @@
 It lets you write reactive UI components, with Ruby's elegance using the tried
 and true React.js engine. :heart:
 
-[**Visit reactrb.org For The Full Story**](https://reactrb.org)
+[**Visit reactrb.org For The Full Story**](http://reactrb.org)
 
 ### Important: current `react.rb` gem users please [read this!](#road-map)
 
@@ -21,7 +21,7 @@ Install the gem, or load the js library
 
 + add `gem 'reactive-ruby'` to your gem file or
 + `gem install reactive-ruby` or
-+ install (or load via cdn) [inline-reactive-ruby.js](https://github.com/reactive-ruby/inline-reactive-ruby)
++ install (or load via cdn) [inline-reactive-ruby.js](http://github.com/reactive-ruby/inline-reactive-ruby)
 
 For gem installation it is highly recommended to read [the getting started section at reactrb.org](http://reactrb.org/docs/getting-started.html)
 
