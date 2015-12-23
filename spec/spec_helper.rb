@@ -13,6 +13,7 @@ end
 
 if RUBY_ENGINE == 'opal'
   require 'reactive-ruby'
+  require 'react/testing/matchers/render_html_matcher'
   require File.expand_path('../support/react/spec_helpers', __FILE__)
 
   module Opal
