@@ -102,7 +102,7 @@ describe React do
           end
         end
 
-        expect(render_to_html(Foo)).to eq("<div>20</div>")
+        expect(Foo).to render("<div>20</div>")
       end
 
       it "should match the instance cycle to ReactComponent life cycle" do

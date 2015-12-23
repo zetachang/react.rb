@@ -2,7 +2,6 @@ require 'spec_helper'
 
 if opal?
 describe 'the React DSL' do
-
   it "will turn the last string in a block into a element" do
     stub_const 'Foo', Class.new
     Foo.class_eval do
@@ -12,7 +11,7 @@ describe 'the React DSL' do
       end
     end
 
-    expect(render_to_html(Foo)).to eq('<div>hello</div>')
+    expect(Foo).to render('<div>hello</div>')
   end
 
   it "has a .span short hand String method" do
@@ -24,7 +23,7 @@ describe 'the React DSL' do
       end
     end
 
-    expect(render_to_html(Foo)).to eq('<div><span>hello</span><span>goodby</span></div>')
+    expect(Foo).to render('<div><span>hello</span><span>goodby</span></div>')
   end
 
   it "has a .br short hand String method" do
@@ -36,7 +35,7 @@ describe 'the React DSL' do
       end
     end
 
-    expect(render_to_html(Foo)).to eq('<div><span>hello<br></span></div>')
+    expect(Foo).to render('<div><span>hello<br></span></div>')
   end
 
   it "has a .td short hand String method" do
@@ -48,7 +47,7 @@ describe 'the React DSL' do
       end
     end
 
-    expect(render_to_html(Foo)).to eq('<table><tr><td>hello</td></tr></table>')
+    expect(Foo).to render('<table><tr><td>hello</td></tr></table>')
   end
 
   it "has a .para short hand String method" do
@@ -60,7 +59,7 @@ describe 'the React DSL' do
       end
     end
 
-    expect(render_to_html(Foo)).to eq('<div><p>hello</p></div>')
+    expect(Foo).to render('<div><p>hello</p></div>')
   end
 
   it "will treat the component class name as a first class component name" do
@@ -78,7 +77,7 @@ describe 'the React DSL' do
       end
     end
 
-    expect(render_to_html(Foo)).to eq('<span>a man walks into a bar</span>')
+    expect(Foo).to render('<span>a man walks into a bar</span>')
   end
 
   it "will treat the component class name as a first class component name" do
@@ -96,7 +95,7 @@ describe 'the React DSL' do
       end
     end
 
-    expect(render_to_html(Foo)).to eq('<span>a man walks into a bar</span>')
+    expect(Foo).to render('<span>a man walks into a bar</span>')
   end
 
   it "can add class names by the haml .class notation" do
@@ -114,7 +113,7 @@ describe 'the React DSL' do
       end
     end
 
-    expect(render_to_html(Foo)).to eq('<span class="the-class">a man walks into a bar</span>')
+    expect(Foo).to render('<span class="the-class">a man walks into a bar</span>')
   end
 
   it "can use the 'class' keyword for classes" do
@@ -126,7 +125,7 @@ describe 'the React DSL' do
       end
     end
 
-    expect(render_to_html(Foo)).to eq('<span class="the-class">hello</span>')
+    expect(Foo).to render('<span class="the-class">hello</span>')
   end
 
   it "can generate a unrendered node using the .as_node method" do          # div { "hello" }.as_node
@@ -138,7 +137,7 @@ describe 'the React DSL' do
       end
     end
 
-    expect(render_to_html(Foo)).to eq('<span>React::Element</span>')
+    expect(Foo).to render('<span>React::Element</span>')
   end
 
   it "can use the dangerously_set_inner_HTML param" do
@@ -150,7 +149,7 @@ describe 'the React DSL' do
       end
     end
 
-    expect(render_to_html(Foo)).to eq('<div>Hello&nbsp;&nbsp;Goodby</div>')
+    expect(Foo).to render('<div>Hello&nbsp;&nbsp;Goodby</div>')
   end
 
   it "will remove all elements passed as params from the rendering buffer" do
@@ -173,7 +172,7 @@ describe 'the React DSL' do
       end
     end
 
-    expect(render_to_html(Test)).to eq('<div><b>hello</b><b>hello</b></div>')
+    expect(Test).to render('<div><b>hello</b><b>hello</b></div>')
   end
 end
 end

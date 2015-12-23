@@ -65,6 +65,7 @@ if RUBY_ENGINE == 'opal'
 
   RSpec.configure do |config|
     config.include React::SpecHelpers
+    config.include React::Testing::Matchers
     config.filter_run_excluding :ruby
   end
 end

@@ -25,8 +25,8 @@ describe React::Component::Base do
         @instance_data.join(" ")
       end
     end
-    expect(render_to_html(Foo)).to eq("<span>working</span>")
-    expect(render_to_html(Bar)).to eq("<span>working well</span>")
+    expect(Foo).to render("<span>working</span>")
+    expect(Bar).to render("<span>working well</span>")
   end
 
 end
