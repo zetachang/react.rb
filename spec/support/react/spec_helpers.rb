@@ -2,6 +2,11 @@ module React
   module SpecHelpers
     `var ReactTestUtils = React.addons.TestUtils`
 
+    def render_to_html(type, options = {})
+      element = React.create_element(type, options)
+      React.render_to_static_markup(element)
+    end
+
     def renderToDocument(type, options = {})
       element = React.create_element(type, options)
       return renderElementToDocument(element)

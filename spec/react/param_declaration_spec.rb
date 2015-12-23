@@ -13,8 +13,7 @@ describe 'the param macro' do
       end
     end
 
-    html = React.render_to_static_markup(React.create_element(Foo,  { bar: 'biz' }))
-    expect(html).to eq('<div>biz</div>')
+    expect(render_to_html(Foo, bar: 'biz')).to eq('<div>biz</div>')
   end
 
   it "can create and access a required param" do
@@ -27,7 +26,7 @@ describe 'the param macro' do
       end
     end
 
-    expect(React.render_to_static_markup(React.create_element(Foo, {foo: :bar}))).to eq('<div>bar</div>')
+    expect(render_to_html(Foo, foo: :bar)).to eq('<div>bar</div>')
   end
 
   it "can create and access an optional params" do
@@ -44,7 +43,7 @@ describe 'the param macro' do
       end
     end
 
-    expect(React.render_to_static_markup(React.create_element(Foo, {foo1: :bar1, foo3: :bar3}))).to eq('<div>bar1-no_bar2-bar3-no_bar4</div>')
+    expect(render_to_html(Foo, foo1: :bar1, foo3: :bar3)).to eq('<div>bar1-no_bar2-bar3-no_bar4</div>')
   end
 
   it 'can specify validation rules with the type option' do
@@ -68,7 +67,7 @@ describe 'the param macro' do
       end
     end
 
-    expect(React.render_to_static_markup(React.create_element(Foo, {foo1: 12, foo2: "string"}))).to eq('<div>12-string</div>')
+    expect(render_to_html(Foo, foo1: 12, foo2: "string")).to eq('<div>12-string</div>')
   end
 
   it 'logs error in warning if validation failed' do
@@ -163,8 +162,8 @@ describe 'the param macro' do
           "#{params.bar.kind}, #{params.baz[0].kind}"
         end
       end
-      expect(React.render_to_static_markup(React.create_element(
-        Foo, foo: "", bar: {bazwoggle: 1}, baz: [{bazwoggle: 2}]))).to eq('<span>1, 2</span>')
+      expect(render_to_html(
+        Foo, foo: "", bar: {bazwoggle: 1}, baz: [{bazwoggle: 2}])).to eq('<span>1, 2</span>')
       expect(`window.dummy_log`).to eq(["Warning: Failed propType: In component `Foo`\nProvided prop `foo` could not be converted to BazWoggle"])
     end
 
@@ -175,7 +174,7 @@ describe 'the param macro' do
           params.foo
         end
       end
-      expect(React.render_to_static_markup(React.create_element(Foo, foo: lambda { 'works!' }))).to eq('<span>works!</span>')
+      expect(render_to_html(Foo, foo: lambda { 'works!' })).to eq('<span>works!</span>')
     end
 
     it "will create a 'bang' (i.e. update) method if the type is React::Observable" do
@@ -190,7 +189,7 @@ describe 'the param macro' do
       end
       current_state = ""
       observer = React::Observable.new(current_state) { |new_state| current_state = new_state }
-      expect(React.render_to_static_markup(React.create_element(Foo, foo: observer))).to eq('<span>ha!</span>')
+      expect(render_to_html(Foo, foo: observer)).to eq('<span>ha!</span>')
       expect(current_state).to eq("ha!")
     end
   end
