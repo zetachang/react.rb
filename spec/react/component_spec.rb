@@ -120,7 +120,7 @@ describe React::Component do
         end
       end
 
-      expect(React.render_to_static_markup(React.create_element(Foo))).to eq('<div>bar</div>')
+      expect(render_to_html(Foo)).to eq('<div>bar</div>')
     end
 
     it 'allows kernal method names like "format" to be used as state variable names' do
@@ -131,7 +131,7 @@ describe React::Component do
         end
       end
 
-      expect(React.render_to_static_markup(React.create_element(Foo))).to eq('<div>yes</div>')
+      expect(render_to_html(Foo)).to eq('<div>yes</div>')
     end
 
     it 'returns an observer with the bang method and no arguments' do
@@ -141,7 +141,7 @@ describe React::Component do
         end
       end
 
-      expect(React.render_to_static_markup(React.create_element(Foo))).to eq('<div>React::Observable</div>')
+      expect(render_to_html(Foo)).to eq('<div>React::Observable</div>')
     end
 
     it 'returns the current value of a state when written' do
@@ -152,7 +152,7 @@ describe React::Component do
         end
       end
 
-      expect(React.render_to_static_markup(React.create_element(Foo))).to eq('<div>bar</div>')
+      expect(render_to_html(Foo)).to eq('<div>bar</div>')
     end
 
     it 'can access an explicitly defined state`' do
@@ -160,7 +160,7 @@ describe React::Component do
         define_state foo: :bar
       end
 
-      expect(React.render_to_static_markup(React.create_element(Foo))).to eq('<div>bar</div>')
+      expect(render_to_html(Foo)).to eq('<div>bar</div>')
     end
 
   end
@@ -304,7 +304,7 @@ describe React::Component do
         end
       end
 
-      expect(React.render_to_static_markup(React.create_element(Foo))).to eq('<div>bar</div>')
+      expect(render_to_html(Foo)).to eq('<div>bar</div>')
     end
 
     it 'transforms state getter to Ruby object' do
@@ -320,7 +320,7 @@ describe React::Component do
         end
       end
 
-      expect(React.render_to_static_markup(React.create_element(Foo))).to eq('<div>Hello</div>')
+      expect(render_to_html(Foo)).to eq('<div>Hello</div>')
     end
   end
 
@@ -468,8 +468,8 @@ describe React::Component do
           end
         end
 
-        expect(React.render_to_static_markup(React.create_element(Foo, foo: 'lorem'))).to eq('<div>lorem-bar</div>')
-        expect(React.render_to_static_markup(React.create_element(Foo))).to eq('<div>foo-bar</div>')
+        expect(render_to_html(Foo, foo: 'lorem')).to eq('<div>lorem-bar</div>')
+        expect(render_to_html(Foo)).to eq('<div>foo-bar</div>')
       end
     end
   end
@@ -596,7 +596,7 @@ describe React::Component do
         end
       end
 
-      expect(React.render_to_static_markup(React.create_element(Bar))).to eq('<div><div><span>astring</span></div></div>')
+      expect(render_to_html(Bar)).to eq('<div><div><span>astring</span></div></div>')
     end
 
     it 'builds single node in top-level render without providing a block' do
@@ -609,8 +609,7 @@ describe React::Component do
         end
       end
 
-      element = React.create_element(Foo)
-      expect(React.render_to_static_markup(element)).to eq('<div></div>')
+      expect(render_to_html(Foo)).to eq('<div></div>')
     end
 
     it 'redefines `p` to make method missing work' do
@@ -627,9 +626,8 @@ describe React::Component do
         end
       end
 
-      element = React.create_element(Foo)
       markup = '<p class="foo"><p></p><div>lorem ipsum</div><p id="10"></p></p>'
-      expect(React.render_to_static_markup(element)).to eq(markup)
+      expect(render_to_html(Foo)).to eq(markup)
     end
 
     it 'only overrides `p` in render context' do

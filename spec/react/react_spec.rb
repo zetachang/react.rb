@@ -102,7 +102,7 @@ describe React do
           end
         end
 
-        expect(React.render_to_static_markup(React.create_element(Foo))).to eq("<div>20</div>")
+        expect(render_to_html(Foo)).to eq("<div>20</div>")
       end
 
       it "should match the instance cycle to ReactComponent life cycle" do

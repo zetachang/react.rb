@@ -25,12 +25,9 @@ describe React::Component::Base do
         @instance_data.join(" ")
       end
     end
-    expect(rendered_component(Foo)).to eq("<span>working</span>")
-    expect(rendered_component(Bar)).to eq("<span>working well</span>")
+    expect(render_to_html(Foo)).to eq("<span>working</span>")
+    expect(render_to_html(Bar)).to eq("<span>working well</span>")
   end
 
-  def rendered_component(component)
-    React.render_to_static_markup(React.create_element(component))
-  end
 end
 end

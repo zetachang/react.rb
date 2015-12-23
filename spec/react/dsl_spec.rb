@@ -12,7 +12,7 @@ describe 'the React DSL' do
       end
     end
 
-    expect(React.render_to_static_markup(React.create_element(Foo))).to eq('<div>hello</div>')
+    expect(render_to_html(Foo)).to eq('<div>hello</div>')
   end
 
   it "has a .span short hand String method" do
@@ -24,7 +24,7 @@ describe 'the React DSL' do
       end
     end
 
-    expect(React.render_to_static_markup(React.create_element(Foo))).to eq('<div><span>hello</span><span>goodby</span></div>')
+    expect(render_to_html(Foo)).to eq('<div><span>hello</span><span>goodby</span></div>')
   end
 
   it "has a .br short hand String method" do
@@ -36,7 +36,7 @@ describe 'the React DSL' do
       end
     end
 
-    expect(React.render_to_static_markup(React.create_element(Foo))).to eq('<div><span>hello<br></span></div>')
+    expect(render_to_html(Foo)).to eq('<div><span>hello<br></span></div>')
   end
 
   it "has a .td short hand String method" do
@@ -48,7 +48,7 @@ describe 'the React DSL' do
       end
     end
 
-    expect(React.render_to_static_markup(React.create_element(Foo))).to eq('<table><tr><td>hello</td></tr></table>')
+    expect(render_to_html(Foo)).to eq('<table><tr><td>hello</td></tr></table>')
   end
 
   it "has a .para short hand String method" do
@@ -60,7 +60,25 @@ describe 'the React DSL' do
       end
     end
 
-    expect(React.render_to_static_markup(React.create_element(Foo))).to eq('<div><p>hello</p></div>')
+    expect(render_to_html(Foo)).to eq('<div><p>hello</p></div>')
+  end
+
+  it "will treat the component class name as a first class component name" do
+    stub_const 'Biz::Mod::Bar', Class.new
+    Biz::Mod::Bar.class_eval do
+      include React::Component
+      def render
+        "a man walks into a bar"
+      end
+    end
+    stub_const 'Foo', Class.new(React::Component::Base)
+    Foo.class_eval do
+      def render
+        Biz::Mod::Bar()
+      end
+    end
+
+    expect(render_to_html(Foo)).to eq('<span>a man walks into a bar</span>')
   end
 
   it "will treat the component class name as a first class component name" do
@@ -78,7 +96,7 @@ describe 'the React DSL' do
       end
     end
 
-    expect(React.render_to_static_markup(React.create_element(Foo))).to eq('<span>a man walks into a bar</span>')
+    expect(render_to_html(Foo)).to eq('<span>a man walks into a bar</span>')
   end
 
   it "can add class names by the haml .class notation" do
@@ -96,7 +114,7 @@ describe 'the React DSL' do
       end
     end
 
-    expect(React.render_to_static_markup(React.create_element(Foo))).to eq('<span class="the-class">a man walks into a bar</span>')
+    expect(render_to_html(Foo)).to eq('<span class="the-class">a man walks into a bar</span>')
   end
 
   it "can use the 'class' keyword for classes" do
@@ -108,7 +126,7 @@ describe 'the React DSL' do
       end
     end
 
-    expect(React.render_to_static_markup(React.create_element(Foo))).to eq('<span class="the-class">hello</span>')
+    expect(render_to_html(Foo)).to eq('<span class="the-class">hello</span>')
   end
 
   it "can generate a unrendered node using the .as_node method" do          # div { "hello" }.as_node
@@ -120,7 +138,7 @@ describe 'the React DSL' do
       end
     end
 
-    expect(React.render_to_static_markup(React.create_element(Foo))).to eq('<span>React::Element</span>')
+    expect(render_to_html(Foo)).to eq('<span>React::Element</span>')
   end
 
   it "can use the dangerously_set_inner_HTML param" do
@@ -132,7 +150,7 @@ describe 'the React DSL' do
       end
     end
 
-    expect(React.render_to_static_markup(React.create_element(Foo))).to eq('<div>Hello&nbsp;&nbsp;Goodby</div>')
+    expect(render_to_html(Foo)).to eq('<div>Hello&nbsp;&nbsp;Goodby</div>')
   end
 
   it "will remove all elements passed as params from the rendering buffer" do
@@ -155,7 +173,7 @@ describe 'the React DSL' do
       end
     end
 
-    expect(React.render_to_static_markup(React.create_element(Test))).to eq('<div><b>hello</b><b>hello</b></div>')
+    expect(render_to_html(Test)).to eq('<div><b>hello</b><b>hello</b></div>')
   end
 end
 end

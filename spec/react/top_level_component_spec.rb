@@ -1,9 +1,7 @@
 require 'spec_helper'
 
 if opal?
-
 module Components
-
   module Controller
     class Component1
       include React::Component
@@ -40,10 +38,9 @@ class Component1
   end
 end
 
-
 def render_top_level(controller, component_name)
-  React.render_to_static_markup(React.create_element(
-    React::TopLevelRailsComponent, {controller: controller, component_name: component_name, render_params: {}}))
+  render_to_html(React::TopLevelRailsComponent, controller: controller,
+                 component_name: component_name, render_params: {})
 end
 
 describe React::TopLevelRailsComponent do
@@ -63,6 +60,5 @@ describe React::TopLevelRailsComponent do
   it 'can find the correct component when the name is fully qualified' do
     expect(render_top_level("Controller", "::Components::Component1")).to eq('<span>Components::Component1</span>')
   end
-
 end
 end

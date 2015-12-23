@@ -10,7 +10,7 @@ end
 
 describe 'An Example from the react.rb doc' do
   it 'produces the correct result' do
-    expect(React.render_to_static_markup(React.create_element(HelloMessage))).to eq('<div>Hello World!</div>')
+    expect(render_to_html(HelloMessage)).to eq('<div>Hello World!</div>')
   end
 end
 
@@ -18,13 +18,13 @@ class HelloMessage2
   include React::Component
   define_state(:user_name) { '@catmando' }
   def render
-    div { "Hello #{user_name}" }
+    div { "Hello #{state.user_name}" }
   end
 end
 
 describe 'Adding state to a component (second tutorial example)' do
   it "produces the correct result" do
-    expect(React.render_to_static_markup(React.create_element(HelloMessage2))).to eq('<div>Hello @catmando</div>')
+    expect(render_to_html(HelloMessage2)).to eq('<div>Hello @catmando</div>')
   end
 
   it 'renders to the document' do
