@@ -10,7 +10,10 @@ module React
                 main map mark menu menuitem meta meter nav noscript object ol optgroup option
                 output p param picture pre progress q rp rt ruby s samp script section select
                 small source span strong style sub summary sup table tbody td textarea tfoot th
-                thead time title tr track u ul var video wbr)
+                thead time title tr track u ul var video wbr) +
+             # The SVG Tags
+             %w(circle clipPath defs ellipse g line linearGradient mask path pattern polygon polyline
+                radialGradient rect stop svg text tspan)
   ATTRIBUTES = %w(accept acceptCharset accessKey action allowFullScreen allowTransparency alt
                 async autoComplete autoPlay cellPadding cellSpacing charSet checked classID
                 className cols colSpan content contentEditable contextMenu controls coords
