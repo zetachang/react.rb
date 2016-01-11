@@ -1,6 +1,7 @@
 require 'react/ext/string'
 require 'react/ext/hash'
 require 'active_support/core_ext/class/attribute'
+require 'active_support/core_ext/module/introspection'
 require 'react/callbacks'
 require 'react/children'
 require 'react/rendering_context'
@@ -28,11 +29,7 @@ module React
       base.extend(ClassMethods)
 
       if base.name
-        parent = base.name.split("::").inject([Module]) { |nesting, next_const|
-          nesting + [nesting.last.const_get(next_const)]
-        }[-2]
-
-        class << parent
+        class << base.parent
           def method_missing(n, *args, &block)
             name = n
             if name =~ /_as_node$/
