@@ -184,10 +184,7 @@ module React
 
     def component?(name)
       name_list = name.split("::")
-      scope_list = self.class.name.split("::").inject([Module]) do |nesting, next_const|
-        nesting + [nesting.last.const_get(next_const)]
-      end.reverse
-      scope_list.each do |scope|
+      [self.class, *self.class.parents].each do |scope|
         component = name_list.inject(scope) do |scope, class_name|
           scope.const_get(class_name)
         end rescue nil
