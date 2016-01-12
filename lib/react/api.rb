@@ -31,19 +31,19 @@ module React
           },
           componentWillReceiveProps: function(next_props) {
             var instance = this._getOpalInstance.apply(this);
-            return #{`instance`.component_will_receive_props(`next_props`) if type.method_defined? :component_will_receive_props};
+            return #{`instance`.component_will_receive_props(Hash.new(`next_props`)) if type.method_defined? :component_will_receive_props};
           },
           shouldComponentUpdate: function(next_props, next_state) {
             var instance = this._getOpalInstance.apply(this);
-            return #{`instance`.should_component_update?(`next_props`, `next_state`) if type.method_defined? :should_component_update?};
+            return #{`instance`.should_component_update?(Hash.new(`next_props`), Hash.new(`next_state`)) if type.method_defined? :should_component_update?};
           },
           componentWillUpdate: function(next_props, next_state) {
             var instance = this._getOpalInstance.apply(this);
-            return #{`instance`.component_will_update(`next_props`, `next_state`) if type.method_defined? :component_will_update};
+            return #{`instance`.component_will_update(Hash.new(`next_props`), Hash.new(`next_state`)) if type.method_defined? :component_will_update};
           },
           componentDidUpdate: function(prev_props, prev_state) {
             var instance = this._getOpalInstance.apply(this);
-            return #{`instance`.component_did_update(`prev_props`, `prev_state`) if type.method_defined? :component_did_update};
+            return #{`instance`.component_did_update(Hash.new(`prev_props`), Hash.new(`prev_state`)) if type.method_defined? :component_did_update};
           },
           componentWillUnmount: function() {
             var instance = this._getOpalInstance.apply(this);

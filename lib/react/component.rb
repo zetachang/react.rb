@@ -116,7 +116,7 @@ module React
       # useful within the react.rb environment for now we are just using it to
       # clear processed_params
       State.set_state_context_to(self) do
-        self.run_callback(:before_receive_props, Hash.new(next_props))
+        self.run_callback(:before_receive_props, next_props)
       end
     rescue Exception => e
       self.class.process_exception(e, self)
@@ -129,9 +129,8 @@ module React
 
     def should_component_update?(next_props, next_state)
       State.set_state_context_to(self) do
-        next_props = Hash.new(next_props)
         if self.respond_to?(:needs_update?)
-          !!self.needs_update?(next_props, Hash.new(next_state))
+          !!self.needs_update?(next_props, next_state)
         elsif false # switch to true to force updates per standard react
           true
         elsif props_changed? next_props
@@ -150,7 +149,7 @@ module React
 
     def component_will_update(next_props, next_state)
       State.set_state_context_to(self) do
-        self.run_callback(:before_update, Hash.new(next_props), Hash.new(next_state))
+        self.run_callback(:before_update, next_props, next_state)
       end
     rescue Exception => e
       self.class.process_exception(e, self)
@@ -158,7 +157,7 @@ module React
 
     def component_did_update(prev_props, prev_state)
       State.set_state_context_to(self) do
-        self.run_callback(:after_update, Hash.new(prev_props), Hash.new(prev_state))
+        self.run_callback(:after_update, prev_props, prev_state)
         State.update_states_to_observe
       end
     rescue Exception => e
