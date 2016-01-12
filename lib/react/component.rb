@@ -122,18 +122,13 @@ module React
       self.class.process_exception(e, self)
     end
 
-    def props_changed?(next_props)
-      return true unless props.keys.sort == next_props.keys.sort
-      props.detect { |k, v| `#{next_props[k]} != #{params[k]}`}
-    end
-
     def should_component_update?(next_props, next_state)
       State.set_state_context_to(self) do
         if self.respond_to?(:needs_update?)
           !!self.needs_update?(next_props, next_state)
         elsif false # switch to true to force updates per standard react
           true
-        elsif props_changed? next_props
+        elsif props != next_props
           true
         elsif `!next_state != !#{@native}.state`
           true
