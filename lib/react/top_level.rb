@@ -26,6 +26,28 @@ module React
                 selected shape size sizes span spellCheck src srcDoc srcSet start step style
                 tabIndex target title type useMap value width wmode dangerouslySetInnerHTML)
 
+  def self.html_tags?(name)
+    tags = HTML_TAGS
+    `
+    for(var i = 0; i < tags.length; i++){
+      if(tags[i] === name)
+        return true;
+    }
+    return false;
+    `
+  end
+
+  def self.html_attrs?(name)
+    attrs = ATTRIBUTES
+    `
+    for(var i = 0; i < attrs.length; i++){
+      if(attrs[i] === name)
+        return true;
+    }
+    return false;
+    `
+  end
+
   def self.create_element(type, properties = {}, &block)
     React::API.create_element(type, properties, &block)
   end
