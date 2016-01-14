@@ -6,19 +6,12 @@ module React
 
     if RUBY_ENGINE != 'opal'
       def self.load_context(ctx, controller, name = nil)
-        puts "************************** React Server Context Initialized #{name} *********************************************"
         @context = Context.new("#{controller.object_id}-#{Time.now.to_i}", ctx, controller, name)
       end
     else
       def self.load_context(unique_id = nil, name = nil)
         # can be called on the client to force re-initialization for testing purposes
         if !unique_id || !@context || @context.unique_id != unique_id
-          if on_opal_server?
-            message = "************************ React Prerendering Context Initialized #{name} ***********************"
-          else
-            message = "************************ React Browser Context Initialized ****************************"
-          end
-          log(message)
           @context = Context.new(unique_id)
         end
         @context

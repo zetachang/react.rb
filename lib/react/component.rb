@@ -1,6 +1,7 @@
 require 'react/ext/string'
 require 'react/ext/hash'
 require 'active_support/core_ext/class/attribute'
+require 'active_support/core_ext/module/introspection'
 require 'react/callbacks'
 require 'react/children'
 require 'react/rendering_context'
@@ -28,11 +29,7 @@ module React
       base.extend(ClassMethods)
 
       if base.name
-        parent = base.name.split("::").inject([Module]) { |nesting, next_const|
-          nesting + [nesting.last.const_get(next_const)]
-        }[-2]
-
-        class << parent
+        class << base.parent
           def method_missing(n, *args, &block)
             name = n
             if name =~ /_as_node$/
@@ -119,25 +116,19 @@ module React
       # useful within the react.rb environment for now we are just using it to
       # clear processed_params
       State.set_state_context_to(self) do
-        self.run_callback(:before_receive_props, Hash.new(next_props))
+        self.run_callback(:before_receive_props, next_props)
       end
     rescue Exception => e
       self.class.process_exception(e, self)
     end
 
-    def props_changed?(next_props)
-      return true unless props.keys.sort == next_props.keys.sort
-      props.detect { |k, v| `#{next_props[k]} != #{params[k]}`}
-    end
-
     def should_component_update?(next_props, next_state)
       State.set_state_context_to(self) do
-        next_props = Hash.new(next_props)
         if self.respond_to?(:needs_update?)
-          !!self.needs_update?(next_props, Hash.new(next_state))
+          !!self.needs_update?(next_props, next_state)
         elsif false # switch to true to force updates per standard react
           true
-        elsif props_changed? next_props
+        elsif props != next_props
           true
         elsif `!next_state != !#{@native}.state`
           true
@@ -153,7 +144,7 @@ module React
 
     def component_will_update(next_props, next_state)
       State.set_state_context_to(self) do
-        self.run_callback(:before_update, Hash.new(next_props), Hash.new(next_state))
+        self.run_callback(:before_update, next_props, next_state)
       end
     rescue Exception => e
       self.class.process_exception(e, self)
@@ -161,7 +152,7 @@ module React
 
     def component_did_update(prev_props, prev_state)
       State.set_state_context_to(self) do
-        self.run_callback(:after_update, Hash.new(prev_props), Hash.new(prev_state))
+        self.run_callback(:after_update, prev_props, prev_state)
         State.update_states_to_observe
       end
     rescue Exception => e
@@ -187,10 +178,7 @@ module React
 
     def component?(name)
       name_list = name.split("::")
-      scope_list = self.class.name.split("::").inject([Module]) do |nesting, next_const|
-        nesting + [nesting.last.const_get(next_const)]
-      end.reverse
-      scope_list.each do |scope|
+      [self.class, *self.class.parents].each do |scope|
         component = name_list.inject(scope) do |scope, class_name|
           scope.const_get(class_name)
         end rescue nil
