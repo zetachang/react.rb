@@ -196,7 +196,7 @@ module React
         node_only = true
         name = name.gsub(/_as_node$/, "")
       end
-      unless (HTML_TAGS.include?(name) || name == 'present'  || name == '_p_tag' || (name = component?(name, self)))
+      unless (React.html_tags?(name) || name == 'present'  || name == '_p_tag' || (name = component?(name, self)))
         return super
       end
 

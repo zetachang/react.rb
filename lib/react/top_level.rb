@@ -10,7 +10,10 @@ module React
                 main map mark menu menuitem meta meter nav noscript object ol optgroup option
                 output p param picture pre progress q rp rt ruby s samp script section select
                 small source span strong style sub summary sup table tbody td textarea tfoot th
-                thead time title tr track u ul var video wbr)
+                thead time title tr track u ul var video wbr) +
+             # The SVG Tags
+             %w(circle clipPath defs ellipse g line linearGradient mask path pattern polygon polyline
+                radialGradient rect stop svg text tspan)
   ATTRIBUTES = %w(accept acceptCharset accessKey action allowFullScreen allowTransparency alt
                 async autoComplete autoPlay cellPadding cellSpacing charSet checked classID
                 className cols colSpan content contentEditable contextMenu controls coords
@@ -21,7 +24,38 @@ module React
                 muted name noValidate open pattern placeholder poster preload radioGroup
                 readOnly rel required role rows rowSpan sandbox scope scrolling seamless
                 selected shape size sizes span spellCheck src srcDoc srcSet start step style
-                tabIndex target title type useMap value width wmode dangerouslySetInnerHTML)
+                tabIndex target title type useMap value width wmode dangerouslySetInnerHTML) +
+                #SVG ATTRIBUTES
+                %w(clipPath cx cy d dx dy fill fillOpacity fontFamily
+                fontSize fx fy gradientTransform gradientUnits markerEnd
+                markerMid markerStart offset opacity patternContentUnits
+                patternUnits points preserveAspectRatio r rx ry spreadMethod
+                stopColor stopOpacity stroke  strokeDasharray strokeLinecap
+                strokeOpacity strokeWidth textAnchor transform version
+                viewBox x1 x2 x xlinkActuate xlinkArcrole xlinkHref xlinkRole
+                xlinkShow xlinkTitle xlinkType xmlBase xmlLang xmlSpace y1 y2 y)
+
+  def self.html_tags?(name)
+    tags = HTML_TAGS
+    `
+    for(var i = 0; i < tags.length; i++){
+      if(tags[i] === name)
+        return true;
+    }
+    return false;
+    `
+  end
+
+  def self.html_attrs?(name)
+    attrs = ATTRIBUTES
+    `
+    for(var i = 0; i < attrs.length; i++){
+      if(attrs[i] === name)
+        return true;
+    }
+    return false;
+    `
+  end
 
   def self.create_element(type, properties = {}, &block)
     React::API.create_element(type, properties, &block)
