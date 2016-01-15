@@ -61,24 +61,36 @@ describe React::TopLevelRailsComponent do
     expect(render_top_level("Controller", "::Components::Component1")).to eq('<span>Components::Component1</span>')
   end
 
-  it 'React.html_tag? will return true for normal html tags' do
-    expect(React.html_tag?('a')).to eq(true)
-    expect(React.html_tag?('div')).to eq(true)
+  describe '.html_tag?' do
+    it 'is truthy for valid html tags' do
+      expect(React.html_tag?('a')).to be_truthy
+      expect(React.html_tag?('div')).to be_truthy
+    end
+
+    it 'is truthy for valid svg tags' do
+      expect(React.html_tag?('svg')).to be_truthy
+      expect(React.html_tag?('circle')).to be_truthy
+    end
+
+    it 'is falsey for invalid tags' do
+      expect(React.html_tag?('tagizzle')).to be_falsey
+    end
   end
 
-  it 'React.html_tag? will return true for svg element names' do
-    expect(React.html_tag?('svg')).to eq(true)
-    expect(React.html_tag?('circle')).to eq(true)
-  end
+  describe '.html_attr?' do
+    it 'is truthy for valid html attributes' do
+      expect(React.html_attr?('id')).to be_truthy
+      expect(React.html_attr?('data')).to be_truthy
+    end
 
-  it 'React.html_attr? will return true for normal html attribute names' do
-    expect(React.html_attr?('id')).to eq(true)
-    expect(React.html_attr?('data')).to eq(true)
-  end
+    it 'is truthy for valid svg attributes' do
+      expect(React.html_attr?('cx')).to be_truthy
+      expect(React.html_attr?('strokeWidth')).to be_truthy
+    end
 
-  it 'React.html_attr? will return true for svg attribute names' do
-    expect(React.html_attr?('cx')).to eq(true)
-    expect(React.html_attr?('strokeWidth')).to eq(true)
+    it 'is falsey for invalid attributes' do
+      expect(React.html_tag?('attrizzle')).to be_falsey
+    end
   end
 end
 end
