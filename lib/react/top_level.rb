@@ -24,7 +24,16 @@ module React
                 muted name noValidate open pattern placeholder poster preload radioGroup
                 readOnly rel required role rows rowSpan sandbox scope scrolling seamless
                 selected shape size sizes span spellCheck src srcDoc srcSet start step style
-                tabIndex target title type useMap value width wmode dangerouslySetInnerHTML)
+                tabIndex target title type useMap value width wmode dangerouslySetInnerHTML) +
+                #SVG ATTRIBUTES
+                %w(clipPath cx cy d dx dy fill fillOpacity fontFamily
+                fontSize fx fy gradientTransform gradientUnits markerEnd
+                markerMid markerStart offset opacity patternContentUnits
+                patternUnits points preserveAspectRatio r rx ry spreadMethod
+                stopColor stopOpacity stroke  strokeDasharray strokeLinecap
+                strokeOpacity strokeWidth textAnchor transform version
+                viewBox x1 x2 x xlinkActuate xlinkArcrole xlinkHref xlinkRole
+                xlinkShow xlinkTitle xlinkType xmlBase xmlLang xmlSpace y1 y2 y)
 
   def self.html_tags?(name)
     tags = HTML_TAGS

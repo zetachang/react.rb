@@ -60,5 +60,25 @@ describe React::TopLevelRailsComponent do
   it 'can find the correct component when the name is fully qualified' do
     expect(render_top_level("Controller", "::Components::Component1")).to eq('<span>Components::Component1</span>')
   end
+
+  it 'html_tags? will return true for normal html tags' do
+    expect(html_tags?('a')).to eq(true)
+    expect(html_tags?('div')).to eq(true)
+  end
+
+  it 'html_tags? will return true for svg element names' do
+    expect(html_tags?('svg')).to eq(true)
+    expect(html_tags?('circle')).to eq(true)
+  end
+
+  it 'html_attrs? will return true for normal html attribute names' do
+    expect(html_attrs?('id')).to eq(true)
+    expect(html_attrs?('data')).to eq(true)
+  end
+
+  it 'html_attrs? will return true for svg attribute names' do
+    expect(html_attrs?('cx')).to eq(true)
+    expect(html_attrs?('strokeWidth')).to eq(true)
+  end
 end
 end
