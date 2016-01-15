@@ -74,7 +74,7 @@ module React
         params << @@component_classes[type]
       elsif type.kind_of?(Class)
         params << create_native_react_class(type)
-      elsif React.html_tags?(type)
+      elsif React.html_tag?(type)
         params << type
       elsif type.is_a? String
         return React::Element.new(type)
@@ -109,7 +109,7 @@ module React
         elsif ["style", "dangerously_set_inner_HTML"].include? key
           props[lower_camelize(key)] = value.to_n
         else
-          props[React.html_attrs?(lower_camelize(key)) ? lower_camelize(key) : key] = value
+          props[React.html_attr?(lower_camelize(key)) ? lower_camelize(key) : key] = value
         end
       end
       props.shallow_to_n

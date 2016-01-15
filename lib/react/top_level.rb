@@ -35,7 +35,7 @@ module React
                 viewBox x1 x2 x xlinkActuate xlinkArcrole xlinkHref xlinkRole
                 xlinkShow xlinkTitle xlinkType xmlBase xmlLang xmlSpace y1 y2 y)
 
-  def self.html_tags?(name)
+  def self.html_tag?(name)
     tags = HTML_TAGS
     `
     for(var i = 0; i < tags.length; i++){
@@ -46,7 +46,7 @@ module React
     `
   end
 
-  def self.html_attrs?(name)
+  def self.html_attr?(name)
     attrs = ATTRIBUTES
     `
     for(var i = 0; i < attrs.length; i++){
