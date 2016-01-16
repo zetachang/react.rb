@@ -42,6 +42,8 @@ React.rb components are *isomorphic* meaning they can run on the server as well 
 
 React.rb integrates well with Rails, Sinatra, and simple static sites, and can be added to existing web pages very easily, or it can be used to deliver complete websites.
 
+[**For complete documentation visit reactrb.org**](http://reactrb.org)
+
 ## Why ?
 
 + *Single Language:*  Use Ruby everywhere, no JS, markup languages, or JSX
