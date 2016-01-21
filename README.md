@@ -83,7 +83,7 @@ To play with some live examples cd to the project directory then
 2. `cd example/examples`
 2. `bundle install`
 3. `bundle exec rackup`
-4. Open `http://localhos:9292`
+4. Open `http://localhost:9292`
 
 or 
 
