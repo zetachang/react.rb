@@ -33,7 +33,7 @@ module React
           end
         else
           define_method("#{name}") do
-            if param_type.respond_to? :_react_param_conversion
+            @processed_params[name] ||= if param_type.respond_to? :_react_param_conversion
               param_type._react_param_conversion props[name]
             elsif param_type.is_a?(Array) &&
               param_type[0].respond_to?(:_react_param_conversion)
@@ -49,6 +49,7 @@ module React
 
       def initialize(props)
         @props = props || {}
+        @processed_params = {}
       end
 
       def [](prop)

@@ -195,6 +195,27 @@ describe 'the param macro' do
       expect(`window.dummy_log`).to eq(["Warning: Failed propType: In component `Foo`\nProvided prop `foo` could not be converted to BazWoggle"])
     end
 
+    it "can will only convert once" do
+      stub_const "BazWoggle", Class.new
+      BazWoggle.class_eval do
+        def initialize(kind)
+          @kind = kind
+        end
+        attr_accessor :kind
+        def self._react_param_conversion(json, validate_only)
+          new(json[:bazwoggle]) if json[:bazwoggle]
+        end
+      end
+      Foo.class_eval do
+        param :foo, type: BazWoggle
+        def render
+          params.foo.kind = params.foo.kind+1
+          "#{params.foo.kind}"
+        end
+      end
+      expect(React.render_to_static_markup(React.create_element(Foo, foo: {bazwoggle: 1}))).to eq('<span>2</span>')
+    end
+
     it "will alias a Proc type param" do
       Foo.class_eval do
         param :foo, type: Proc
