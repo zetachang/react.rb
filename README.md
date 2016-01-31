@@ -18,6 +18,7 @@ and true React.js engine. :heart:
 
 Install the gem, or load the js library
 
++ add `gem 'reactive_rails_generator'` to your gem file [(details)](https://github.com/loicboutet/reactive-rails-generator) and use the generator, or
 + add `gem 'reactive-ruby'` to your gem file or
 + `gem install reactive-ruby` or
 + install (or load via cdn) [inline-reactive-ruby.js](http://github.com/reactive-ruby/inline-reactive-ruby)
