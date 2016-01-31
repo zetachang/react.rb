@@ -33,23 +33,39 @@ module React
           end
         else
           define_method("#{name}") do
-            @processed_params[name] ||= if param_type.respond_to? :_react_param_conversion
-              param_type._react_param_conversion props[name]
-            elsif param_type.is_a?(Array) &&
-              param_type[0].respond_to?(:_react_param_conversion)
-              props[name].collect do |param|
-                param_type[0]._react_param_conversion param
-              end
+            if @processed_params.has_key? name
+              @processed_params[name]
             else
-              props[name]
+              @processed_params[name] = if param_type.respond_to? :_react_param_conversion
+                param_type._react_param_conversion props[name]
+              elsif param_type.is_a?(Array) &&
+                param_type[0].respond_to?(:_react_param_conversion)
+                props[name].collect do |param|
+                  param_type[0]._react_param_conversion param
+                end
+              else
+                props[name]
+              end
             end
           end
         end
       end
 
-      def initialize(props)
+      def unchanged_processed_params(new_props)
+        Hash[
+          *@processed_params.collect do |key, value|
+            [key, value] if @props[key] == new_props[key]
+          end.compact.flatten(1)
+        ]
+      end
+
+      def initialize(props, current_props_wrapper=nil)
         @props = props || {}
-        @processed_params = {}
+        @processed_params = if current_props_wrapper
+          current_props_wrapper.unchanged_processed_params(props)
+        else
+          {}
+        end
       end
 
       def [](prop)
