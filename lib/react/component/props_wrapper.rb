@@ -54,7 +54,7 @@ module React
       def unchanged_processed_params(new_props)
         Hash[
           *@processed_params.collect do |key, value|
-            [key, value] if @props[key] == new_props[key]
+            [key, value] if @props[key].equal? new_props[key] # `#{@props[key]} == #{new_props[key]}`
           end.compact.flatten(1)
         ]
       end
