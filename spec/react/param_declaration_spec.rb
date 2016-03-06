@@ -2,7 +2,6 @@ require 'spec_helper'
 
 if opal?
 describe 'the param macro' do
-
   it 'defines collect_other_params_as method on params proxy' do
     stub_const 'Foo', Class.new(React::Component::Base)
     Foo.class_eval do
@@ -166,6 +165,65 @@ describe 'the param macro' do
       params = { foo: "", bar: { bazwoggle: 1 }, baz: [{ bazwoggle: 2 }] }
       expect(Foo).to render('<span>1, 2</span>').with_params(params)
       expect(`window.dummy_log`).to eq(["Warning: Failed propType: In component `Foo`\nProvided prop `foo` could not be converted to BazWoggle"])
+    end
+
+    describe "converts params only once" do
+      it "not on every access" do
+        pending 'Fix after merging'
+        stub_const "BazWoggle", Class.new
+        BazWoggle.class_eval do
+          def initialize(kind)
+            @kind = kind
+          end
+          attr_accessor :kind
+          def self._react_param_conversion(json, validate_only)
+            new(json[:bazwoggle]) if json[:bazwoggle]
+          end
+        end
+        Foo.class_eval do
+          param :foo, type: BazWoggle
+          def render
+            params.foo.kind = params.foo.kind+1
+            "#{params.foo.kind}"
+          end
+        end
+        expect(Foo).to render
+        expect(React.render_to_static_markup(React.create_element(Foo, foo: {bazwoggle: 1}))).to eq('<span>2</span>')
+      end
+
+      it "even if contains an embedded native object" do
+        pending 'Fix after merging'
+        stub_const "Bar", Class.new(React::Component::Base)
+        stub_const "BazWoggle", Class.new
+        BazWoggle.class_eval do
+          def initialize(kind)
+            @kind = kind
+          end
+          attr_accessor :kind
+          def self._react_param_conversion(json, validate_only)
+            new(JSON.from_object(json[0])[:bazwoggle]) if JSON.from_object(json[0])[:bazwoggle]
+          end
+        end
+        Bar.class_eval do
+          param :foo, type: BazWoggle
+          def render
+            params.foo.kind.to_s
+          end
+        end
+        Foo.class_eval do
+          export_state :change_me
+          before_mount do
+            Foo.change_me! "initial"
+          end
+          def render
+            Bar(foo: Native([`{bazwoggle: #{Foo.change_me}}`]))
+          end
+        end
+        div = `document.createElement("div")`
+        React.render(React.create_element(Foo, {}), div)
+        Foo.change_me! "updated"
+        expect(`div.children[0].innerHTML`).to eq("updated")
+      end
     end
 
     it "will alias a Proc type param" do

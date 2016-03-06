@@ -83,6 +83,11 @@ module React
         props_wrapper.define_method(name) do
           @_all_others ||= validator_in_lexical_scope.undefined_props(props)
         end
+
+        validator_in_lexial_scope = validator
+        props_wrapper.define_method(name) do
+          @_all_others ||= validator_in_lexial_scope.undefined_props(props)
+        end
       end
 
       def define_state(*states, &block)
