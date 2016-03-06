@@ -19,7 +19,7 @@ module React
         libraries.each do |library|
           native_name = "#{library}.#{name}"
           native_component = `eval(#{native_name})` rescue nil
-          React::API.import_native_component(name, native_component) and return name if native_component and `native_component != undefined`
+          React::API.import_native_component(name, native_component) and return name if native_component && `native_component != undefined`
         end
         name
       end
