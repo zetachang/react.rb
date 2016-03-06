@@ -169,7 +169,6 @@ describe 'the param macro' do
 
     describe "converts params only once" do
       it "not on every access" do
-        pending 'Fix after merging'
         stub_const "BazWoggle", Class.new
         BazWoggle.class_eval do
           def initialize(kind)
@@ -187,7 +186,6 @@ describe 'the param macro' do
             "#{params.foo.kind}"
           end
         end
-        expect(Foo).to render
         expect(React.render_to_static_markup(React.create_element(Foo, foo: {bazwoggle: 1}))).to eq('<span>2</span>')
       end
 

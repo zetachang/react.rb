@@ -27,15 +27,17 @@ module React
           end
         else
           define_method("#{name}") do
-            if param_type.respond_to? :_react_param_conversion
-              param_type._react_param_conversion props[name]
-            elsif param_type.is_a?(Array) &&
-              param_type[0].respond_to?(:_react_param_conversion)
-              props[name].collect do |param|
-                param_type[0]._react_param_conversion param
+            fetch_from_cache(name) do
+              if param_type.respond_to? :_react_param_conversion
+                param_type._react_param_conversion props[name]
+              elsif param_type.is_a?(Array) &&
+                param_type[0].respond_to?(:_react_param_conversion)
+                props[name].collect do |param|
+                  param_type[0]._react_param_conversion param
+                end
+              else
+                props[name]
               end
-            else
-              props[name]
             end
           end
         end
@@ -50,6 +52,18 @@ module React
       end
 
       private
+
+      def fetch_from_cache(name)
+        last, value = cache[name]
+        return value if last.equal?(props[name])
+        yield.tap do |value|
+          cache[name] = [props[name], value]
+        end
+      end
+
+      def cache
+        @cache ||= Hash.new { |h, k| h[k] = [] }
+      end
 
       def props
         component.props
