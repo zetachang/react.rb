@@ -45,6 +45,10 @@ React.rb integrates well with Rails, Sinatra, and simple static sites, and can b
 
 [**For complete documentation visit reactrb.org**](http://reactrb.org)
 
+## Examples
+
+Refer to [https://github.com/reactive-ruby/react.rb-examples] to see some live examples in action.
+
 ## Why ?
 
 + *Single Language:*  Use Ruby everywhere, no JS, markup languages, or JSX
@@ -77,30 +81,6 @@ Please let us know either at [Gitter.im](https://gitter.im/zetachang/react.rb) o
 
 ## Developing
 
-`git clone` the project.
-
-To play with some live examples cd to the project directory then 
-
-2. `cd example/examples`
-2. `bundle install`
-3. `bundle exec rackup`
-4. Open `http://localhost:9292`
-
-or 
-
-1. `cd example/rails-tutorial`
-2. `bundle install`
-3. `bundle exec rails s`
-4. Open `http://localhost:3000`
-
-or
-
-1. `cd example/sinatra-tutorial`
-2. `bundle install`
-3. `bundle exec rackup`
-4. Open `http://localhost:9292`
-
-Note that these are very simple examples, for the purpose of showing how to configure the gem in various server environments.  For more  examples and information see [reactrb.org.](http://reactrb.org)
 
 ## Testing
 
