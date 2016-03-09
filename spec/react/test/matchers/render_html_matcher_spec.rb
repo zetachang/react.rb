@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 if opal?
-describe React::Testing::Matchers::RenderHTMLMatcher do
+describe React::Test::Matchers::RenderHTMLMatcher do
   let(:component) {
     Class.new do
       include React::Component

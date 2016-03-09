@@ -1,5 +1,5 @@
 module React
-  module Testing
+  module Test
     module Matchers
       class RenderHTMLMatcher
         def initialize(expected)

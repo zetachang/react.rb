@@ -13,7 +13,7 @@ end
 
 if RUBY_ENGINE == 'opal'
   require 'reactive-ruby'
-  require 'react/testing/matchers/render_html_matcher'
+  require 'react/test/matchers/render_html_matcher'
   require File.expand_path('../support/react/spec_helpers', __FILE__)
 
   module Opal
@@ -66,7 +66,7 @@ if RUBY_ENGINE == 'opal'
 
   RSpec.configure do |config|
     config.include React::SpecHelpers
-    config.include React::Testing::Matchers
+    config.include React::Test::Matchers
     config.filter_run_excluding :ruby
   end
 end
