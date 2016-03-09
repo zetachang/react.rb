@@ -21,6 +21,10 @@ module React
       def update_params(params)
         component.set_props(params)
       end
+
+      def force_update!
+        component.force_update!
+      end
     end
   end
 end

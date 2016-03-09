@@ -68,6 +68,13 @@ if opal?
         subject.update_params(message: 'moon')
         expect(component.params.from).to eq('outerspace')
       end
+
+    describe '#force_update' do
+      it 'causes the component to render' do
+        component = subject.mount(Greeter)
+        expect(component).to receive(:render)
+        subject.force_update!
+      end
     end
   end
 end
