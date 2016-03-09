@@ -1,6 +1,6 @@
 # React.rb 
 
-**A complete [React.js](http://facebook.github.io/react/) [Opal Ruby](http://opalrb.org) wrapper**
+### A complete [React.js](http://facebook.github.io/react/) [Opal Ruby](http://opalrb.org) wrapper.
 
 [**Visit reactrb.org For The Full Story**](http://reactrb.org)
 
