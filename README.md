@@ -1,4 +1,4 @@
-# React.rb 
+# React.rb
 
 ### A complete [React.js](http://facebook.github.io/react/) [Opal Ruby](http://opalrb.org) wrapper.
 
@@ -14,7 +14,7 @@ and true React.js engine. :heart:
 
 ### Important: current `react.rb` gem users please [read this!](#road-map)
 
-## Installation 
+## Installation
 
 Install the gem, or load the js library
 
@@ -35,11 +35,11 @@ Each react component class has a render method that generates the markup for tha
 
 Each react component class defines a new tag-method in the DSL that works just like built-in html tags, so react components can render other react components.
 
-As events occur, components update their state, which causes them to rerender, and perhaps pass new parameters to lower level components, thus causing them to rerender.  
+As events occur, components update their state, which causes them to rerender, and perhaps pass new parameters to lower level components, thus causing them to rerender.
 
-Under the hood the actual work is effeciently done by the [React.js](http://facebook.github.io/react/) engine. 
+Under the hood the actual work is effeciently done by the [React.js](http://facebook.github.io/react/) engine.
 
-React.rb components are *isomorphic* meaning they can run on the server as well as the client.  This means that the initial expansion of the component tree to markup is done server side, just like ERB, or HAML templates.   Then the same code runs on the client and will respond to any events.   
+React.rb components are *isomorphic* meaning they can run on the server as well as the client.  This means that the initial expansion of the component tree to markup is done server side, just like ERB, or HAML templates.   Then the same code runs on the client and will respond to any events.
 
 React.rb integrates well with Rails, Sinatra, and simple static sites, and can be added to existing web pages very easily, or it can be used to deliver complete websites.
 
@@ -82,7 +82,7 @@ Please let us know either at [Gitter.im](https://gitter.im/zetachang/react.rb) o
 ## Contributing
 
 This project is still in early stage, so discussion, bug reports and PRs are
-really welcome :wink:.   
+really welcome :wink:.
 
 #### Testing react.rb
 
