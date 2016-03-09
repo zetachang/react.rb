@@ -1,3 +1,4 @@
+if opal?
 module React
   module SpecHelpers
     `var ReactTestUtils = React.addons.TestUtils`
@@ -59,4 +60,5 @@ module React
       check_block.call
     end
   end
+end
 end
