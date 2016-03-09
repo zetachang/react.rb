@@ -79,20 +79,16 @@ Version 0.9.0 of `react.rb` **will not be** 100% backward compatible with 0.3.0 
 
 Please let us know either at [Gitter.im](https://gitter.im/zetachang/react.rb) or [via an issue](https://github.com/zetachang/react.rb/issues) if you have specific concerns with the upgrade from 0.3.0 to 0.9.0.
 
-## Developing
-
-
-## Testing
-
-1. `bundle install`
-2. `bundle exec rake test_app` to generate a dummy test app.
-3. `bundle exec rake`
-
-## Contributions
+## Contributing
 
 This project is still in early stage, so discussion, bug reports and PRs are
 really welcome :wink:.   
 
+#### Testing react.rb
+
+1. `bundle install`
+2. `bundle exec rake test_app` to generate a dummy test app.
+3. `bundle exec rake`
 
 ## License
 
