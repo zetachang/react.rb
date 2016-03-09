@@ -9,13 +9,13 @@ module React
 
     def renderToDocument(type, options = {})
       element = React.create_element(type, options)
-      return renderElementToDocument(element)
+      renderElementToDocument(element)
     end
 
     def renderElementToDocument(element)
       instance = Native(`ReactTestUtils.renderIntoDocument(#{element.to_n})`)
       instance.class.include(React::Component::API)
-      return instance
+      instance
     end
 
     def simulateEvent(event, element, params = {})
