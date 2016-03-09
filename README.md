@@ -84,8 +84,9 @@ Please let us know either at [Gitter.im](https://gitter.im/zetachang/react.rb) o
 
 ## Testing
 
-1. Run `bundle exec rake test_app` to generate a dummy test app.
-2. `bundle exec rake`
+1. `bundle install`
+2. `bundle exec rake test_app` to generate a dummy test app.
+3. `bundle exec rake`
 
 ## Contributions
 
