@@ -47,7 +47,7 @@ React.rb integrates well with Rails, Sinatra, and simple static sites, and can b
 
 ## Examples
 
-Refer to [https://github.com/reactive-ruby/react.rb-examples] to see some live examples in action.
+Refer to [reactive-ruby/react.rb-examples](https://github.com/reactive-ruby/react.rb-examples) to see some live examples in action.
 
 ## Why ?
 
