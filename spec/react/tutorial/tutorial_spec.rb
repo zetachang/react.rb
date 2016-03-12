@@ -8,7 +8,7 @@ class HelloMessage
   end
 end
 
-describe 'An Example from the react.rb doc' do
+describe 'An Example from the react.rb doc', type: :component do
   it 'produces the correct result' do
     expect(HelloMessage).to render('<div>Hello World!</div>')
   end
@@ -22,7 +22,7 @@ class HelloMessage2
   end
 end
 
-describe 'Adding state to a component (second tutorial example)' do
+describe 'Adding state to a component (second tutorial example)', type: :component do
   it "produces the correct result" do
     expect(HelloMessage2).to render('<div>Hello @catmando</div>')
   end

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 if opal?
-describe 'the React DSL' do
+RSpec.describe 'the React DSL', type: :component do
   it "will turn the last string in a block into a element" do
     stub_const 'Foo', Class.new
     Foo.class_eval do

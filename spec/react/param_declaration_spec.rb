@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 if opal?
-describe 'the param macro' do
+describe 'the param macro', type: :component do
   it 'defines collect_other_params_as method on params proxy' do
     stub_const 'Foo', Class.new(React::Component::Base)
     Foo.class_eval do

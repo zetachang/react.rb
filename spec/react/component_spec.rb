@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 if opal?
-describe React::Component do
+describe React::Component, type: :component do
   after(:each) do
     React::API.clear_component_class_cache
   end

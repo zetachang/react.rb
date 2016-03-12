@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 if opal?
-describe React::Component::Base do
+RSpec.describe React::Component::Base, type: :component do
   after(:each) do
     React::API.clear_component_class_cache
   end
@@ -28,6 +28,5 @@ describe React::Component::Base do
     expect(Foo).to render("<span>working</span>")
     expect(Bar).to render("<span>working well</span>")
   end
-
 end
 end
