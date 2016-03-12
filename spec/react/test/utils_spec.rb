@@ -19,30 +19,6 @@ if opal?
           end
         end
       end
-
-      class Session
-        def unmount(target = component)
-        end
-
-        def mounted?
-        end
-
-        def within
-          scopes.push(current_scope)
-          yield
-        ensure
-          scopes.pop
-        end
-
-        def find_dom_node
-        end
-
-        def find_with_class
-        end
-
-        def click
-        end
-      end
     end
   end
   RSpec.describe React::Test::Utils do
