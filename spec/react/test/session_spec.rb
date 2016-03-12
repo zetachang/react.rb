@@ -29,15 +29,15 @@ if opal?
       end
 
       it 'optionaly passes params to the component' do
-        component = subject.mount(Greeter, message: 'world')
-        expect(component.params.message).to eq('world')
+        instance = subject.mount(Greeter, message: 'world')
+        expect(instance.params.message).to eq('world')
       end
     end
 
-    describe '#component' do
+    describe '#instance' do
       it 'returns the instance of the mounted component' do
-        component = subject.mount(Greeter)
-        expect(subject.component).to eq(component)
+        instance = subject.mount(Greeter)
+        expect(subject.instance).to eq(instance)
       end
     end
 
@@ -48,38 +48,38 @@ if opal?
       end
     end
 
-    describe '#instance' do
+    describe '#native' do
       it 'returns the React native instance of the component' do
-        component = subject.mount(Greeter)
-        native = component.instance_variable_get('@native')
-        expect(subject.instance).to eq(native)
+        instance = subject.mount(Greeter)
+        native = instance.instance_variable_get('@native')
+        expect(subject.native).to eq(native)
       end
     end
 
     describe '#update_params' do
       it 'sends new params to the component' do
-        component = subject.mount(Greeter, message: 'world')
+        instance = subject.mount(Greeter, message: 'world')
         subject.update_params(message: 'moon')
-        expect(component.params.message).to eq('moon')
+        expect(instance.params.message).to eq('moon')
       end
 
       it 'leaves unspecified params in tact' do
-        component = subject.mount(Greeter, message: 'world', from: 'outerspace')
+        instance = subject.mount(Greeter, message: 'world', from: 'outerspace')
         subject.update_params(message: 'moon')
-        expect(component.params.from).to eq('outerspace')
+        expect(instance.params.from).to eq('outerspace')
       end
 
       it 'causes the component to render' do
-        component = subject.mount(Greeter, message: 'world')
-        expect(component).to receive(:render)
+        instance = subject.mount(Greeter, message: 'world')
+        expect(instance).to receive(:render)
         subject.update_params(message: 'moon')
       end
     end
 
     describe '#force_update' do
       it 'causes the component to render' do
-        component = subject.mount(Greeter)
-        expect(component).to receive(:render)
+        instance = subject.mount(Greeter)
+        expect(instance).to receive(:render)
         subject.force_update!
       end
     end

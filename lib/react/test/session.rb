@@ -1,29 +1,33 @@
 module React
   module Test
     class Session
+      DSL_METHODS = %i[mount instance native element update_params
+        force_update!].freeze
+
       def mount(component_klass, params = {})
         @element = React.create_element(component_klass, params)
-        component
+        instance
       end
 
       def instance
-        @instance ||= Native(`React.addons.TestUtils.renderIntoDocument(#{element.to_n})`)
+        @component ||= `#{native.to_n}._getOpalInstance.apply(#{native})`
+      end
+
+      def native
+        @native ||= Native(
+          `React.addons.TestUtils.renderIntoDocument(#{element.to_n})`)
       end
 
       def element
         @element
       end
 
-      def component
-        @component ||= `#{instance.to_n}._getOpalInstance.apply(#{instance})`
-      end
-
       def update_params(params)
-        component.set_props(params)
+        instance.set_props(params)
       end
 
       def force_update!
-        component.force_update!
+        instance.force_update!
       end
     end
   end
