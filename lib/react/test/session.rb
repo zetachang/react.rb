@@ -2,7 +2,7 @@ module React
   module Test
     class Session
       DSL_METHODS = %i[mount instance native element update_params
-        force_update!].freeze
+        force_update! html].freeze
 
       def mount(component_klass, params = {})
         @element = React.create_element(component_klass, params)
@@ -28,6 +28,10 @@ module React
 
       def force_update!
         instance.force_update!
+      end
+
+      def html
+        React.render_to_static_markup(element)
       end
     end
   end

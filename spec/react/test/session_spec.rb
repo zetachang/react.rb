@@ -56,6 +56,13 @@ if opal?
       end
     end
 
+    describe '#html' do
+      it 'returns the component rendered to static html' do
+        subject.mount(Greeter, message: 'world')
+        expect(subject.html).to eq('<span>Hello world</span>')
+      end
+    end
+
     describe '#update_params' do
       it 'sends new params to the component' do
         instance = subject.mount(Greeter, message: 'world')
