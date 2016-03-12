@@ -10,7 +10,7 @@ module React
       end
 
       def instance
-        @component ||= `#{native.to_n}._getOpalInstance.apply(#{native})`
+        @instance ||= `#{native.to_n}._getOpalInstance.apply(#{native})`
       end
 
       def native
@@ -23,11 +23,11 @@ module React
       end
 
       def update_params(params)
-        instance.set_props(params)
+        native.set_props(params)
       end
 
       def force_update!
-        instance.force_update!
+        native.force_update!
       end
 
       def html
