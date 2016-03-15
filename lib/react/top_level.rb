@@ -37,24 +37,24 @@ module React
 
   def self.html_tag?(name)
     tags = HTML_TAGS
-    `
-    for(var i = 0; i < tags.length; i++){
-      if(tags[i] === name)
-        return true;
+    %x{
+      for(var i = 0; i < tags.length; i++) {
+        if(tags[i] === name)
+          return true;
+      }
+      return false;
     }
-    return false;
-    `
   end
 
   def self.html_attr?(name)
     attrs = ATTRIBUTES
-    `
-    for(var i = 0; i < attrs.length; i++){
-      if(attrs[i] === name)
-        return true;
+    %x{
+      for(var i = 0; i < attrs.length; i++) {
+        if(attrs[i] === name)
+          return true;
+      }
+      return false;
     }
-    return false;
-    `
   end
 
   def self.create_element(type, properties = {}, &block)
