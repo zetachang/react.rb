@@ -31,7 +31,9 @@ module React
       end
 
       def html
-        React.render_to_static_markup(element)
+        # How can we get the current ReactElement w/o violating private APIs?
+        elem = Native(native[:_reactInternalInstance][:_currentElement])
+        React.render_to_static_markup(elem)
       end
     end
   end

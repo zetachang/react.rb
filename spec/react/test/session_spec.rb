@@ -61,6 +61,12 @@ if opal?
         subject.mount(Greeter, message: 'world')
         expect(subject.html).to eq('<span>Hello world</span>')
       end
+
+      it 'returns the updated static html' do
+        subject.mount(Greeter)
+        subject.update_params(message: 'moon')
+        expect(subject.html).to eq('<span>Hello moon</span>')
+      end
     end
 
     describe '#update_params' do
