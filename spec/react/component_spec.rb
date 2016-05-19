@@ -705,6 +705,14 @@ describe React::Component do
       expect(nodes).to be_a(Enumerator)
       expect(nodes.size).to eq(2)
     end
+
+    it 'returns an empty Enumerator if there are no children' do
+      ele = React.create_element(Foo)
+      renderElementToDocument(ele)
+      nodes = Foo.the_children.each
+      expect(nodes.size).to eq(nil)
+      expect(nodes.count).to eq(0)
+    end
   end
 end
 end

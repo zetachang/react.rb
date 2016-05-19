@@ -64,7 +64,11 @@ module React
     end
 
     def children
-      nodes = [`#{@native}.props.children`].flatten
+      nodes = if `#{@native}.props.children==undefined`
+        []
+      else
+        [`#{@native}.props.children`].flatten
+      end
       class << nodes
         include Enumerable
 

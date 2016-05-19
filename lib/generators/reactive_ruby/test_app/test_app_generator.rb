@@ -25,8 +25,8 @@ module ReactiveRuby
 
     def configure_test_app
       template 'boot.rb.erb', "#{test_app_path}/config/boot.rb", force: true
-      template 'application.rb.erb', "#{test_app_path}/config/application.rb", force: true
-      template 'assets/javascripts/application.rb',
+      template 'test_application.rb.erb', "#{test_app_path}/config/application.rb", force: true
+      template 'assets/javascripts/test_application.rb',
         "#{test_app_path}/app/assets/javascripts/application.rb", force: true
       template 'assets/javascripts/components.rb',
         "#{test_app_path}/app/views/components.rb", force: true
