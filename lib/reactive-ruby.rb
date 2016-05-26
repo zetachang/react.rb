@@ -1,5 +1,5 @@
 if RUBY_ENGINE == 'opal'
-  #require 'sources/react.js' unless defined? NOREACTJS
+  #require 'sources/react_v15.js' comment this out for release, leave in for testing with which ever version you like
   require 'react/top_level'
   require 'react/observable'
   require 'react/component'
