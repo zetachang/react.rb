@@ -1,5 +1,5 @@
 if RUBY_ENGINE == 'opal'
-  require 'sources/react.js'
+  #require 'sources/react.js' unless defined? NOREACTJS
   require 'react/top_level'
   require 'react/observable'
   require 'react/component'
