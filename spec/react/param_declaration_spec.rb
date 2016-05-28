@@ -110,11 +110,13 @@ describe 'the param macro' do
 
     %x{
       var log = [];
-      var org_warn_console = window.console.warn;
-      window.console.warn = function(str){log.push(str)}
+      var org_warn_console =  window.console.warn;
+      var org_error_console = window.console.error;
+      window.console.warn = window.console.error = function(str){log.push(str)}
     }
     renderToDocument(Foo2, bar: 10, lorem: Lorem.new)
-    `window.console.warn = org_warn_console;`
+    `window.console.warn = org_warn_console; window.console.error = org_error_console;`
+
     expect(`log`).to eq(["Warning: Failed propType: In component `Foo2`\nRequired prop `foo` was not specified\nProvided prop `bar` could not be converted to String"])
   end
 
@@ -131,11 +133,12 @@ describe 'the param macro' do
 
     %x{
       var log = [];
-      var org_warn_console = window.console.warn;
-      window.console.warn = function(str){log.push(str)}
+      var org_warn_console =  window.console.warn;
+      var org_error_console = window.console.error;
+      window.console.warn = window.console.error = function(str){log.push(str)}
     }
     renderToDocument(Foo, foo: 10, bar: '10', lorem: Lorem.new)
-    `window.console.warn = org_warn_console;`
+    `window.console.warn = org_warn_console; window.console.error = org_error_console;`
     expect(`log`).to eq([])
   end
 
@@ -144,13 +147,14 @@ describe 'the param macro' do
       %x{
         window.dummy_log = [];
         window.org_warn_console = window.console.warn;
-        window.console.warn = function(str){window.dummy_log.push(str)}
+        window.org_error_console = window.console.warn
+        window.console.warn = window.console.error = function(str){window.dummy_log.push(str)}
       }
       stub_const 'Foo', Class.new(React::Component::Base)
       Foo.class_eval { def render; ""; end }
     end
     after(:each) do
-      `window.console.warn = window.org_warn_console;`
+      `window.console.warn = window.org_warn_console; window.console.error = window.org_error_console`
     end
 
     it "can use the [] notation for arrays" do

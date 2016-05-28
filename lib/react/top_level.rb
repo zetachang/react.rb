@@ -29,7 +29,14 @@ module React
 
   def self.render(element, container)
     container = `container.$$class ? container[0] : container`
-    component = Native(`React.render(#{element.to_n}, container, function(){#{yield if block_given?}})`)
+    if !(`typeof ReactDOM === 'undefined'`)
+      component = Native(`ReactDOM.render(#{element.to_n}, container, function(){#{yield if block_given?}})`) # v0.15+
+    elsif !(`typeof React.renderToString === 'undefined'`)
+      component = Native(`React.render(#{element.to_n}, container, function(){#{yield if block_given?}})`)
+    else
+      raise "render is not defined.  In React >= v15 you must import it with ReactDOM"
+    end
+
     component.class.include(React::Component::API)
     component
   end
@@ -39,22 +46,51 @@ module React
   end
 
   def self.render_to_string(element)
-    React::RenderingContext.build { `React.renderToString(#{element.to_n})` }
+    if !(`typeof ReactDOMServer === 'undefined'`)
+      React::RenderingContext.build { `ReactDOMServer.renderToString(#{element.to_n})` } # v0.15+
+    elsif !(`typeof React.renderToString === 'undefined'`)
+      React::RenderingContext.build { `React.renderToString(#{element.to_n})` }
+    else
+      raise "renderToString is not defined.  In React >= v15 you must import it with ReactDOMServer"
+    end
   end
 
   def self.render_to_static_markup(element)
-    React::RenderingContext.build { `React.renderToStaticMarkup(#{element.to_n})` }
+    if !(`typeof ReactDOMServer === 'undefined'`)
+      React::RenderingContext.build { `ReactDOMServer.renderToStaticMarkup(#{element.to_n})` } # v0.15+
+    elsif !(`typeof React.renderToString === 'undefined'`)
+      React::RenderingContext.build { `React.renderToStaticMarkup(#{element.to_n})` }
+    else
+      raise "renderToStaticMarkup is not defined.  In React >= v15 you must import it with ReactDOMServer"
+    end
   end
 
   def self.unmount_component_at_node(node)
-    `React.unmountComponentAtNode(node.$$class ? node[0] : node)`
+    if !(`typeof ReactDOM === 'undefined'`)
+      `ReactDOM.unmountComponentAtNode(node.$$class ? node[0] : node)` # v0.15+
+    elsif !(`typeof React.renderToString === 'undefined'`)
+      `React.unmountComponentAtNode(node.$$class ? node[0] : node)`
+    else
+      raise "unmountComponentAtNode is not defined.  In React >= v15 you must import it with ReactDOM"
+    end
   end
 
 end
 
 Element.instance_eval do
+
   class ::Element::DummyContext < React::Component::Base
   end
+
+  def self.find(selector)
+    selector = selector.dom_node if selector.respond_to? :dom_node rescue selector
+    `$(#{selector})`
+  end
+
+  def self.[](selector)
+    find(selector)
+  end
+
   def render(&block)
     React.render(React::RenderingContext.render(nil) {::Element::DummyContext.new.instance_eval &block}, self)
   end

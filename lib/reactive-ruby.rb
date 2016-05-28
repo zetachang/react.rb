@@ -1,5 +1,8 @@
+
+
 if RUBY_ENGINE == 'opal'
-  #require 'sources/react_v15.js' comment this out for release, leave in for testing with which ever version you like
+  #require 'sources/react_v13.js' #comment this out for release, leave in for testing with which ever version you like
+  #
   require 'react/top_level'
   require 'react/observable'
   require 'react/component'
@@ -16,6 +19,10 @@ if RUBY_ENGINE == 'opal'
 else
   require 'opal'
   require 'opal-browser'
+  begin
+    require 'opal-jquery'
+  rescue LoadError
+  end
   require 'opal-activesupport'
   require 'reactive-ruby/version'
   require 'reactive-ruby/rails' if defined?(Rails)

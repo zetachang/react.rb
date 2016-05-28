@@ -15,7 +15,7 @@ module React
 
     def simulateEvent(event, element, params = {})
       simulator = Native(`ReactTestUtils.Simulate`)
-      simulator[event.to_s].call(`#{element.to_n}.getDOMNode()`, params)
+      simulator[event.to_s].call(element.dom_node, params)
     end
 
     def isElementOfType(element, type)

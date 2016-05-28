@@ -36,7 +36,7 @@ describe 'the React DSL' do
       end
     end
 
-    expect(React.render_to_static_markup(React.create_element(Foo))).to eq('<div><span>hello<br></span></div>')
+    expect(React.render_to_static_markup(React.create_element(Foo)).gsub("<br/>", "<br>")).to eq('<div><span>hello<br></span></div>')
   end
 
   it "has a .td short hand String method" do

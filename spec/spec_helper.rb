@@ -2,6 +2,7 @@ ENV["RAILS_ENV"] ||= 'test'
 
 require 'opal'
 require 'opal-rspec'
+require 'opal-jquery'
 
 def opal?
   RUBY_ENGINE == 'opal'
@@ -11,8 +12,11 @@ def ruby?
   !opal?
 end
 
+
 if RUBY_ENGINE == 'opal'
+  require File.expand_path('../vendor/jquery-2.2.4.min', __FILE__)
   require 'reactive-ruby'
+
   require File.expand_path('../support/react/spec_helpers', __FILE__)
 
   module Opal

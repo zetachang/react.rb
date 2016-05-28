@@ -266,7 +266,7 @@ describe React::Component do
       end
 
       element = renderToDocument(Foo)
-      expect(element.getDOMNode.textContent).to eq('10')
+      expect(Element[element].text).to eq('10')
     end
 
     it 'supports original `setState` as `set_state` method' do
@@ -341,7 +341,7 @@ describe React::Component do
         end
 
         element = renderToDocument(Foo, prop: 'foobar')
-        expect(element.getDOMNode.textContent).to eq('foobar')
+        expect(Element[element].text).to eq('foobar')
       end
 
       it 'accesses nested params as orignal Ruby object' do
@@ -352,42 +352,43 @@ describe React::Component do
         end
 
         element = renderToDocument(Foo, prop: [{foo: 10}])
-        expect(element.getDOMNode.textContent).to eq('10')
+        expect(Element[element].text).to eq('10')
       end
     end
 
-    describe 'Props Updating' do
-      before do
-        stub_const 'Foo', Class.new
-        Foo.class_eval do
-          include React::Component
-        end
-      end
-
-      it 'supports original `setProps` as method `set_props`' do
-        Foo.class_eval do
-          def render
-            React.create_element('div') { params[:foo] }
-          end
-        end
-
-        element = renderToDocument(Foo, {foo: 10})
-        element.set_props(foo: 20)
-        expect(`#{element.dom_node}.innerHTML`).to eq('20')
-      end
-
-      it 'supports original `replaceProps` as method `set_props!`' do
-        Foo.class_eval do
-          def render
-            React.create_element('div') { params[:foo] ? 'exist' : 'null' }
-          end
-        end
-
-        element = renderToDocument(Foo, {foo: 10})
-        element.set_props!(bar: 20)
-        expect(element.getDOMNode.innerHTML).to eq('null')
-      end
-    end
+    # deprecated as of React 14
+    # describe 'Props Updating' do
+    #   before do
+    #     stub_const 'Foo', Class.new
+    #     Foo.class_eval do
+    #       include React::Component
+    #     end
+    #   end
+    #
+    #   it 'supports original `setProps` as method `set_props`' do
+    #     Foo.class_eval do
+    #       def render
+    #         React.create_element('div') { params[:foo] }
+    #       end
+    #     end
+    #
+    #     element = renderToDocument(Foo, {foo: 10})
+    #     element.set_props(foo: 20)
+    #     expect(`#{element.dom_node}.innerHTML`).to eq('20')
+    #   end
+    #
+    #   it 'supports original `replaceProps` as method `set_props!`' do
+    #     Foo.class_eval do
+    #       def render
+    #         React.create_element('div') { params[:foo] ? 'exist' : 'null' }
+    #       end
+    #     end
+    #
+    #     element = renderToDocument(Foo, {foo: 10})
+    #     element.set_props!(bar: 20)
+    #     expect(element.getDOMNode.innerHTML).to eq('null')
+    #   end
+    # end
 
     describe 'Prop validation' do
       before do
@@ -422,11 +423,12 @@ describe React::Component do
 
         %x{
           var log = [];
-          var org_warn_console = window.console.warn;
-          window.console.warn = function(str){log.push(str)}
+          var org_warn_console =  window.console.warn;
+          var org_error_console = window.console.error;
+          window.console.warn = window.console.error = function(str){log.push(str)}
         }
         renderToDocument(Foo, bar: 10, lorem: Lorem.new)
-        `window.console.warn = org_warn_console;`
+        `window.console.warn = org_warn_console; window.console.error = org_error_console;`
         expect(`log`).to eq(["Warning: Failed propType: In component `Foo`\nRequired prop `foo` was not specified\nProvided prop `bar` could not be converted to String"])
       end
 
@@ -445,10 +447,11 @@ describe React::Component do
         %x{
           var log = [];
           var org_warn_console = window.console.warn;
-          window.console.warn = function(str){log.push(str)}
+          var org_error_console = window.console.error
+          window.console.warn = window.console.error = function(str){log.push(str)}
         }
         renderToDocument(Foo, foo: 10, bar: '10', lorem: Lorem.new)
-        `window.console.warn = org_warn_console;`
+        `window.console.warn = org_warn_console; window.console.error = org_error_console;`
         expect(`log`).to eq([])
       end
     end
