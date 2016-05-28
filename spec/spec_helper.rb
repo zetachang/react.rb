@@ -15,6 +15,7 @@ end
 
 if RUBY_ENGINE == 'opal'
   require File.expand_path('../vendor/jquery-2.2.4.min', __FILE__)
+  require 'react-latest'
   require 'reactive-ruby'
 
   require File.expand_path('../support/react/spec_helpers', __FILE__)
