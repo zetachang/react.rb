@@ -4,11 +4,11 @@ $:.push File.expand_path('../lib/', __FILE__)
 require 'reactive-ruby/version'
 
 Gem::Specification.new do |s|
-  s.name         = 'reactive-ruby'
+  s.name         = 'reactrb'
   s.version      = React::VERSION
 
-  s.author       = 'David Chang'
-  s.email        = 'zeta11235813@gmail.com'
+  s.authors       = ['David Chang', 'Adam Jahn', 'Mitch VanDuyn']
+  s.email        = 'reactrb@catprint.com'
   s.homepage     = 'https://reactrb.org'
   s.summary      = 'Opal Ruby wrapper of React.js library.'
   s.license      = 'MIT'
