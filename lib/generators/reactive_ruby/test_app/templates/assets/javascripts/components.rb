@@ -1,4 +1,4 @@
 require 'opal'
 require 'react'
-require 'reactive-ruby'
+require 'reactrb'
 require_tree './components'

@@ -18,6 +18,7 @@ if RUBY_ENGINE == 'opal'
       "   add 'require \"react-v1x\"' immediately before the require of 'reactive-ruby'."
     ].join("\n")
   end
+  require 'react/hash'
   require 'react/top_level'
   require 'react/observable'
   require 'react/component'

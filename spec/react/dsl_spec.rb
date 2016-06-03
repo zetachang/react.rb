@@ -1,6 +1,12 @@
 require 'spec_helper'
 
 if opal?
+
+module TestMod123
+  class Bar < React::Component::Base
+  end
+end
+
 describe 'the React DSL' do
 
   it "will turn the last string in a block into a element" do
@@ -82,8 +88,8 @@ describe 'the React DSL' do
   end
 
   it "can add class names by the haml .class notation" do
-    stub_const 'Mod::Bar', Class.new(React::Component::Base)
-    Mod::Bar.class_eval do
+    # stub_const 'Mod::Barz', Class.new(React::Component::Base)
+    TestMod123::Bar.class_eval do
       collect_other_params_as :attributes
       def render
         "a man walks into a bar".span(attributes)
@@ -92,7 +98,7 @@ describe 'the React DSL' do
     stub_const 'Foo', Class.new(React::Component::Base)
     Foo.class_eval do
       def render
-        Mod::Bar().the_class
+        TestMod123::Bar().the_class
       end
     end
 

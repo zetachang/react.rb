@@ -3,7 +3,7 @@ require 'browser/interval'      # gives us wrappers on javascript methods such a
 require 'jquery'
 require 'opal-jquery'  # gives us a nice wrapper on jQuery which we will use mainly for HTTP calls
 require "json"         # json conversions
-require 'reactive-ruby'   # and the whole reason we are gathered here today!
+require 'reactrb'   # and the whole reason we are gathered here today!
 require 'react-router'
 require 'reactive-router'
 require 'basics'
