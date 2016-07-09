@@ -12,6 +12,8 @@ module React
       if renames_and_exclusions.has_key? name
         if native_name = renames_and_exclusions[name]
           native_name
+          native_component = `eval(#{native_name})` rescue nil
+          React::API.import_native_component(name, native_component) and return name if native_component && `native_component != undefined`
         else
           super
         end
